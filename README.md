@@ -17,7 +17,7 @@
 [optional footer(s)]
 ```
 
-## 🔖 Commit Type 목록
+## Commit Type 목록
 
 | type | 설명 |
 |------|------|
