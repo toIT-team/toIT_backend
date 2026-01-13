@@ -21,7 +21,7 @@ public class Users {
     @Column(nullable = true)
     private String bio;
 
-    @Enumerated( EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     private AuthProvider authProvider;
 
     private Long providerUsersId;
