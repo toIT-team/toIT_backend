@@ -4,6 +4,8 @@ import com.toit.enums.AuthProvider;
 import com.toit.enums.EntityStatus;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.data.annotation.CreatedDate;
 
 @Entity
@@ -35,5 +37,9 @@ public class Users {
 
     @Column(nullable = true)
     private LocalDateTime deletedAt;
+
+    //1:N 관계
+    @OneToMany(mappedBy = "users")
+    private List<Schedules> schedules = new ArrayList<>();
 
 }
