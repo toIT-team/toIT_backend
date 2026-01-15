@@ -42,4 +42,11 @@ public class Users {
     @OneToMany(mappedBy = "users")
     private List<Schedules> schedules = new ArrayList<>();
 
+    /**
+     * 보간함(folders)와 1:N 관계
+     * 외래 키의 주인은 Folders
+     */
+    @OneToMany(mappedBy = "users")
+    private List<Folders> folders = new ArrayList<>();
+
 }
