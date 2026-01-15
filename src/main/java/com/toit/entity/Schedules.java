@@ -37,7 +37,11 @@ public class Schedules {
     @Column(nullable = true)
     private LocalDateTime deletedAt;
 
-    //Users와 N:1 관계 설정
+    /**
+     * 사용자 엔티티
+     * OAuth 로그인 및 소프트 삭제를 지원한다.
+     * Users와 N:1 관계 설정
+     */
     @ManyToOne
     @JoinColumn(name = "users_id", nullable = false)
     private Users users;
