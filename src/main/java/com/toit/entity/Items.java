@@ -46,28 +46,23 @@ public class Items {
     /**
      * 자료 이름
      * 길이 제한 255
+     * type 형태 LINK, TEXT 일 때 사용
      */
     @Column(nullable = false)
     private String name;
 
     /**
-     * 링크 URL
-     * type형태가 LINK일 때 사용
-     */
-    @Column(nullable = true, length = 2000)
-    private String url;
-
-    /**
-     * 파일 경로
-     * type형태가 FILE, IMAGE일 때 사용
+     * 링크 URL 및 파일 경로
+     * type형태가 LINK, FILE, IMAGE일 때 사용
      */
     @Column(nullable = true, length = 2000)
     private String filePath;
 
     /**
      * 파일 경로
-     * type형태가 TEXT, IMAGE일 때 사용
+     * type형태가 LINK, TEXT, IMAGE, FILE일 때 사용
      * IMAGE의 경우 설명이 이 값에 포함
+     * FILE의 경우 사이즈 값이 들어감
      */
     @Column(nullable = true, length = 2000)
     private String textContent;
