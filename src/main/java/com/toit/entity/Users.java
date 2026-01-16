@@ -81,4 +81,11 @@ public class Users {
     @OneToMany(mappedBy = "users")
     private List<Folders> folders = new ArrayList<>();
 
+    /**
+     * 보관함(folders)와 1:N 관계
+     * 외래 키의 주인은 Folders
+     */
+    @OneToMany(mappedBy = "users")
+    private List<Folders> items = new ArrayList<>();
+
 }
