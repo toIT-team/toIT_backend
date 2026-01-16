@@ -57,7 +57,7 @@ public class Folders {
     private EntityStatus status;
 
     /**
-     * 보간함 생성 후 시간 즉시 생성
+     * 보관함 생성 후 시간 즉시 생성
      */
     @CreatedDate
     @Column(nullable = false, updatable = false)
