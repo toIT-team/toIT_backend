@@ -1,4 +1,4 @@
-package com.toit.enums;
+package com.toit.common.enums;
 
 
 public enum ItemsType {

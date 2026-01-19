@@ -1,7 +1,9 @@
-package com.toit.entity;
+package com.toit.user;
 
-import com.toit.enums.AuthProvider;
-import com.toit.enums.EntityStatus;
+import com.toit.folders.Folders;
+import com.toit.schedules.Schedules;
+import com.toit.common.enums.AuthProvider;
+import com.toit.common.enums.EntityStatus;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

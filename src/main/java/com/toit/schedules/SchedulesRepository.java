@@ -1,6 +1,6 @@
-package com.toit.repository;
+package com.toit.schedules;
 
-import com.toit.entity.Schedules;
+import com.toit.schedules.Schedules;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

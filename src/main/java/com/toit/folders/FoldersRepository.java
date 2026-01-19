@@ -1,7 +1,5 @@
-package com.toit.repository;
+package com.toit.folders;
 
-import com.toit.entity.Folders;
-import com.toit.entity.Schedules;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

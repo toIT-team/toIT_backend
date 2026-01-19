@@ -1,8 +1,9 @@
-package com.toit.entity;
+package com.toit.items;
 
-import com.toit.enums.EntityStatus;
-import com.toit.enums.ItemsType;
-import com.toit.enums.StorageTarget;
+import com.toit.common.enums.EntityStatus;
+import com.toit.common.enums.ItemsType;
+import com.toit.common.enums.StorageTarget;
+import com.toit.user.Users;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

@@ -1,6 +1,5 @@
-package com.toit.repository;
+package com.toit.user;
 
-import com.toit.entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
