@@ -46,14 +46,9 @@ feat(api)!: rename /links endpoint to /item
 Git trailer 형식을 사용합니다.
 
 - 커밋 메시지(Footer)에 이슈 번호를 적으면 Github이 자동으로 이슈와 커밋을 연결
+- 커밋에서는 Closes를 하지 않습니다. → PR에서만 사용합니다.
 ```
-fix(auth): prevent token refresh loop
-
+type(scope): description
+- [body]
 Refs: #123
-```
-- 이슈를 닫고 싶으면 다음과 같이 진행합니다.
-```
-feat(schedule): add monthly schedule query
-
-Closes: #3
 ```
