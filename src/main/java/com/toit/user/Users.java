@@ -8,10 +8,12 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 @Table(name = "users")
+@Getter
 public class Users {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long usersId;
@@ -75,13 +77,6 @@ public class Users {
     //1:N 관계
     @OneToMany(mappedBy = "users")
     private List<Schedules> schedules = new ArrayList<>();
-
-    /**
-     * 보관함(folders)와 1:N 관계
-     * 외래 키의 주인은 Folders
-     */
-    @OneToMany(mappedBy = "users")
-    private List<Folders> folders = new ArrayList<>();
 
     /**
      * 보관함(folders)와 1:N 관계
