@@ -20,9 +20,7 @@ public class FoldersController {
     private final FoldersService foldersService;
 
 
-    /**
-     * Folders 보관함 하나 생성 API
-     */
+    /** Folders 보관함 하나 생성 API */
     @PostMapping
     public ResponseEntity<FoldersCreateResponse> createFolders(
             @RequestBody FoldersCreateRequest request

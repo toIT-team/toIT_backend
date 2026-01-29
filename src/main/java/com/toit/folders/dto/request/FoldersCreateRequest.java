@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 public class FoldersCreateRequest {
 
     /** 사용자 ID */
-    private Long userId;
+    private Long usersId;
 
     /** 보관함 이름 */
     private String name;

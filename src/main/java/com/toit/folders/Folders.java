@@ -1,6 +1,7 @@
 package com.toit.folders;
 
 import com.toit.common.enums.EntityStatus;
+import com.toit.folders.dto.request.FoldersCreateRequest;
 import com.toit.user.Users;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -82,4 +83,15 @@ public class Folders {
     @ManyToOne
     @JoinColumn(name = "users_id", nullable = false)
     private Users users;
+
+
+    public Folders(String name, String memo, Boolean isDefault, String color, Boolean isFavorite, Users users) {
+        this.name = name;
+        this.memo = memo;
+        this.isDefault = isDefault;
+        this.color = color;
+        this.isFavorite = isFavorite;
+        this.status = EntityStatus.ACTIVE;
+        this.users = users;
+    }
 }
