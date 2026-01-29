@@ -95,4 +95,5 @@ public class Users {
         this.status = EntityStatus.ACTIVE;
         this.createdAt = createdAt;
     }
+
 }
