@@ -14,11 +14,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 
 
 @Entity
 @Table(name = "folders")
+@Getter
 public class Folders {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long foldersId;
@@ -77,11 +79,7 @@ public class Folders {
      */
     private Boolean isFavorite;
 
-
     @ManyToOne
     @JoinColumn(name = "users_id", nullable = false)
     private Users users;
-
-
-
 }

@@ -8,10 +8,12 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 @Table(name = "users")
+@Getter
 public class Users {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long usersId;
