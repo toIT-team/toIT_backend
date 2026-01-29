@@ -4,6 +4,7 @@ import com.toit.folders.dto.request.FoldersCreateRequest;
 import com.toit.folders.dto.response.FoldersCreateResponse;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,7 @@ public class FoldersService {
                 false,
                 request.getColor(),
                 false,
+                LocalDateTime.now(),
                 users
         );
         return new FoldersCreateResponse(foldersRepository.save(folders));

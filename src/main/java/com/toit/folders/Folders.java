@@ -85,7 +85,7 @@ public class Folders {
     private Users users;
 
 
-    public Folders(String name, String memo, Boolean isDefault, String color, Boolean isFavorite, Users users) {
+    public Folders(String name, String memo, Boolean isDefault, String color, Boolean isFavorite, LocalDateTime createdAt, Users users) {
         this.name = name;
         this.memo = memo;
         this.isDefault = isDefault;
@@ -93,5 +93,6 @@ public class Folders {
         this.isFavorite = isFavorite;
         this.status = EntityStatus.ACTIVE;
         this.users = users;
+        this.createdAt = createdAt;
     }
 }
