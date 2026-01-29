@@ -85,4 +85,14 @@ public class Users {
     @OneToMany(mappedBy = "users")
     private List<Folders> items = new ArrayList<>();
 
+    public Users(String email, String name, String bio, AuthProvider authProvider, Long providerUsersId, LocalDateTime createdAt
+    ) {
+        this.email = email;
+        this.name = name;
+        this.bio = bio;
+        this.authProvider = authProvider;
+        this.providerUsersId = providerUsersId;
+        this.status = EntityStatus.ACTIVE;
+        this.createdAt = createdAt;
+    }
 }
