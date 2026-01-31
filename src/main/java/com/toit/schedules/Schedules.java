@@ -1,6 +1,5 @@
 package com.toit.schedules;
 
-import com.toit.common.enums.AppColor;
 import com.toit.common.enums.EntityStatus;
 import com.toit.folders.Folders;
 import com.toit.user.Users;
@@ -10,11 +9,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Schedules {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long schedulesId;
@@ -28,10 +30,10 @@ public class Schedules {
     /***
      * 선택한 컬러 ENUM 값
      */
-    private AppColor appColor;
+    private String appColor;
 
     /***
-     * .스케줄이 속한 폴더
+     * 스케줄이 속한 폴더
      */
     @ManyToOne
     @JoinColumn(name = "folders_id", nullable = true) // 특정 폴더에 속하지 않을 수도 있다면 nullable = true
@@ -72,7 +74,6 @@ public class Schedules {
      */
     @Column(nullable = false)
     private String location;
-
 
     /**
      * 보관함 서비스 상태
@@ -116,44 +117,10 @@ public class Schedules {
     @JoinColumn(name = "users_id", nullable = false)
     private Users users;
 
-    /**
-     * 전체 필드를 받는 생성자
+    /***
+     * 일부 필드만 받는 생성자
      */
-
-    public Schedules(Long schedulesId,
-                     String title,
-                     AppColor appColor,
-                     Folders folders,
-                     Boolean timeSetting,
-                     LocalDate startDate,
-                     LocalDate endDate,
-                     LocalTime startTime,
-                     LocalTime endTime,
-                     EntityStatus status,
-                     String location,
-                     Boolean notification,
-                     String memo,
-                     LocalDateTime createdAt,
-                     LocalDateTime deletedAt,
-                     Users users) {
-
-        this.schedulesId = schedulesId;
-        this.title = title;
-        this.appColor = appColor;
-        this.folders = folders;
-        this.timeSetting = timeSetting;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.status = status;
-        this.location = location;
-        this.notification = notification;
-        this.memo = memo;
-        this.createdAt = createdAt;
-        this.deletedAt = deletedAt;
-        this.users = users;
-    }public Schedules(String title, AppColor appColor, Folders folders,
+    public Schedules(String title, String appColor, Folders folders,
                       Boolean timeSetting, LocalDate startDate, LocalDate endDate,
                       LocalTime startTime, LocalTime endTime,
                       String location, Boolean notification, String memo, Users users) {
@@ -170,5 +137,6 @@ public class Schedules {
         this.memo = memo;
         this.users = users;
         this.status = EntityStatus.ACTIVE; // 초기값 강제
+        this.createdAt = LocalDateTime.now(); // 이 줄을 추가하세요!
     }
 }

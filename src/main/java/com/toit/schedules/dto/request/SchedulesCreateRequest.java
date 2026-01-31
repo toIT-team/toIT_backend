@@ -1,6 +1,6 @@
 package com.toit.schedules.dto.request;
 
-import com.toit.common.enums.AppColor;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +12,6 @@ import java.time.LocalTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SchedulesCreateRequest {
 
-
     /** 사용자 ID */
     private Long usersId;
 
@@ -20,7 +19,7 @@ public class SchedulesCreateRequest {
     private String title;
 
     /** 컬러 ENUM 값 */
-    private AppColor appColor;
+    private String appColor;
 
     /** 선택한 폴더의 ID (어느 폴더에 저장할지) */
     private Long foldersId;

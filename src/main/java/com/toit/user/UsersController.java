@@ -23,5 +23,4 @@ public class UsersController {
     ) {
         return ResponseEntity.ok(usersService.createUser(request));
     }
-
 }

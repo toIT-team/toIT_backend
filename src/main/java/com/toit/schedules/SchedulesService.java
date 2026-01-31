@@ -4,14 +4,19 @@ package com.toit.schedules;
 
 import com.toit.folders.Folders;
 import com.toit.folders.FoldersRepository;
+import com.toit.schedules.dto.SchedulesTodayDto;
 import com.toit.schedules.dto.request.SchedulesCreateRequest;
 import com.toit.schedules.dto.response.SchedulesCreateResponse;
+import com.toit.schedules.dto.response.SchedulesTodayResponse;
 import com.toit.user.Users;
 import com.toit.user.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -22,7 +27,25 @@ public class SchedulesService {
     private final SchedulesRepository schedulesRepository;
     private final UsersRepository usersRepository;
     private final FoldersRepository foldersRepository;
+    /***
+     * 오늘 일정 조회
+     */
 
+    public SchedulesTodayResponse getTodaySchedules(Long usersId, LocalDate todayDate) {
+        // startDate <= todayDate AND endDate >= todayDate 조건으로 조회
+        List<Schedules> schedules = schedulesRepository
+                .findByUsersUsersIdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(usersId, todayDate, todayDate);
+
+        List<SchedulesTodayDto> scheduleDtos = schedules.stream()
+                .map(SchedulesTodayDto::from)
+                .collect(Collectors.toList());
+
+        return SchedulesTodayResponse.of(usersId, scheduleDtos);
+    }
+
+    /***
+     * 일정 생성
+     */
     @Transactional
     public SchedulesCreateResponse createSchedule(SchedulesCreateRequest request) {
         // 1. 유저 조회
