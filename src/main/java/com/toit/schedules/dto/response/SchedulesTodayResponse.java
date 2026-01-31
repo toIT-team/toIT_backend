@@ -19,9 +19,6 @@ public class SchedulesTodayResponse {
     public SchedulesTodayResponse(Long userId, List<SchedulesTodayDto> schedules) {
         this.userId = userId;
         this.schedules = schedules;
-    }
 
-    public static SchedulesTodayResponse of(Long userId, List<SchedulesTodayDto> schedules) {
-        return new SchedulesTodayResponse(userId, schedules);
     }
 }

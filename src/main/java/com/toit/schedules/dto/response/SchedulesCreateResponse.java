@@ -17,13 +17,6 @@ public class SchedulesCreateResponse {
     private String title;
 
 
-    public static SchedulesCreateResponse from(Schedules schedule) {
-        return new SchedulesCreateResponse(
-                schedule.getSchedulesId(),
-                schedule.getTitle()
-        );
-    }
-
     public SchedulesCreateResponse(Long schedulesId, String title) {
         this.schedulesId = schedulesId;
         this.title = title;

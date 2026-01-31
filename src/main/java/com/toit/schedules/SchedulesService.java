@@ -36,11 +36,15 @@ public class SchedulesService {
         List<Schedules> schedules = schedulesRepository
                 .findByUsersUsersIdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(usersId, todayDate, todayDate);
 
-        List<SchedulesTodayDto> scheduleDtos = schedules.stream()
-                .map(SchedulesTodayDto::from)
+        List<SchedulesTodayDto> scheduleDto = schedules.stream()
+                .map(s -> new SchedulesTodayDto(
+                         s.getSchedulesId()
+                        ,s.getTitle()
+                        ,s.getStartTime()
+                        ,s.getEndTime()
+                        ,s.getAppColor()))
                 .collect(Collectors.toList());
-
-        return SchedulesTodayResponse.of(usersId, scheduleDtos);
+        return new SchedulesTodayResponse(usersId, scheduleDto);
     }
 
     /***
@@ -80,6 +84,6 @@ public class SchedulesService {
 
         // 3. 저장 및 응답 DTO 변환 반환
         Schedules savedSchedule = schedulesRepository.save(schedule);
-        return SchedulesCreateResponse.from(savedSchedule);
+        return new  SchedulesCreateResponse(savedSchedule.getSchedulesId(), savedSchedule.getTitle());
     }
 }

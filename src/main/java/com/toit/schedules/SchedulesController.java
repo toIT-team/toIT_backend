@@ -8,11 +8,8 @@ import com.toit.schedules.dto.response.SchedulesCreateResponse;
 import com.toit.schedules.dto.response.SchedulesTodayResponse;
 import lombok.RequiredArgsConstructor;
 
-
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 
 
 @RestController

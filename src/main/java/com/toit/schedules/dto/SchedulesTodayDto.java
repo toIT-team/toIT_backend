@@ -1,12 +1,14 @@
 package com.toit.schedules.dto;
 
 import com.toit.schedules.Schedules;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
 
 @Getter
-
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SchedulesTodayDto {
     private Long schedulesId;
     private String title;
@@ -22,17 +24,5 @@ public class SchedulesTodayDto {
         this.appColor = appColor;
     }
 
-    /**
-     * 엔티티(Schedules)를 DTO로 변환하는 정적 팩토리 메서드
-     */
-    public static SchedulesTodayDto from(Schedules schedule) {
-        return new SchedulesTodayDto(
-                schedule.getSchedulesId(),
-                schedule.getTitle(),
-                schedule.getStartTime(),
-                schedule.getEndTime(),
-                schedule.getAppColor()
-        );
 
-    }
 }

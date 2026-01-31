@@ -47,6 +47,4 @@ public class SchedulesCreateRequest {
 
     /** 입력한 메모  */
     private String memo;
-
-
 }
