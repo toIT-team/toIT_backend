@@ -24,13 +24,12 @@ public class FoldersViews {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long foldersViewsId;
 
+
     /**
-     * 사용자가 해당 폴더를 본 마지막 시간
+     * 최근 본 폴더 시간
      */
-    @CreatedDate
     @Column(nullable = false)
     private LocalDateTime lastViewedAt;
-
 
     @ManyToOne
     @JoinColumn(name = "users_id", nullable = false)
@@ -43,7 +42,10 @@ public class FoldersViews {
     public FoldersViews(Folders folder, Users users) {
         this.folder = folder;
         this.users = users;
+        this.lastViewedAt = LocalDateTime.now();
     }
 
-
+    public void updateLastViewed() {
+        this.lastViewedAt = LocalDateTime.now();
+    }
 }
