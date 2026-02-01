@@ -20,7 +20,7 @@ import org.springframework.data.annotation.CreatedDate;
 @Table(name = "folders_views")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class FoldersView {
+public class FoldersViews {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long foldersViewsId;
 
@@ -40,7 +40,7 @@ public class FoldersView {
     @JoinColumn(name = "folders_id", nullable = false)
     private Folders folder;
 
-    public FoldersView(Folders folder, Users users) {
+    public FoldersViews(Folders folder, Users users) {
         this.folder = folder;
         this.users = users;
     }
