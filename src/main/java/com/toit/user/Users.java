@@ -80,13 +80,6 @@ public class Users {
     @OneToMany(mappedBy = "users")
     private List<Schedules> schedules = new ArrayList<>();
 
-    /**
-     * 보관함(folders)와 1:N 관계
-     * 외래 키의 주인은 Folders
-     */
-    @OneToMany(mappedBy = "users")
-    private List<Folders> items = new ArrayList<>();
-
     public Users(String email, String name, String bio, AuthProvider authProvider, Long providerUsersId, LocalDateTime createdAt
     ) {
         this.email = email;
