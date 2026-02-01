@@ -29,7 +29,7 @@ public class SchedulesController {
     public ResponseEntity<SchedulesTodayResponse> getTodaySchedules(
             @RequestBody SchedulesTodayRequest request
             ) {
-        return ResponseEntity.ok(schedulesService.getTodaySchedules(request.getUsersId(), request.getTodayDate()));
+        return ResponseEntity.ok(schedulesService.getTodaySchedules(request));
     }
 
     /*

@@ -6,6 +6,7 @@ import com.toit.folders.Folders;
 import com.toit.folders.FoldersRepository;
 import com.toit.schedules.dto.SchedulesTodayDto;
 import com.toit.schedules.dto.request.SchedulesCreateRequest;
+import com.toit.schedules.dto.request.SchedulesTodayRequest;
 import com.toit.schedules.dto.response.SchedulesCreateResponse;
 import com.toit.schedules.dto.response.SchedulesTodayResponse;
 import com.toit.user.Users;
@@ -14,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,10 +31,16 @@ public class SchedulesService {
      * 오늘 일정 조회
      */
 
-    public SchedulesTodayResponse getTodaySchedules(Long usersId, LocalDate todayDate) {
+    public SchedulesTodayResponse getTodaySchedules(SchedulesTodayRequest request) {
         // startDate <= todayDate AND endDate >= todayDate 조건으로 조회
         List<Schedules> schedules = schedulesRepository
-                .findByUsersUsersIdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(usersId, todayDate, todayDate);
+                .findByUsersUsersIdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(request.getUsersId(),
+                        request.getTodayDate(),
+                        request.getTodayDate());
+
+        // 1. 유저 조회
+        Users user = usersRepository.findById(request.getUsersId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
         List<SchedulesTodayDto> scheduleDto = schedules.stream()
                 .map(s -> new SchedulesTodayDto(
@@ -44,7 +50,7 @@ public class SchedulesService {
                         ,s.getEndTime()
                         ,s.getAppColor()))
                 .collect(Collectors.toList());
-        return new SchedulesTodayResponse(usersId, scheduleDto);
+        return new SchedulesTodayResponse(request.getUsersId(), scheduleDto);
     }
 
     /***
