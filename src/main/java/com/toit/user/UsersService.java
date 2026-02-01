@@ -23,10 +23,8 @@ public class UsersService {
                 request.getProviderUsersId(),
                 LocalDateTime.now()
         );
-
         return new UsersCreateResponse(usersRepository.save(users));
     }
-
 
     public Users findById(Long usersId){
         Optional<Users> users = usersRepository.findById(usersId);
