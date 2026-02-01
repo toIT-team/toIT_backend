@@ -52,6 +52,7 @@ public class SchedulesService {
                 .collect(Collectors.toList());
         return new SchedulesTodayResponse(request.getUsersId(), scheduleDto);
     }
+    //커밋 푸시 테스트 입니다
 
     /***
      * 일정 생성
