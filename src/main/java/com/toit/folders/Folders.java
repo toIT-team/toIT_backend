@@ -15,13 +15,16 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
 
 @Entity
 @Table(name = "folders")
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Folders {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long foldersId;
