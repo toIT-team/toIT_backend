@@ -47,25 +47,25 @@ public class Schedules {
     /**
      * 스케줄 일정의 시작 날짜
      */
-    @Column(nullable = true)
+    @Column(nullable = false)
     private LocalDate startDate;
 
     /**
      * 스케줄 일정의 종료 날짜
      */
-    @Column(nullable = true)
+    @Column(nullable = false)
     private LocalDate endDate;
 
     /**
      * 스케줄 일정의 시작 시간
      */
-    @Column(nullable = true)
+    @Column(nullable = false)
     private LocalTime startTime;
 
     /**
      * 스케줄 일정의 종료 시간
      */
-    @Column(nullable = true)
+    @Column(nullable = false)
     private LocalTime endTime;
 
     /**
