@@ -3,7 +3,9 @@ package com.toit.schedules;
 
 
 import com.toit.schedules.dto.request.SchedulesCreateRequest;
+import com.toit.schedules.dto.request.SchedulesUpdateRequest;
 import com.toit.schedules.dto.response.SchedulesCreateResponse;
+import com.toit.schedules.dto.response.SchedulesUpdateResponse;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
@@ -28,6 +30,16 @@ public class SchedulesController {
             @RequestBody SchedulesCreateRequest request
     ) {
         return ResponseEntity.ok(schedulesService.createSchedule(request));
+    }
+
+    /***
+     * 수정 영역
+     */
+    @PutMapping
+    public ResponseEntity<SchedulesUpdateResponse> updateSchedule(
+            @RequestBody SchedulesUpdateRequest request
+    ) {
+        return ResponseEntity.ok(schedulesService.updateSchedules(request));
     }
 
 }

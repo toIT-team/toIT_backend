@@ -4,12 +4,13 @@ package com.toit.schedules;
 
 import com.toit.folders.Folders;
 import com.toit.folders.FoldersRepository;
-import com.toit.schedules.dto.SchedulesMonthDto;
+import com.toit.schedules.dto.request.SchedulesUpdateRequest;
 import com.toit.schedules.dto.response.SchedulesTodayResponse;
 import com.toit.schedules.dto.request.SchedulesCreateRequest;
 import com.toit.schedules.dto.request.SchedulesMonthRequest;
 import com.toit.schedules.dto.response.SchedulesCreateResponse;
 import com.toit.schedules.dto.response.SchedulesMonthResponse;
+import com.toit.schedules.dto.response.SchedulesUpdateResponse;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
 import java.time.LocalDate;
@@ -17,13 +18,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 import java.util.List;
 import java.util.stream.Collectors;
 
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class SchedulesService {
 
     private final SchedulesRepository schedulesRepository;
@@ -57,7 +58,7 @@ public class SchedulesService {
     }
 
     /** 시작날짜 ~ 종료날짜 사이 일정 조회 */
-    public SchedulesMonthResponse getSchedulesBetween(SchedulesMonthRequest request) {
+    public List<SchedulesMonthResponse> getSchedulesBetween(SchedulesMonthRequest request) {
         // 1. DB 조회 (기간 내 겹치는 모든 일정 가져오기)
         List<Schedules> schedules = schedulesRepository.findSchedulesBetween(
                 request.getUsersId(),
@@ -66,8 +67,8 @@ public class SchedulesService {
         );
 
         // 2. Entity -> DTO 변환 (SchedulesMonthDto가 있다고 가정)
-        List<SchedulesMonthDto> scheduleDtos = schedules.stream()
-                .map(s -> new SchedulesMonthDto(
+        List<SchedulesMonthResponse> scheduleDtos = schedules.stream()
+                .map(s -> new SchedulesMonthResponse(
                         s.getSchedulesId(),
                         s.getTitle(),
                         s.getStartDate(),
@@ -78,9 +79,8 @@ public class SchedulesService {
                 .collect(Collectors.toList());
 
         // 3. 응답 반환
-        return new SchedulesMonthResponse(request.getUsersId(), scheduleDtos);
+        return scheduleDtos;
     }
-
 
     /**
      * 생성
@@ -123,4 +123,59 @@ public class SchedulesService {
     }
 
 
+    /***
+     * 수정 영역
+     */
+
+
+    /***
+     * 스케줄 수정 로직
+     * @param request
+     */
+    @Transactional // 수정이 일어나므로 readOnly = false (기본값)
+    public SchedulesUpdateResponse updateSchedules(SchedulesUpdateRequest request) {
+
+        // 1. 스케줄 조회 (없으면 예외 발생)
+        Schedules schedule = schedulesRepository.findById(request.getSchedulesId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 스케줄을 찾을 수 없습니다. ID=" + request.getSchedulesId()));
+
+
+        // 2. 폴더 조회 (폴더 ID가 들어온 경우에만)
+        Folders folder = null;
+        if (request.getFoldersId() != null) {
+            folder = foldersRepository.findById(request.getFoldersId())
+                    .orElseThrow(() -> new IllegalArgumentException("해당 폴더를 찾을 수 없습니다. ID=" + request.getFoldersId()));
+        }
+
+        // 4. 데이터 수정 (Dirty Checking - save 호출 불필요)
+        schedule.update(
+                request.getTitle(),
+                request.getAppColor(),
+                folder,
+                request.getTimeSetting(),
+                request.getStartDate(),
+                request.getEndDate(),
+                request.getStartTime(),
+                request.getEndTime(),
+                request.getLocation(),
+                request.getNotification(),
+                request.getMemo()
+        );
+
+        // 5. 변경된 엔티티를 Response DTO로 변환하여 반환
+        return new SchedulesUpdateResponse(
+                schedule.getSchedulesId(),
+                schedule.getTitle(),
+                schedule.getAppColor(),
+                schedule.getFolders() != null ? schedule.getFolders().getFoldersId() : null, // 폴더가 없을 경우 null 처리
+                schedule.getTimeSetting(),
+                schedule.getStartDate(),
+                schedule.getEndDate(),
+                schedule.getStartTime(),
+                schedule.getEndTime(),
+                schedule.getLocation(),
+                schedule.getNotification(),
+                schedule.getMemo()
+        );
+    }
 }
