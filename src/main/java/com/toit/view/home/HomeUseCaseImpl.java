@@ -4,8 +4,11 @@ import com.toit.folders.FoldersService;
 import com.toit.folders.dto.response.FoldersItemResponse;
 import com.toit.foldersview.FoldersViewsService;
 import com.toit.foldersview.dto.response.RecentFoldersResponse;
+import com.toit.schedules.SchedulesService;
+import com.toit.schedules.dto.response.SchedulesTodayResponse;
 import com.toit.view.home.dto.request.HomeViewRequest;
 import com.toit.view.home.dto.response.HomeViewResponse;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,12 +21,19 @@ public class HomeUseCaseImpl implements HomeUseCase {
 
     private final FoldersViewsService foldersViewsService;
     private final FoldersService foldersService;
+    private final SchedulesService schedulesService;
 
     @Override
-    public HomeViewResponse getHomeView(Long usersId) {
+    public HomeViewResponse getHomeView(Long usersId, LocalDate todayDate) {
+        // 최근 본 보관함 조회 - 시간 내림차순으로 정렬 후 최대 4개
         List<RecentFoldersResponse> foldersViews = foldersViewsService.getRecentFolders(usersId);
+
+        // 보관함 전체 조회
         List<FoldersItemResponse> folders = foldersService.getAllFoldersByUser(usersId);
 
-        return new HomeViewResponse(usersId, folders, foldersViews);
+        // 오늘 일정 조회
+        List<SchedulesTodayResponse> schedules = schedulesService.getTodaySchedules(usersId, todayDate);
+
+        return new HomeViewResponse(usersId, folders, foldersViews, schedules);
     }
 }

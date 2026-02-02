@@ -3,11 +3,7 @@ package com.toit.schedules;
 
 
 import com.toit.schedules.dto.request.SchedulesCreateRequest;
-import com.toit.schedules.dto.request.SchedulesMonthRequest;
-import com.toit.schedules.dto.request.SchedulesTodayRequest;
 import com.toit.schedules.dto.response.SchedulesCreateResponse;
-import com.toit.schedules.dto.response.SchedulesMonthResponse;
-import com.toit.schedules.dto.response.SchedulesTodayResponse;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;

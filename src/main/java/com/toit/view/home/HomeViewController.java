@@ -20,6 +20,6 @@ public class HomeViewController {
     public ResponseEntity<HomeViewResponse> getHome(
             @RequestBody HomeViewRequest request
     ) {
-        return ResponseEntity.ok(homeUseCase.getHomeView(request.getUsersId()));
+        return ResponseEntity.ok(homeUseCase.getHomeView(request.getUsersId(), request.getTodayDate()));
     }
 }
