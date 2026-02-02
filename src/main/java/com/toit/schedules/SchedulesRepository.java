@@ -2,6 +2,8 @@ package com.toit.schedules;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -11,13 +13,20 @@ import java.util.List;
 public interface SchedulesRepository extends JpaRepository<Schedules, Long> {
 
 
-    /**
-     * 특정 유저의 일정 중 오늘 날짜가 포함된(startDate <= today <= endDate) 일정 조회
-     */
-    List<Schedules> findByUsersUsersIdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(
-            Long usersId,
-            LocalDate todayForStart,
-            LocalDate todayForEnd
-    );
+    /** 오늘 일정 조회 */
+    @Query("SELECT s FROM Schedules s " +
+            "WHERE s.users.usersId = :userId " +
+            "AND :targetDate BETWEEN s.startDate AND s.endDate " +
+            "ORDER BY s.startTime ASC")
+    List<Schedules> findTodaySchedules(@Param("userId") Long userId,
+                                       @Param("targetDate") LocalDate targetDate);
 
+    /** 시작날짜 종료날짜 사이 일정 조회 */
+    @Query("SELECT s FROM Schedules s " +
+            "WHERE s.users.usersId = :userId " +
+            "AND s.startDate BETWEEN :startDate AND :endDate " +
+            "ORDER BY s.startDate ASC, s.startTime ASC")
+    List<Schedules> findSchedulesBetween(@Param("userId") Long userId,
+                                         @Param("startDate") LocalDate startDate,
+                                         @Param("endDate") LocalDate endDate);
 }

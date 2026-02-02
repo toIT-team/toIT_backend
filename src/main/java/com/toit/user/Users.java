@@ -1,13 +1,11 @@
 package com.toit.user;
 
-import com.toit.folders.Folders;
-import com.toit.schedules.Schedules;
+
 import com.toit.common.enums.AuthProvider;
 import com.toit.common.enums.EntityStatus;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -72,13 +70,6 @@ public class Users {
     @Column(nullable = true)
     private LocalDateTime deletedAt;
 
-    /**
-     * 스케줄(schedules)과 1:N 관계
-     * 외래 키의 주인은 Schedules
-     */
-    //1:N 관계
-    @OneToMany(mappedBy = "users")
-    private List<Schedules> schedules = new ArrayList<>();
 
     public Users(String email, String name, String bio, AuthProvider authProvider, Long providerUsersId, LocalDateTime createdAt
     ) {

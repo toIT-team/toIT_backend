@@ -42,18 +42,19 @@ public class Schedules {
     /***
      * 스케줄의 시간 설정 여부 (False = 시간 설정 안함 , True = 시간 설정했을 때)
      */
+    @Column(nullable = false)
     private Boolean timeSetting;
 
     /**
      * 스케줄 일정의 시작 날짜
      */
-    @Column(nullable = true)
+    @Column(nullable = false)
     private LocalDate startDate;
 
     /**
      * 스케줄 일정의 종료 날짜
      */
-    @Column(nullable = true)
+    @Column(nullable = false)
     private LocalDate endDate;
 
     /**

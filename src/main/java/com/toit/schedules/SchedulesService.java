@@ -4,10 +4,13 @@ package com.toit.schedules;
 
 import com.toit.folders.Folders;
 import com.toit.folders.FoldersRepository;
+import com.toit.schedules.dto.SchedulesMonthDto;
 import com.toit.schedules.dto.SchedulesTodayDto;
 import com.toit.schedules.dto.request.SchedulesCreateRequest;
+import com.toit.schedules.dto.request.SchedulesMonthRequest;
 import com.toit.schedules.dto.request.SchedulesTodayRequest;
 import com.toit.schedules.dto.response.SchedulesCreateResponse;
+import com.toit.schedules.dto.response.SchedulesMonthResponse;
 import com.toit.schedules.dto.response.SchedulesTodayResponse;
 import com.toit.user.Users;
 import com.toit.user.UsersRepository;
@@ -27,15 +30,16 @@ public class SchedulesService {
     private final SchedulesRepository schedulesRepository;
     private final UsersRepository usersRepository;
     private final FoldersRepository foldersRepository;
+
     /***
-     * 오늘 일정 조회
+     * 조회
      */
 
+    /** 오늘 일정 조회 */
     public SchedulesTodayResponse getTodaySchedules(SchedulesTodayRequest request) {
         // startDate <= todayDate AND endDate >= todayDate 조건으로 조회
         List<Schedules> schedules = schedulesRepository
-                .findByUsersUsersIdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(request.getUsersId(),
-                        request.getTodayDate(),
+                .findTodaySchedules(request.getUsersId(),
                         request.getTodayDate());
 
         // 1. 유저 조회
@@ -52,11 +56,37 @@ public class SchedulesService {
                 .collect(Collectors.toList());
         return new SchedulesTodayResponse(request.getUsersId(), scheduleDto);
     }
-    //커밋 푸시 테스트 입니다
+
+    /** 시작날짜 ~ 종료날짜 사이 일정 조회 */
+    public SchedulesMonthResponse getSchedulesBetween(SchedulesMonthRequest request) {
+        // 1. DB 조회 (기간 내 겹치는 모든 일정 가져오기)
+        List<Schedules> schedules = schedulesRepository.findSchedulesBetween(
+                request.getUsersId(),
+                request.getStartDate(),
+                request.getEndDate()
+        );
+
+        // 2. Entity -> DTO 변환 (SchedulesMonthDto가 있다고 가정)
+        List<SchedulesMonthDto> scheduleDtos = schedules.stream()
+                .map(s -> new SchedulesMonthDto(
+                        s.getSchedulesId(),
+                        s.getTitle(),
+                        s.getStartDate(),
+                        s.getEndDate(),
+                        s.getAppColor()
+                        // 필요한 필드 추가
+                ))
+                .collect(Collectors.toList());
+
+        // 3. 응답 반환
+        return new SchedulesMonthResponse(request.getUsersId(), scheduleDtos);
+    }
 
     /***
-     * 일정 생성
+     * 생성
      */
+
+    /** 일정 생성 */
     @Transactional
     public SchedulesCreateResponse createSchedule(SchedulesCreateRequest request) {
         // 1. 유저 조회
@@ -93,4 +123,6 @@ public class SchedulesService {
         Schedules savedSchedule = schedulesRepository.save(schedule);
         return new  SchedulesCreateResponse(savedSchedule.getSchedulesId(), savedSchedule.getTitle());
     }
+
+
 }
