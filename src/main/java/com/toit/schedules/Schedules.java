@@ -140,4 +140,25 @@ public class Schedules {
         this.status = EntityStatus.ACTIVE; // 초기값 강제
         this.createdAt = LocalDateTime.now(); // 이 줄을 추가하세요!
     }
+
+    /**
+     * 스케줄 정보 수정 메서드
+     * Service 계층에서 Transactional 안에서 호출되면 Dirty Checking으로 자동 저장됨
+     */
+    public void update(String title, String appColor, Folders folders,
+                       Boolean timeSetting, LocalDate startDate, LocalDate endDate,
+                       LocalTime startTime, LocalTime endTime,
+                       String location, Boolean notification, String memo) {
+        this.title = title;
+        this.appColor = appColor;
+        this.folders = folders; // 폴더가 변경되거나 null(폴더 없음)로 설정될 수 있음
+        this.timeSetting = timeSetting;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.location = location;
+        this.notification = notification;
+        this.memo = memo;
+    }
 }
