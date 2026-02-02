@@ -1,8 +1,6 @@
 package com.toit.folders;
 
-import com.toit.folders.dto.request.FoldersAllRequest;
 import com.toit.folders.dto.request.FoldersCreateRequest;
-import com.toit.folders.dto.response.FoldersAllResponse;
 import com.toit.folders.dto.response.FoldersCreateResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,18 +26,7 @@ public class FoldersController {
     public ResponseEntity<FoldersCreateResponse> createFolders(
             @RequestBody FoldersCreateRequest request
     ){
-        return ResponseEntity.ok(foldersService.createFolders(request));
-    }
-
-    /**
-     * <h2>Folders 보관함 전체 조회 API</h2>
-     *
-     * <p>한 명의 사용자가 접근 가능한 모든 보관함을 조회합니다.</p>
-     */
-    @GetMapping("/all")
-    public ResponseEntity<FoldersAllResponse> getAllFoldersByUser(
-            @RequestBody FoldersAllRequest request
-    ){
-        return ResponseEntity.ok(foldersService.getAllFoldersByUser(request));
+        return ResponseEntity.ok(foldersService
+                .createFolders(request.getUsersId(), request.getName(), request.getMemo(), request.getColor()));
     }
 }

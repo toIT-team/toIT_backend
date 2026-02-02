@@ -1,8 +1,6 @@
 package com.toit.folders;
 
-import com.toit.folders.dto.request.FoldersAllRequest;
 import com.toit.folders.dto.request.FoldersCreateRequest;
-import com.toit.folders.dto.response.FoldersAllResponse;
 import com.toit.folders.dto.response.FoldersCreateResponse;
 import com.toit.folders.dto.response.FoldersItemResponse;
 import com.toit.user.Users;
@@ -19,20 +17,24 @@ public class FoldersService {
 
     private final UsersService usersService;
 
+
     /**
      * <h2>Folders 보관함 하나 생성 비즈니스 로직</h2>
-     * @param request
-     * @return
+     * @param usersId
+     * @param name
+     * @param memo
+     * @param color
+     * @return FoldersCreateResponse
      */
-    public FoldersCreateResponse createFolders(FoldersCreateRequest request) {
-        /** Users 조회 -> Users 예외 처리 */
-        Users users = usersService.findById(request.getUsersId());
+    public FoldersCreateResponse createFolders(Long usersId, String name, String memo, String color) {
+        // Users 조회 -> Users 예외 처리
+        Users users = usersService.findById(usersId);
 
         Folders folders = new Folders(
-                request.getName(),
-                request.getMemo(),
+                name,
+                memo,
                 false,
-                request.getColor(),
+                color,
                 false,
                 LocalDateTime.now(),
                 users
@@ -40,13 +42,20 @@ public class FoldersService {
         return new FoldersCreateResponse(foldersRepository.save(folders));
     }
 
-    public FoldersAllResponse getAllFoldersByUser(FoldersAllRequest request) {
-        Long userId = request.getUsersId();
-        usersService.findById(userId);
-        List<FoldersItemResponse> folders = foldersRepository.findByUsers_UsersId(userId)
+
+    /**
+     * <h2>Folders 보관함 전체 조회</h2>
+     *
+     * <p>한 명의 사용자가 접근 가능한 모든 보관함을 조회합니다.</p>
+     * @param usersId
+     * @return
+     */
+    public List<FoldersItemResponse> getAllFoldersByUser(Long usersId) {
+        usersService.findById(usersId);
+        List<FoldersItemResponse> folders = foldersRepository.findByUsers_UsersId(usersId)
                 .stream()
                 .map(FoldersItemResponse::new)
                 .toList();
-        return new FoldersAllResponse(userId, folders);
+        return folders;
     }
 }
