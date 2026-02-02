@@ -1,6 +1,5 @@
 package com.toit.schedules.dto;
 
-import com.toit.schedules.Schedules;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
