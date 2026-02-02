@@ -7,7 +7,6 @@ import com.toit.folders.FoldersRepository;
 import com.toit.schedules.dto.request.SchedulesUpdateRequest;
 import com.toit.schedules.dto.response.SchedulesTodayResponse;
 import com.toit.schedules.dto.request.SchedulesCreateRequest;
-import com.toit.schedules.dto.request.SchedulesMonthRequest;
 import com.toit.schedules.dto.response.SchedulesCreateResponse;
 import com.toit.schedules.dto.response.SchedulesMonthResponse;
 import com.toit.schedules.dto.response.SchedulesUpdateResponse;
@@ -58,12 +57,12 @@ public class SchedulesService {
     }
 
     /** 시작날짜 ~ 종료날짜 사이 일정 조회 */
-    public List<SchedulesMonthResponse> getSchedulesBetween(SchedulesMonthRequest request) {
+    public List<SchedulesMonthResponse> getSchedulesBetween(Long usersId,LocalDate startDate, LocalDate endDate) {
         // 1. DB 조회 (기간 내 겹치는 모든 일정 가져오기)
         List<Schedules> schedules = schedulesRepository.findSchedulesBetween(
-                request.getUsersId(),
-                request.getStartDate(),
-                request.getEndDate()
+                usersId,
+                startDate,
+                endDate
         );
 
         // 2. Entity -> DTO 변환 (SchedulesMonthDto가 있다고 가정)
