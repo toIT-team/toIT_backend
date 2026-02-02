@@ -42,6 +42,7 @@ public class Schedules {
     /***
      * 스케줄의 시간 설정 여부 (False = 시간 설정 안함 , True = 시간 설정했을 때)
      */
+    @Column(nullable = false)
     private Boolean timeSetting;
 
     /**
@@ -59,13 +60,13 @@ public class Schedules {
     /**
      * 스케줄 일정의 시작 시간
      */
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalTime startTime;
 
     /**
      * 스케줄 일정의 종료 시간
      */
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalTime endTime;
 
     /**

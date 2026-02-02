@@ -19,13 +19,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/schedules")
 public class SchedulesController {
     private final SchedulesService schedulesService;
-    /*
-     *  조회 (GET)
-     */
 
-
-    /*
-     * 생성 (POST)
+    /***
+     * 생성 영역
      */
 
     /***
