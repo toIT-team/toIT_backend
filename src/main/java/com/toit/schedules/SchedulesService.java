@@ -5,15 +5,14 @@ package com.toit.schedules;
 import com.toit.folders.Folders;
 import com.toit.folders.FoldersRepository;
 import com.toit.schedules.dto.SchedulesMonthDto;
-import com.toit.schedules.dto.SchedulesTodayDto;
+import com.toit.schedules.dto.response.SchedulesTodayResponse;
 import com.toit.schedules.dto.request.SchedulesCreateRequest;
 import com.toit.schedules.dto.request.SchedulesMonthRequest;
-import com.toit.schedules.dto.request.SchedulesTodayRequest;
 import com.toit.schedules.dto.response.SchedulesCreateResponse;
 import com.toit.schedules.dto.response.SchedulesMonthResponse;
-import com.toit.schedules.dto.response.SchedulesTodayResponse;
 import com.toit.user.Users;
-import com.toit.user.UsersRepository;
+import com.toit.user.UsersService;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,33 +27,33 @@ import java.util.stream.Collectors;
 public class SchedulesService {
 
     private final SchedulesRepository schedulesRepository;
-    private final UsersRepository usersRepository;
+    private final UsersService usersService;
     private final FoldersRepository foldersRepository;
 
-    /***
-     * 조회
+    /**
+     * 오늘 일정 조회
+     * @param usersId
+     * @param todayDate
+     * @return
      */
-
-    /** 오늘 일정 조회 */
-    public SchedulesTodayResponse getTodaySchedules(SchedulesTodayRequest request) {
+    public List<SchedulesTodayResponse> getTodaySchedules(Long usersId, LocalDate todayDate) {
         // startDate <= todayDate AND endDate >= todayDate 조건으로 조회
         List<Schedules> schedules = schedulesRepository
-                .findTodaySchedules(request.getUsersId(),
-                        request.getTodayDate());
+                .findTodaySchedules(usersId,
+                        todayDate);
 
-        // 1. 유저 조회
-        Users user = usersRepository.findById(request.getUsersId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+        // 유저 조회
+        usersService.findById(usersId);
 
-        List<SchedulesTodayDto> scheduleDto = schedules.stream()
-                .map(s -> new SchedulesTodayDto(
+        List<SchedulesTodayResponse> scheduleDto = schedules.stream()
+                .map(s -> new SchedulesTodayResponse(
                          s.getSchedulesId()
                         ,s.getTitle()
                         ,s.getStartTime()
                         ,s.getEndTime()
                         ,s.getAppColor()))
                 .collect(Collectors.toList());
-        return new SchedulesTodayResponse(request.getUsersId(), scheduleDto);
+        return scheduleDto;
     }
 
     /** 시작날짜 ~ 종료날짜 사이 일정 조회 */
@@ -82,17 +81,16 @@ public class SchedulesService {
         return new SchedulesMonthResponse(request.getUsersId(), scheduleDtos);
     }
 
-    /***
-     * 생성
-     */
 
-    /** 일정 생성 */
+    /**
+     * 생성
+     * @param request
+     * @return
+     */
     @Transactional
     public SchedulesCreateResponse createSchedule(SchedulesCreateRequest request) {
         // 1. 유저 조회
-        Users user = usersRepository.findById(request.getUsersId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
-
+        Users user = usersService.findById(request.getUsersId());
         // 2. 폴더 조회 (null 허용)
         Folders folder = null;
         if (request.getFoldersId() != null) {
