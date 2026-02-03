@@ -1,6 +1,7 @@
 package com.toit.schedules.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,15 +34,18 @@ public class SchedulesUpdateRequest {
     private Boolean timeSetting;
 
     /** 시작 날짜 */
+
     private LocalDate startDate;
 
     /** 종료 날짜 */
     private LocalDate endDate;
 
     /** 시작 시간  */
+    @Schema(type = "string", example = "09:00:00")
     private LocalTime startTime;
 
     /** 종료 시간  */
+    @Schema(type = "string", example = "09:00:00")
     private LocalTime endTime;
 
     /** 장소 */
