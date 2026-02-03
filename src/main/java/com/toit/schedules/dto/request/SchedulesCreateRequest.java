@@ -1,6 +1,7 @@
 package com.toit.schedules.dto.request;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,15 +29,18 @@ public class SchedulesCreateRequest {
     private Boolean timeSetting;
 
     /** 시작 날짜  */
+
     private LocalDate startDate;
 
     /** 시작 시간  */
+    @Schema(type = "string", example = "09:00:00")
     private LocalTime startTime;
 
     /** 종료 날짜  */
     private LocalDate endDate;
 
     /** 종료 시간 */
+    @Schema(type = "string", example = "09:00:00")
     private LocalTime endTime;
 
     /** 설정한 위치  */

@@ -34,6 +34,11 @@ dependencies {
 
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
+
+	/***
+	 * Swagger 라이브러리
+	 */
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
 }
 
 tasks.named('test') {
