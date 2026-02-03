@@ -2,14 +2,13 @@ package com.toit.schedules;
 
 
 
+import com.toit.common.enums.EntityStatus;
 import com.toit.folders.Folders;
 import com.toit.folders.FoldersRepository;
+import com.toit.schedules.dto.request.SchedulesDeleteRequest;
 import com.toit.schedules.dto.request.SchedulesUpdateRequest;
-import com.toit.schedules.dto.response.SchedulesTodayResponse;
+import com.toit.schedules.dto.response.*;
 import com.toit.schedules.dto.request.SchedulesCreateRequest;
-import com.toit.schedules.dto.response.SchedulesCreateResponse;
-import com.toit.schedules.dto.response.SchedulesMonthResponse;
-import com.toit.schedules.dto.response.SchedulesUpdateResponse;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
 import java.time.LocalDate;
@@ -19,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -29,6 +29,17 @@ public class SchedulesService {
     private final SchedulesRepository schedulesRepository;
     private final UsersService usersService;
     private final FoldersRepository foldersRepository;
+
+
+    public Schedules findBySchedules(Long schedulesId){
+        Optional<Schedules> schedules = schedulesRepository.findById(schedulesId);
+
+        if (schedules.isPresent()) {
+            return schedules.get();
+        } else {
+            throw new IllegalArgumentException("존재하지 않는 일정입니다. usersId=" + schedulesId);
+        }
+    }
 
     /**
      * 오늘 일정 조회
@@ -81,12 +92,7 @@ public class SchedulesService {
         return scheduleDtos;
     }
 
-    /**
-     * 생성
-     * @param request
-     * @return
-     */
-    @Transactional
+
     public SchedulesCreateResponse createSchedule(SchedulesCreateRequest request) {
         // 1. 유저 조회
         Users user = usersService.findById(request.getUsersId());
@@ -135,8 +141,7 @@ public class SchedulesService {
     public SchedulesUpdateResponse updateSchedules(SchedulesUpdateRequest request) {
 
         // 1. 스케줄 조회 (없으면 예외 발생)
-        Schedules schedule = schedulesRepository.findById(request.getSchedulesId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 스케줄을 찾을 수 없습니다. ID=" + request.getSchedulesId()));
+        Schedules schedule = findBySchedules(request.getSchedulesId());
 
 
         // 2. 폴더 조회 (폴더 ID가 들어온 경우에만)
@@ -176,5 +181,21 @@ public class SchedulesService {
                 schedule.getNotification(),
                 schedule.getMemo()
         );
+    }
+
+    /***
+     *
+     * @param request
+     */
+    public SchedulesDeleteResponse deleteSchedule(SchedulesDeleteRequest request) {
+
+        // 1. 스케줄 조회 (없으면 예외 발생)
+        Schedules schedule = findBySchedules(request.getSchedulesId());
+
+        usersService.findById(request.getUserId());
+
+        EntityStatus entityStatus = schedule.changeStatusDelete();
+
+        return new SchedulesDeleteResponse(request.getSchedulesId() , request.getUserId(),entityStatus );
     }
 }
