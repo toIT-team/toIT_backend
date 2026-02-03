@@ -3,8 +3,10 @@ package com.toit.schedules;
 
 
 import com.toit.schedules.dto.request.SchedulesCreateRequest;
+import com.toit.schedules.dto.request.SchedulesDeleteRequest;
 import com.toit.schedules.dto.request.SchedulesUpdateRequest;
 import com.toit.schedules.dto.response.SchedulesCreateResponse;
+import com.toit.schedules.dto.response.SchedulesDeleteResponse;
 import com.toit.schedules.dto.response.SchedulesUpdateResponse;
 import lombok.RequiredArgsConstructor;
 
@@ -40,6 +42,16 @@ public class SchedulesController {
             @RequestBody SchedulesUpdateRequest request
     ) {
         return ResponseEntity.ok(schedulesService.updateSchedules(request));
+    }
+
+    /***
+     * 삭제 영역
+     */
+    @DeleteMapping
+    public ResponseEntity<SchedulesDeleteResponse> deleteSchedule(
+            @RequestBody SchedulesDeleteRequest request
+    ){
+        return ResponseEntity.ok(schedulesService.deleteSchedule(request));
     }
 
 }

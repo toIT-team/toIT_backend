@@ -13,5 +13,5 @@ import org.springframework.context.annotation.Configuration;
 )
 @Configuration
 public class SwaggerConfig {
-    // 추가적인 빈(Bean) 설정이 없다면 이대로 비워두셔도 작동합니다.
+
 }

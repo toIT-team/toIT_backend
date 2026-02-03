@@ -82,7 +82,8 @@ public class Schedules {
      * ACTIVITY일 경우 활성화, DELETED 경우 비홣성화
      */
     @Enumerated(EnumType.STRING)
-    private EntityStatus status;
+    @Column(nullable = false)
+    private EntityStatus status = EntityStatus.ACTIVE;
 
     /**
      * 알림 설정
@@ -160,5 +161,10 @@ public class Schedules {
         this.location = location;
         this.notification = notification;
         this.memo = memo;
+    }
+
+    public EntityStatus changeStatusDelete(){
+        this.status = EntityStatus.DELETED;
+        return this.status;
     }
 }
