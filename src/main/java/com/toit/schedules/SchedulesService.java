@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class SchedulesService {
 
     private final SchedulesRepository schedulesRepository;
