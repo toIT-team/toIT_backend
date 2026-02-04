@@ -21,8 +21,9 @@ public class SchedulesController {
     private final SchedulesService schedulesService;
 
     /***
-     * 생성 영역
+     * 조회 영역
      */
+
 
     /***
      * 일정 생성
