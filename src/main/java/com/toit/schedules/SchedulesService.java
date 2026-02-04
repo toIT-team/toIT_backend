@@ -30,7 +30,6 @@ public class SchedulesService {
     private final UsersService usersService;
     private final FoldersRepository foldersRepository;
 
-
     public Schedules findBySchedules(Long schedulesId){
         Optional<Schedules> schedules = schedulesRepository.findById(schedulesId);
 
@@ -67,8 +66,9 @@ public class SchedulesService {
         return scheduleDto;
     }
 
+
     /** 시작날짜 ~ 종료날짜 사이 일정 조회 */
-    public List<SchedulesMonthResponse> getSchedulesBetween(Long usersId,LocalDate startDate, LocalDate endDate) {
+    public List<SchedulesMonthResponse> getSearchSchedules(Long usersId,LocalDate startDate, LocalDate endDate) {
         // 1. DB 조회 (기간 내 겹치는 모든 일정 가져오기)
         List<Schedules> schedules = schedulesRepository.findSchedulesBetween(
                 usersId,
@@ -93,6 +93,12 @@ public class SchedulesService {
     }
 
 
+    /***
+     *
+     * @param request
+     * 스케줄 생성
+     * @return
+     */
     public SchedulesCreateResponse createSchedule(SchedulesCreateRequest request) {
         // 1. 유저 조회
         Users user = usersService.findById(request.getUsersId());

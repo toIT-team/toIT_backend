@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class HomeViewRequest {
 
-    /**
-     * 사용자 ID
-     * */
+
     private Long usersId;
 
     private LocalDate todayDate;

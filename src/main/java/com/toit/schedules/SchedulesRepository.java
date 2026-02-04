@@ -24,7 +24,8 @@ public interface SchedulesRepository extends JpaRepository<Schedules, Long> {
     /** 시작날짜 종료날짜 사이 일정 조회 */
     @Query("SELECT s FROM Schedules s " +
             "WHERE s.users.usersId = :userId " +
-            "AND s.startDate BETWEEN :startDate AND :endDate " +
+            "AND s.endDate >= :startDate " +
+            "AND s.startDate <= :endDate " +
             "ORDER BY s.startDate ASC, s.startTime ASC")
     List<Schedules> findSchedulesBetween(@Param("userId") Long userId,
                                          @Param("startDate") LocalDate startDate,
