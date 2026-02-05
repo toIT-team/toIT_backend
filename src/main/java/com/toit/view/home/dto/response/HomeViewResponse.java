@@ -2,7 +2,7 @@ package com.toit.view.home.dto.response;
 
 import com.toit.folders.dto.response.FoldersItemResponse;
 import com.toit.foldersview.dto.response.RecentFoldersResponse;
-import com.toit.schedules.dto.response.SchedulesTodayResponse;
+import com.toit.schedules.dto.response.SchedulesSelectedDayResponse;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -29,10 +29,10 @@ public class HomeViewResponse {
     /**
      * 오늘 일정 조회
      */
-    private List<SchedulesTodayResponse> schedules;
+    private List<SchedulesSelectedDayResponse> schedules;
 
     public HomeViewResponse(Long userId, List<FoldersItemResponse> folders, List<RecentFoldersResponse> foldersViews
-            , List<SchedulesTodayResponse> schedules) {
+            , List<SchedulesSelectedDayResponse> schedules) {
         this.userId = userId;
         this.folders = folders;
         this.foldersViews = foldersViews;

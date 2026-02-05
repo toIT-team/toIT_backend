@@ -8,14 +8,14 @@ import java.time.LocalTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SchedulesTodayResponse {
+public class SchedulesSelectedDayResponse {
     private Long schedulesId;
     private String title;
     private LocalTime startTime;
     private LocalTime endTime;
     private String appColor;
 
-    public SchedulesTodayResponse(Long schedulesId, String title, LocalTime startTime, LocalTime endTime, String appColor) {
+    public SchedulesSelectedDayResponse(Long schedulesId, String title, LocalTime startTime, LocalTime endTime, String appColor) {
         this.schedulesId = schedulesId;
         this.title = title;
         this.startTime = startTime;

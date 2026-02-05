@@ -5,6 +5,7 @@ package com.toit.schedules;
 import com.toit.common.enums.EntityStatus;
 import com.toit.folders.Folders;
 import com.toit.folders.FoldersRepository;
+import com.toit.folders.FoldersService;
 import com.toit.schedules.dto.request.SchedulesDeleteRequest;
 import com.toit.schedules.dto.request.SchedulesUpdateRequest;
 import com.toit.schedules.dto.response.*;
@@ -29,6 +30,7 @@ public class SchedulesService {
     private final SchedulesRepository schedulesRepository;
     private final UsersService usersService;
     private final FoldersRepository foldersRepository;
+    private final FoldersService foldersService;
 
     public Schedules findBySchedules(Long schedulesId){
         Optional<Schedules> schedules = schedulesRepository.findById(schedulesId);
@@ -40,31 +42,64 @@ public class SchedulesService {
         }
     }
 
+    public ScheduleViewResponse getSchedule(Long usersId,Long schedulesId){
+
+        usersService.findById(usersId);
+
+        Schedules schedules = findBySchedules(schedulesId);
+
+        Folders folders = schedules.getFolders();
+
+        return new ScheduleViewResponse(
+                usersId,
+                schedules.getSchedulesId(),
+                schedules.getTitle(),
+                (folders != null) ? folders.getFoldersId() : null, // 폴더가 없으면 ID도 null
+                (folders != null) ? folders.getName() : null,      // 폴더가 없으면 제목도 null
+                schedules.getTimeSetting(),
+                schedules.getStartDate(),
+                schedules.getEndDate(),
+                schedules.getStartTime(),
+                schedules.getEndTime(),
+                schedules.getLocation(),
+                schedules.getNotification(),
+                schedules.getMemo()
+        );
+    }
+
+
+    /***
+     * 조회 영역
+     */
+
     /**
-     * 오늘 일정 조회
+     * 선택된 날짜 일정 조회
      * @param usersId
-     * @param todayDate
+     * @param selectedDay
      * @return
      */
-    public List<SchedulesTodayResponse> getTodaySchedules(Long usersId, LocalDate todayDate) {
+    public List<SchedulesSelectedDayResponse> getSelectedDaySchedules(Long usersId, LocalDate selectedDay) {
         // startDate <= todayDate AND endDate >= todayDate 조건으로 조회
         List<Schedules> schedules = schedulesRepository
-                .findTodaySchedules(usersId,
-                        todayDate);
+                .findSelectedDaySchedules(usersId,
+                        selectedDay);
 
         // 유저 조회
         usersService.findById(usersId);
 
-        List<SchedulesTodayResponse> scheduleDto = schedules.stream()
-                .map(s -> new SchedulesTodayResponse(
+        List<SchedulesSelectedDayResponse> scheduleDto = schedules.stream()
+                .map(s -> new SchedulesSelectedDayResponse(
                          s.getSchedulesId()
                         ,s.getTitle()
                         ,s.getStartTime()
                         ,s.getEndTime()
                         ,s.getAppColor()))
                 .collect(Collectors.toList());
+
         return scheduleDto;
     }
+
+
 
 
     /** 시작날짜 ~ 종료날짜 사이 일정 조회 */
@@ -92,6 +127,9 @@ public class SchedulesService {
         return scheduleDtos;
     }
 
+    /***
+     * 생성 영역 ------
+     */
 
     /***
      *

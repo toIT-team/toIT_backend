@@ -5,14 +5,12 @@ import com.toit.folders.dto.response.FoldersItemResponse;
 import com.toit.foldersview.FoldersViewsService;
 import com.toit.foldersview.dto.response.RecentFoldersResponse;
 import com.toit.schedules.SchedulesService;
-import com.toit.schedules.dto.response.SchedulesTodayResponse;
-import com.toit.view.home.dto.request.HomeViewRequest;
+import com.toit.schedules.dto.response.SchedulesSelectedDayResponse;
 import com.toit.view.home.dto.response.HomeViewResponse;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +29,7 @@ public class HomeUseCaseImpl implements HomeUseCase {
         List<FoldersItemResponse> folders = foldersService.getAllFoldersByUser(usersId);
 
         // 오늘 일정 조회
-        List<SchedulesTodayResponse> schedules = schedulesService.getTodaySchedules(usersId, todayDate);
+        List<SchedulesSelectedDayResponse> schedules = schedulesService.getSelectedDaySchedules(usersId, todayDate);
 
         return new HomeViewResponse(usersId, folders, foldersViews, schedules);
     }
