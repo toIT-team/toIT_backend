@@ -18,7 +18,7 @@ public interface SchedulesRepository extends JpaRepository<Schedules, Long> {
             "WHERE s.users.usersId = :userId " +
             "AND :targetDate BETWEEN s.startDate AND s.endDate " +
             "ORDER BY s.startTime ASC")
-    List<Schedules> findTodaySchedules(@Param("userId") Long userId,
+    List<Schedules> findSelectedDaySchedules(@Param("userId") Long userId,
                                        @Param("targetDate") LocalDate targetDate);
 
     /** 시작날짜 종료날짜 사이 일정 조회 */
