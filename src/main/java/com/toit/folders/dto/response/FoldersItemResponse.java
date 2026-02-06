@@ -17,6 +17,7 @@ public class FoldersItemResponse {
     private String color;
     private LocalDateTime createdAt;
     private Boolean isFavorite;
+    private Integer iconIdx;
 
     public FoldersItemResponse(Folders folders) {
         this.foldersId = folders.getFoldersId();
@@ -27,5 +28,6 @@ public class FoldersItemResponse {
         this.color = folders.getColor();
         this.isFavorite = folders.getIsFavorite();
         this.createdAt = folders.getCreatedAt();
+        this.iconIdx = folders.getIconIdx();
     }
 }
