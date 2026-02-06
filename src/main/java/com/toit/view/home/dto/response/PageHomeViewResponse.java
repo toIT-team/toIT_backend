@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class HomeViewResponse {
+public class PageHomeViewResponse {
     /**
      * 사용자의 보관함 조회
      */
@@ -31,7 +31,7 @@ public class HomeViewResponse {
      */
     private List<SchedulesSelectedDayResponse> schedules;
 
-    public HomeViewResponse(Long userId, List<FoldersItemResponse> folders, List<RecentFoldersResponse> foldersViews
+    public PageHomeViewResponse(Long userId, List<FoldersItemResponse> folders, List<RecentFoldersResponse> foldersViews
             , List<SchedulesSelectedDayResponse> schedules) {
         this.userId = userId;
         this.folders = folders;
