@@ -7,14 +7,14 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class HomeViewRequest {
+public class PageHomeViewRequest {
 
 
     private Long usersId;
 
     private LocalDate todayDate;
 
-    public HomeViewRequest(Long usersId, LocalDate todayDate){
+    public PageHomeViewRequest(Long usersId, LocalDate todayDate){
         this.usersId = usersId;
         this.todayDate = todayDate;
     }
