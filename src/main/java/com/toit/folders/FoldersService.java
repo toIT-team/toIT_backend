@@ -2,6 +2,7 @@ package com.toit.folders;
 
 import com.toit.folders.dto.response.FoldersCreateResponse;
 import com.toit.folders.dto.response.FoldersItemResponse;
+import com.toit.folders.dto.response.FoldersUpdateResponse;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
 import com.toit.view.folders.dto.response.PageFoldersMemoResponse;
@@ -41,6 +42,17 @@ public class FoldersService {
                 users
         );
         return new FoldersCreateResponse(foldersRepository.save(folders));
+    }
+
+    /**
+     *
+     */
+    public FoldersUpdateResponse updateFolders(Long usersId, Long foldersId, String name, String memo, String color, Integer iconIdx){
+        usersService.findById(usersId);
+        Folders folders = findByFoldersIdAndUsers_UsersId(usersId, foldersId);
+        folders.update(name, memo, color, iconIdx);
+        foldersRepository.save(folders);
+        return new FoldersUpdateResponse(folders, usersId);
     }
 
 
