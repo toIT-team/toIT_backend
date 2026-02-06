@@ -1,11 +1,10 @@
 package com.toit.folders;
 
-import com.toit.folders.dto.request.FoldersCreateRequest;
 import com.toit.folders.dto.response.FoldersCreateResponse;
 import com.toit.folders.dto.response.FoldersItemResponse;
-import com.toit.folders.dto.response.FoldersMemoResponse;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
+import com.toit.view.folders.dto.response.PageFoldersMemoResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -64,11 +63,11 @@ public class FoldersService {
     /**
      * <h2>하나의 Folders 메모 보기</h2>
      */
-    public FoldersMemoResponse getOneFoldersMemobByUser(Long usersId, Long foldersId){
+    public PageFoldersMemoResponse getOneFoldersMemobByUser(Long usersId, Long foldersId){
         usersService.findById(usersId);
         Folders folders = findByFoldersIdAndUsers_UsersId(usersId, foldersId);
 
-        return new FoldersMemoResponse(folders);
+        return new PageFoldersMemoResponse(folders);
     }
 
 

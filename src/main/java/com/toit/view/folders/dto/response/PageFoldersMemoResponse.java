@@ -1,4 +1,4 @@
-package com.toit.folders.dto.response;
+package com.toit.view.folders.dto.response;
 
 import com.toit.folders.Folders;
 import java.time.LocalDateTime;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class FoldersMemoResponse {
+public class PageFoldersMemoResponse {
     private Long foldersId;
     private Long usersId;
     private String name;
@@ -16,7 +16,7 @@ public class FoldersMemoResponse {
     private Boolean isDefault;
     private String color;
     private LocalDateTime createdAt;
-    public FoldersMemoResponse(Folders folders) {
+    public PageFoldersMemoResponse(Folders folders) {
         this.foldersId = folders.getFoldersId();
         this.usersId = folders.getUsers().getUsersId();
         this.name = folders.getName();
