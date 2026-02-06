@@ -83,6 +83,13 @@ public class Folders {
      */
     private Boolean isFavorite;
 
+    /**
+     * 아이콘 인덱스
+     * 기본값 0
+     */
+    @Column(nullable = false)
+    private Integer iconIdx = 0;
+
     @ManyToOne
     @JoinColumn(name = "users_id", nullable = false)
     private Users users;
@@ -97,5 +104,6 @@ public class Folders {
         this.status = EntityStatus.ACTIVE;
         this.users = users;
         this.createdAt = createdAt;
+        this.iconIdx = 0;
     }
 }
