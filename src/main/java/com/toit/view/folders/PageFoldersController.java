@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Pages - Home", description = "Home 화면(page) 전용 API")
+@Tag(name = "Pages - Folders", description = "Home 화면(page) 전용 API")
 @RestController
 @RequestMapping("/page/folders")
 @RequiredArgsConstructor
