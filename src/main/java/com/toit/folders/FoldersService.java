@@ -3,10 +3,12 @@ package com.toit.folders;
 import com.toit.folders.dto.request.FoldersCreateRequest;
 import com.toit.folders.dto.response.FoldersCreateResponse;
 import com.toit.folders.dto.response.FoldersItemResponse;
+import com.toit.folders.dto.response.FoldersMemoResponse;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -58,4 +60,29 @@ public class FoldersService {
                 .toList();
         return folders;
     }
+
+    /**
+     * <h2>하나의 Folders 메모 보기</h2>
+     */
+    public FoldersMemoResponse getOneFoldersMemobByUser(Long usersId, Long foldersId){
+        usersService.findById(usersId);
+        Folders folders = findByFoldersIdAndUsers_UsersId(usersId, foldersId);
+
+        return new FoldersMemoResponse(folders);
+    }
+
+
+    /**
+     * <h2>하나의 Folders 사용자와 연관관계 있는지 보기 - 예외 검사</h2>
+     * 리턴값은 Folders
+     */
+    public Folders findByFoldersIdAndUsers_UsersId(Long usersId, Long foldersId){
+        Optional<Folders> folders = foldersRepository.findByFoldersIdAndUsers_UsersId(foldersId, usersId);
+        if (folders.isPresent()) {
+            return folders.get();
+        } else {
+            throw new IllegalArgumentException("존재하지 않는 보관함입니다. foldersId=" + foldersId);
+        }
+    }
+
 }
