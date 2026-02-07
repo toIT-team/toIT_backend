@@ -43,9 +43,9 @@ public class FoldersService {
         );
         return new FoldersCreateResponse(foldersRepository.save(folders));
     }
-
     /**
-     *
+     * <h2>Folders 보관함 하나 수정</h2>
+     * <p>수정은 Folders 전부 값 수정</p>
      */
     public FoldersUpdateResponse updateFolders(Long usersId, Long foldersId, String name, String memo, String color, Integer iconIdx){
         usersService.findById(usersId);
