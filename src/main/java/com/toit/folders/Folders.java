@@ -116,4 +116,12 @@ public class Folders {
         this.iconIdx = iconIdx;
     }
 
+    /**
+     * Folders 소프트 Delete 실행 시
+     */
+    public void softDelete() {
+        this.status = EntityStatus.DELETED;
+        this.deletedAt = LocalDateTime.now();
+    }
+
 }
