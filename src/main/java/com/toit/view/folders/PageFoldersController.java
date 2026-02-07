@@ -1,6 +1,7 @@
 package com.toit.view.folders;
 
 import com.toit.view.folders.dto.response.PageFoldersMemoResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,9 @@ public class PageFoldersController {
     private final PageFoldersUseCase pageFoldersUseCase;
 
 
+    @Operation(
+            summary = "보관함 메모 화면 API - 화면이름 : 보관함-더보기-메모보기"
+    )
     @GetMapping("/memo")
     public ResponseEntity<PageFoldersMemoResponse> getOneFoldersMemo(
             @RequestParam("usersId") Long usersId,
