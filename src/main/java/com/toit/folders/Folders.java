@@ -14,7 +14,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -83,6 +85,13 @@ public class Folders {
      */
     private Boolean isFavorite;
 
+    /**
+     * 아이콘 인덱스
+     * 기본값 0
+     */
+    @Column(nullable = false)
+    private Integer iconIdx = 0;
+
     @ManyToOne
     @JoinColumn(name = "users_id", nullable = false)
     private Users users;
@@ -97,5 +106,14 @@ public class Folders {
         this.status = EntityStatus.ACTIVE;
         this.users = users;
         this.createdAt = createdAt;
+        this.iconIdx = 0;
     }
+
+    public void update(String name, String memo, String color, Integer iconIdx) {
+        this.name = name;
+        this.memo = memo;
+        this.color = color;
+        this.iconIdx = iconIdx;
+    }
+
 }

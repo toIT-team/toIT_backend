@@ -1,10 +1,13 @@
 package com.toit.folders;
 
 import com.toit.folders.dto.request.FoldersCreateRequest;
+import com.toit.folders.dto.request.FoldersUpdateRequest;
 import com.toit.folders.dto.response.FoldersCreateResponse;
+import com.toit.folders.dto.response.FoldersUpdateResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,5 +31,16 @@ public class FoldersController {
     ){
         return ResponseEntity.ok(foldersService
                 .createFolders(request.getUsersId(), request.getName(), request.getMemo(), request.getColor()));
+    }
+
+    /**
+     * Folders 보관함 수정
+     */
+    @PatchMapping
+    public ResponseEntity<FoldersUpdateResponse> updateFolders(
+            @RequestBody FoldersUpdateRequest request
+            ){
+        return ResponseEntity.ok(foldersService.updateFolders(request.getUsersId(), request.getFoldersId(),
+                request.getName(), request.getMemo(), request.getColor(), request.getIconIdx()));
     }
 }
