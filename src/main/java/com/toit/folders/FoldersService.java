@@ -1,6 +1,7 @@
 package com.toit.folders;
 
 import com.toit.folders.dto.response.FoldersCreateResponse;
+import com.toit.folders.dto.response.FoldersDeleteResponse;
 import com.toit.folders.dto.response.FoldersItemResponse;
 import com.toit.folders.dto.response.FoldersUpdateResponse;
 import com.toit.user.Users;
@@ -18,6 +19,33 @@ public class FoldersService {
     private final FoldersRepository foldersRepository;
 
     private final UsersService usersService;
+
+    /**
+     * <h2>Folders 보관함 전체 조회</h2>
+     *
+     * <p>한 명의 사용자가 접근 가능한 모든 보관함을 조회합니다.</p>
+     * @param usersId
+     * @return
+     */
+    public List<FoldersItemResponse> getAllFoldersByUser(Long usersId) {
+        usersService.findById(usersId);
+        List<FoldersItemResponse> folders = foldersRepository.findByUsers_UsersId(usersId)
+                .stream()
+                .map(FoldersItemResponse::new)
+                .toList();
+        return folders;
+    }
+
+
+    /**
+     * <h2>하나의 Folders 메모 보기</h2>
+     */
+    public PageFoldersMemoResponse getOneFoldersMemobByUser(Long usersId, Long foldersId){
+        usersService.findById(usersId);
+        Folders folders = findByFoldersIdAndUsers_UsersId(usersId, foldersId);
+
+        return new PageFoldersMemoResponse(folders);
+    }
 
 
     /**
@@ -43,6 +71,7 @@ public class FoldersService {
         );
         return new FoldersCreateResponse(foldersRepository.save(folders));
     }
+
     /**
      * <h2>Folders 보관함 하나 수정</h2>
      * <p>수정은 Folders 전부 값 수정</p>
@@ -55,33 +84,18 @@ public class FoldersService {
         return new FoldersUpdateResponse(folders, usersId);
     }
 
-
     /**
-     * <h2>Folders 보관함 전체 조회</h2>
-     *
-     * <p>한 명의 사용자가 접근 가능한 모든 보관함을 조회합니다.</p>
-     * @param usersId
-     * @return
+     * <h2>Folders 보관함 하나 삭제</h2>
+     * <p>삭제 시 Hard 삭제가 되는 것이 아닌 소프트 삭제 실행</p>
+     * <p>응답값은 Folders 하나의 아이템으로 지정</p>
      */
-    public List<FoldersItemResponse> getAllFoldersByUser(Long usersId) {
+    public FoldersDeleteResponse deleteFolders(Long usersId, Long foldersId){
         usersService.findById(usersId);
-        List<FoldersItemResponse> folders = foldersRepository.findByUsers_UsersId(usersId)
-                .stream()
-                .map(FoldersItemResponse::new)
-                .toList();
-        return folders;
+        Folders byFoldersIdAndUsersUsersId = findByFoldersIdAndUsers_UsersId(usersId, foldersId);
+        byFoldersIdAndUsersUsersId.softDelete();
+        Folders folders = foldersRepository.save(byFoldersIdAndUsersUsersId);
+        return new FoldersDeleteResponse(folders);
     }
-
-    /**
-     * <h2>하나의 Folders 메모 보기</h2>
-     */
-    public PageFoldersMemoResponse getOneFoldersMemobByUser(Long usersId, Long foldersId){
-        usersService.findById(usersId);
-        Folders folders = findByFoldersIdAndUsers_UsersId(usersId, foldersId);
-
-        return new PageFoldersMemoResponse(folders);
-    }
-
 
     /**
      * <h2>하나의 Folders 사용자와 연관관계 있는지 보기 - 예외 검사</h2>
@@ -94,6 +108,10 @@ public class FoldersService {
         } else {
             throw new IllegalArgumentException("존재하지 않는 보관함입니다. foldersId=" + foldersId);
         }
+    }
+
+    public void updateSoftDelete(Folders folders){
+
     }
 
 }
