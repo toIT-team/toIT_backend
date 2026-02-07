@@ -8,26 +8,20 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class FoldersItemResponse {
-    private Long foldersId;
+public class FoldersUpdateResponse {
     private Long usersId;
+    private Long foldersId;
     private String name;
     private String memo;
-    private Boolean isDefault;
     private String color;
-    private LocalDateTime createdAt;
-    private Boolean isFavorite;
     private Integer iconIdx;
 
-    public FoldersItemResponse(Folders folders) {
+    public FoldersUpdateResponse(Folders folders, Long usersId) {
+        this.usersId = usersId;
         this.foldersId = folders.getFoldersId();
-        this.usersId = folders.getUsers().getUsersId();
         this.name = folders.getName();
         this.memo = folders.getMemo();
-        this.isDefault = folders.getIsDefault();
         this.color = folders.getColor();
-        this.isFavorite = folders.getIsFavorite();
-        this.createdAt = folders.getCreatedAt();
         this.iconIdx = folders.getIconIdx();
     }
 }
