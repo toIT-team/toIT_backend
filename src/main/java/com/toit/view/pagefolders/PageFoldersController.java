@@ -1,6 +1,6 @@
-package com.toit.view.folders;
+package com.toit.view.pagefolders;
 
-import com.toit.view.folders.dto.response.PageFoldersMemoResponse;
+import com.toit.view.pagefolders.dto.response.PageFoldersMemoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

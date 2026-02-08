@@ -1,4 +1,4 @@
-package com.toit.view.home;
+package com.toit.view.pagehome;
 
 import com.toit.folders.FoldersService;
 import com.toit.folders.dto.response.FoldersItemResponse;
@@ -6,7 +6,7 @@ import com.toit.foldersview.FoldersViewsService;
 import com.toit.foldersview.dto.response.RecentFoldersResponse;
 import com.toit.schedules.SchedulesService;
 import com.toit.schedules.dto.response.SchedulesSelectedDayResponse;
-import com.toit.view.home.dto.response.PageHomeViewResponse;
+import com.toit.view.pagehome.dto.response.PageHomeViewResponse;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
