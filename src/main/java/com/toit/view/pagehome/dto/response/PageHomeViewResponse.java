@@ -1,4 +1,4 @@
-package com.toit.view.home.dto.response;
+package com.toit.view.pagehome.dto.response;
 
 import com.toit.folders.dto.response.FoldersItemResponse;
 import com.toit.foldersview.dto.response.RecentFoldersResponse;

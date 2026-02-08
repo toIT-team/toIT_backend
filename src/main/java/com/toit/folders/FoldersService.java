@@ -6,7 +6,7 @@ import com.toit.folders.dto.response.FoldersItemResponse;
 import com.toit.folders.dto.response.FoldersUpdateResponse;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
-import com.toit.view.folders.dto.response.PageFoldersMemoResponse;
+import com.toit.view.pagefolders.dto.response.PageFoldersMemoResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;

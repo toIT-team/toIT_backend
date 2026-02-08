@@ -1,6 +1,6 @@
-package com.toit.view.home;
+package com.toit.view.pagehome;
 
-import com.toit.view.home.dto.response.PageHomeViewResponse;
+import com.toit.view.pagehome.dto.response.PageHomeViewResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDate;

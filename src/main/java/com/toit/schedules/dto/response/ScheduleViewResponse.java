@@ -1,6 +1,7 @@
 package com.toit.schedules.dto.response;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,16 +31,18 @@ public class ScheduleViewResponse {
     /** 스케줄 시간 설정 */
     private Boolean timeSetting;
 
-    /** 시작 날짜 */
+
     private LocalDate startDate;
 
     /** 종료 날짜 */
     private LocalDate endDate;
 
     /** 시작 시간 */
+
     private LocalTime startTime;
 
     /** 종료 시간 */
+
     private LocalTime endTime;
 
     /** 위치 */
