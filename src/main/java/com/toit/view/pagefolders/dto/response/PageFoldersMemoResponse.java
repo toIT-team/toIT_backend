@@ -1,4 +1,4 @@
-package com.toit.view.folders.dto.response;
+package com.toit.view.pagefolders.dto.response;
 
 import com.toit.folders.Folders;
 import java.time.LocalDateTime;

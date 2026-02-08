@@ -1,12 +1,12 @@
-package com.toit.view.schedules;
+package com.toit.view.pageschedules;
 
 
 import com.toit.schedules.SchedulesService;
 import com.toit.schedules.dto.response.ScheduleViewResponse;
 import com.toit.schedules.dto.response.SchedulesMonthResponse;
 import com.toit.schedules.dto.response.SchedulesSelectedDayResponse;
-import com.toit.view.schedules.dto.response.SchedulesSearchResponse;
-import com.toit.view.schedules.dto.response.SchedulesSelectDayViewResponse;
+import com.toit.view.pageschedules.dto.response.PageSchedulesSearchResponse;
+import com.toit.view.pageschedules.dto.response.PageSchedulesSelectDayViewResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class SchedulesUseCaseImpl implements SchedulesUseCase{
+public class PageSchedulesUseCaseImpl implements PageSchedulesUseCase {
 
     private final SchedulesService schedulesService;
 
@@ -23,21 +23,21 @@ public class SchedulesUseCaseImpl implements SchedulesUseCase{
      * startDate ~ endDate 범위 내의 일정들을 반환
      */
     @Override
-    public SchedulesSearchResponse getSearchSchedulesView(Long usersId, LocalDate startDate, LocalDate endDate) {
+    public PageSchedulesSearchResponse getSearchSchedulesView(Long usersId, LocalDate startDate, LocalDate endDate) {
 
         List<SchedulesMonthResponse> schedules = schedulesService.getSearchSchedules(usersId, startDate, endDate);
 
-        return new SchedulesSearchResponse(usersId, schedules);
+        return new PageSchedulesSearchResponse(usersId, schedules);
     }
 
     /***
      * 선택된 날짜의 스케줄들을 반환
      */
     @Override
-    public SchedulesSelectDayViewResponse getSelectedDayScheduleView(Long userId, LocalDate selectedDay){
+    public PageSchedulesSelectDayViewResponse getSelectedDayScheduleView(Long userId, LocalDate selectedDay){
         List<SchedulesSelectedDayResponse> schedules = schedulesService.getSelectedDaySchedules(userId, selectedDay);
 
-        return  new SchedulesSelectDayViewResponse(userId, schedules) ;
+        return  new PageSchedulesSelectDayViewResponse(userId, schedules) ;
 
     }
 

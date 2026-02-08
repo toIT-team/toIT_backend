@@ -1,4 +1,4 @@
-package com.toit.view.schedules.dto.response;
+package com.toit.view.pageschedules.dto.response;
 
 
 
@@ -11,14 +11,14 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SchedulesSelectDayViewResponse {
+public class PageSchedulesSelectDayViewResponse {
 
     /** 사용자 ID* */
     private Long userId;
 
     private List<SchedulesSelectedDayResponse> schedulesResponses;
 
-    public SchedulesSelectDayViewResponse(Long userId, List<SchedulesSelectedDayResponse> schedulesResponses) {
+    public PageSchedulesSelectDayViewResponse(Long userId, List<SchedulesSelectedDayResponse> schedulesResponses) {
         this.userId = userId;
         this.schedulesResponses = schedulesResponses;
     }

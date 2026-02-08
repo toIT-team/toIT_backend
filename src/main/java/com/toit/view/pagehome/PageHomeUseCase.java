@@ -1,6 +1,6 @@
-package com.toit.view.home;
+package com.toit.view.pagehome;
 
-import com.toit.view.home.dto.response.PageHomeViewResponse;
+import com.toit.view.pagehome.dto.response.PageHomeViewResponse;
 import java.time.LocalDate;
 
 public interface PageHomeUseCase {

@@ -3,6 +3,7 @@ package com.toit.items;
 import com.toit.common.enums.EntityStatus;
 import com.toit.common.enums.ItemsType;
 import com.toit.common.enums.StorageTarget;
+import com.toit.folders.Folders;
 import com.toit.user.Users;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -96,4 +97,22 @@ public class Items {
     @ManyToOne
     @JoinColumn(name = "users_id", nullable = false)
     private Users users;
+
+    public static Items createTextInFolder(
+            Users users,
+            Long foldersId,
+            String name,
+            String textContent
+    ) {
+        Items item = new Items();
+        item.users = users;
+        item.storageTarget = StorageTarget.FOLDERS;
+        item.storageId = foldersId;
+        item.itemsType = ItemsType.TEXT;
+        item.name = name;
+        item.textContent = textContent;
+        item.status = EntityStatus.ACTIVE;
+        item.createdAt = LocalDateTime.now();
+        return item;
+    }
 }
