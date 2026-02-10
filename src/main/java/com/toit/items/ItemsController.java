@@ -27,6 +27,6 @@ public class ItemsController {
     public ResponseEntity<ItemsTextCreateResponse> createFoldersText(
             @RequestBody ItemsTextCreateReqeust request
     ){
-        return ResponseEntity.ok(itemsService.createFoldersText(request.getUsersId(), request.getFoldersIdList(), request.getName(), request.getTextContent()));
+        return ResponseEntity.ok(itemsService.createFoldersText(request.getUsersId(), request.getFoldersIdList(), request.getTextContent()));
     }
 }

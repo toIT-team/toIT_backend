@@ -101,7 +101,6 @@ public class Items {
     public static Items createTextInFolder(
             Users users,
             Long foldersId,
-            String name,
             String textContent
     ) {
         Items item = new Items();
@@ -109,7 +108,6 @@ public class Items {
         item.storageTarget = StorageTarget.FOLDERS;
         item.storageId = foldersId;
         item.itemsType = ItemsType.TEXT;
-        item.name = name;
         item.textContent = textContent;
         item.status = EntityStatus.ACTIVE;
         item.createdAt = LocalDateTime.now();
