@@ -48,7 +48,7 @@ public class Items {
     /**
      * 자료 이름
      * 길이 제한 255
-     * type 형태 LINK, TEXT 일 때 사용
+     * type 형태 LINK(링크 제목), TEXT 일 때 사용
      */
     @Column(nullable = true)
     private String name;
@@ -133,9 +133,10 @@ public class Items {
     public static Items createLinkInFolder(
             Users users,
             Long foldersId,
-            String textContent,
             String filePath,
-            String linkThumbnail
+            String textContent,
+            String linkThumbnail,
+            String name
     ) {
         Items item = new Items();
         item.users = users;
@@ -145,6 +146,7 @@ public class Items {
         item.textContent = textContent;
         item.linkThumbnail = linkThumbnail;
         item.filePath = filePath;
+        item.name = name;
         item.status = EntityStatus.ACTIVE;
         item.createdAt = LocalDateTime.now();
         return item;

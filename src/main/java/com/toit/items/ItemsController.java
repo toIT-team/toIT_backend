@@ -3,6 +3,7 @@ package com.toit.items;
 import com.toit.items.dto.request.ItemsLinkCreateRequest;
 import com.toit.items.dto.request.ItemsTextCreateReqeust;
 import com.toit.items.dto.response.ItemsTextCreateResponse;
+import com.toit.items.dto.response.itemsLinkCreateResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -39,9 +40,9 @@ public class ItemsController {
             description = "자료 추가는 POST입니다."
     )
     @PostMapping("/link")
-    public ResponseEntity<ItemsTextCreateResponse> createFoldersLink(
+    public ResponseEntity<itemsLinkCreateResponse> createFoldersLink(
             @RequestBody ItemsLinkCreateRequest request
     ){
-        return ResponseEntity.ok(itemsService.createFoldersLink(request.getUsersId(), request.getFoldersIdList(), request.getFilePath(), request.getTextContent(), request.getLinkThumbnail()));
+        return ResponseEntity.ok(itemsService.createFoldersLink(request.getUsersId(), request.getFoldersIdList(), request.getFilePath()));
     }
 }
