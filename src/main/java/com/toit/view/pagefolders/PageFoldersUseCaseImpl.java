@@ -1,8 +1,7 @@
-package com.toit.view.folders;
+package com.toit.view.pagefolders;
 
-import com.toit.folders.Folders;
 import com.toit.folders.FoldersService;
-import com.toit.view.folders.dto.response.PageFoldersMemoResponse;
+import com.toit.view.pagefolders.dto.response.PageFoldersMemoResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
