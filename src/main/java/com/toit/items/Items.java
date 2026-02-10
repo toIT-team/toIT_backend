@@ -50,7 +50,7 @@ public class Items {
      * 길이 제한 255
      * type 형태 LINK, TEXT 일 때 사용
      */
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String name;
 
     /**
