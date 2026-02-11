@@ -20,7 +20,7 @@ public class PageFoldersController {
 
 
     @Operation(
-            summary = "보관함 메모 화면 API - 화면이름 : 보관함-더보기-메모보기"
+            summary = "보관함 메모 화면 API - 화면이름 : 보관함-더보기-메모보기, 보관함 내부-상단 케밥 메뉴-메모보기"
     )
     @GetMapping("/memo")
     public ResponseEntity<PageFoldersMemoResponse> getOneFoldersMemo(
