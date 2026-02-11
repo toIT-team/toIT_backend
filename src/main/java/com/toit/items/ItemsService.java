@@ -1,13 +1,21 @@
 package com.toit.items;
 
 
+import com.toit.common.enums.EntityStatus;
+import com.toit.common.enums.ItemsType;
+import com.toit.common.enums.StorageTarget;
 import com.toit.folders.FoldersService;
+import com.toit.items.dto.response.ItemsFoldersImagesResponse;
+import com.toit.items.dto.response.ItemsFoldersInFilesResponse;
+import com.toit.items.dto.response.ItemsFoldersInLinksResponse;
+import com.toit.items.dto.response.ItemsFoldersInTextsResponse;
 import com.toit.items.dto.response.ItemsTextCreateResponse;
 import com.toit.items.dto.response.itemsLinkCreateResponse;
 import com.toit.items.linkpreview.LinkPreview;
 import com.toit.items.linkpreview.LinkPreviewExtractor;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -79,5 +87,105 @@ public class ItemsService {
 
 
         return new itemsLinkCreateResponse(usersId, foldersIdList, filePath, preview.getDescription(), preview.getThumbnailUrl(),  preview.getTitle());
+    }
+
+    /**
+     * 하나의 사용자 폴더 내부 링크 조회
+     */
+    public List<ItemsFoldersInLinksResponse> getFoldersLinks(Long usersId, Long foldersId) {
+
+        usersService.findById(usersId);
+        foldersService.findByFoldersIdAndUsers_UsersId(usersId, foldersId);
+        // 링크만 조회
+        List<Items> links = itemsRepository
+                .findFoldersItems(
+                        usersId,
+                        StorageTarget.FOLDERS,
+                        foldersId,
+                        ItemsType.LINK,
+                        EntityStatus.ACTIVE
+                );
+
+        List<ItemsFoldersInLinksResponse> result = new ArrayList<>();
+
+        for (Items item : links) {
+            result.add(new ItemsFoldersInLinksResponse(item));
+        }
+        return result;
+    }
+
+    /**
+     * 하나의 사용자 폴더 내부 텍스트 조회
+     */
+    public List<ItemsFoldersInTextsResponse> getFoldersTexts(Long usersId, Long foldersId) {
+
+        usersService.findById(usersId);
+        foldersService.findByFoldersIdAndUsers_UsersId(usersId, foldersId);
+        // 링크만 조회
+        List<Items> links = itemsRepository
+                .findFoldersItems(
+                        usersId,
+                        StorageTarget.FOLDERS,
+                        foldersId,
+                        ItemsType.TEXT,
+                        EntityStatus.ACTIVE
+                );
+
+        List<ItemsFoldersInTextsResponse> result = new ArrayList<>();
+
+        for (Items item : links) {
+            result.add(new ItemsFoldersInTextsResponse(item));
+        }
+        return result;
+    }
+
+    /**
+     * 하나의 사용자 폴더 내부 이미지 조회
+     */
+    public List<ItemsFoldersImagesResponse> getFoldersImages(Long usersId, Long foldersId) {
+
+        usersService.findById(usersId);
+        foldersService.findByFoldersIdAndUsers_UsersId(usersId, foldersId);
+        // 링크만 조회
+        List<Items> links = itemsRepository
+                .findFoldersItems(
+                        usersId,
+                        StorageTarget.FOLDERS,
+                        foldersId,
+                        ItemsType.IMAGE,
+                        EntityStatus.ACTIVE
+                );
+
+        List<ItemsFoldersImagesResponse> result = new ArrayList<>();
+
+        for (Items item : links) {
+            result.add(new ItemsFoldersImagesResponse(item));
+        }
+        return result;
+    }
+
+    /**
+     * 하나의 사용자 폴더 내부 파일 조회
+     */
+    public List<ItemsFoldersInFilesResponse> getFoldersFiles(Long usersId, Long foldersId) {
+
+        usersService.findById(usersId);
+        foldersService.findByFoldersIdAndUsers_UsersId(usersId, foldersId);
+        // 링크만 조회
+        List<Items> links = itemsRepository
+                .findFoldersItems(
+                        usersId,
+                        StorageTarget.FOLDERS,
+                        foldersId,
+                        ItemsType.FILE,
+                        EntityStatus.ACTIVE
+                );
+
+        List<ItemsFoldersInFilesResponse> result = new ArrayList<>();
+
+        for (Items item : links) {
+            result.add(new ItemsFoldersInFilesResponse(item));
+        }
+        return result;
     }
 }
