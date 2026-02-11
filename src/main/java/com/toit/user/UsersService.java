@@ -1,6 +1,7 @@
 package com.toit.user;
 
 import com.toit.common.enums.AuthProvider;
+import com.toit.exception.users.UsersNotFoundException;
 import com.toit.user.dto.request.UsersCreateRequest;
 import com.toit.user.dto.response.UsersCreateResponse;
 import java.time.LocalDateTime;
@@ -27,12 +28,7 @@ public class UsersService {
     }
 
     public Users findById(Long usersId){
-        Optional<Users> users = usersRepository.findById(usersId);
-
-        if (users.isPresent()) {
-            return users.get();
-        } else {
-            throw new IllegalArgumentException("존재하지 않는 사용자입니다. usersId=" + usersId);
-        }
+        return usersRepository.findById(usersId)
+                .orElseThrow(() -> new UsersNotFoundException("usersId가 " + usersId + "인 해당 사용자를 찾을 수 없습니다."));
     }
 }
