@@ -48,26 +48,42 @@ public class Items {
     /**
      * 자료 이름
      * 길이 제한 255
-     * type 형태 LINK, TEXT 일 때 사용
+     * type 형태 LINK(링크 제목), TEXT 일 때 사용
      */
     @Column(nullable = true)
     private String name;
 
     /**
      * 링크 URL 및 파일 경로
+     * <br><br/>
      * type형태가 LINK, FILE, IMAGE일 때 사용
+     * <br><br/>
+     * LINK의 경우 링크 URL
+     * <br><br/>
+     * FILE, IMAGE의 경우 파일 주소
      */
     @Column(nullable = true, length = 2000)
     private String filePath;
 
     /**
-     * 파일 경로
+     * 텍스트내용
+     * <br><br/>
      * type형태가 LINK, TEXT, IMAGE, FILE일 때 사용
+     * <br><br/>
+     * LINK의 경우 링크 본문
+     * <br><br/>
      * IMAGE의 경우 설명이 이 값에 포함
+     * <br><br/>
      * FILE의 경우 사이즈 값이 들어감
      */
     @Column(nullable = true, length = 2000)
     private String textContent;
+
+    /**
+     * LINK 전용 썸네일 URL
+     */
+    @Column(nullable = true, length = 2000)
+    private String linkThumbnail;
 
     /**
      * 자료 서비스 상태
@@ -109,6 +125,28 @@ public class Items {
         item.storageId = foldersId;
         item.itemsType = ItemsType.TEXT;
         item.textContent = textContent;
+        item.status = EntityStatus.ACTIVE;
+        item.createdAt = LocalDateTime.now();
+        return item;
+    }
+
+    public static Items createLinkInFolder(
+            Users users,
+            Long foldersId,
+            String filePath,
+            String textContent,
+            String linkThumbnail,
+            String name
+    ) {
+        Items item = new Items();
+        item.users = users;
+        item.storageTarget = StorageTarget.FOLDERS;
+        item.storageId = foldersId;
+        item.itemsType = ItemsType.TEXT;
+        item.textContent = textContent;
+        item.linkThumbnail = linkThumbnail;
+        item.filePath = filePath;
+        item.name = name;
         item.status = EntityStatus.ACTIVE;
         item.createdAt = LocalDateTime.now();
         return item;

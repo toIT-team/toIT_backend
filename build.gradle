@@ -39,6 +39,11 @@ dependencies {
 	 * Swagger 라이브러리
 	 */
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+
+	/**
+	 * Jsoup 라이브러리 -> 링크의 본문, 링크의 제목, 링크의 썸네일
+	 */
+	implementation 'org.jsoup:jsoup:1.22.1'
 }
 
 tasks.named('test') {
