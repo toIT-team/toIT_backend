@@ -16,10 +16,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 @Table(name = "items")
+@Getter
 public class Items {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,7 +50,7 @@ public class Items {
     /**
      * 자료 이름
      * 길이 제한 255
-     * type 형태 LINK(링크 제목), TEXT 일 때 사용
+     * type 형태 LINK(링크 제목), FILE(파일 이름0
      */
     @Column(nullable = true)
     private String name;
@@ -142,7 +144,7 @@ public class Items {
         item.users = users;
         item.storageTarget = StorageTarget.FOLDERS;
         item.storageId = foldersId;
-        item.itemsType = ItemsType.TEXT;
+        item.itemsType = ItemsType.LINK;
         item.textContent = textContent;
         item.linkThumbnail = linkThumbnail;
         item.filePath = filePath;
