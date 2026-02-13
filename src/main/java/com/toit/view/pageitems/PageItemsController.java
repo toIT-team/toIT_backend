@@ -1,6 +1,6 @@
-package com.toit.view.pagefolders;
+package com.toit.view.pageitems;
 
-import com.toit.view.pagefolders.dto.response.PageFoldersMemoResponse;
+import com.toit.view.pageitems.dto.response.PageFoldersInItemsAllResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -10,25 +10,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Pages - Folders", description = "Home 화면(page) 전용 API")
+@Tag(name = "Pages - Items", description = "보관함 내부 화면(page) 전용 API")
 @RestController
-@RequestMapping("/page/folders")
+@RequestMapping("/page/items")
 @RequiredArgsConstructor
-public class PageFoldersController {
-
-    private final PageFoldersUseCase pageFoldersUseCase;
-
+public class PageItemsController {
+    private final PageItemsUseCase pageItemsUseCase;
 
     @Operation(
-            summary = "보관함 메모 화면 API - 화면이름 : 보관함-더보기-메모보기, 보관함 내부-상단 케밥 메뉴-메모보기"
+            summary = "보관함 내부 API - 화면이름 : 보관함-내부-링크, 보관함-내부-노트, 보관함-내부-파일, 보관함-내부-이미지"
     )
-    @GetMapping("/memo")
-    public ResponseEntity<PageFoldersMemoResponse> getOneFoldersMemo(
+    @GetMapping
+    public ResponseEntity<PageFoldersInItemsAllResponse> getOneFoldersMemo(
             @RequestParam("usersId") Long usersId,
             @RequestParam("foldersId") Long foldersId
     ) {
         return ResponseEntity.ok(
-                pageFoldersUseCase.getOneFoldersMemo(usersId, foldersId)
+                pageItemsUseCase.getOnFoldersInItemsAll(usersId, foldersId)
         );
     }
+
 }
