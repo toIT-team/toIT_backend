@@ -1,6 +1,7 @@
 package com.toit.schedules.dto.request;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -34,6 +35,7 @@ public class SchedulesCreateRequest {
 
     /** 시작 시간  */
     @Schema(type = "string", example = "09:00:00")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime startTime;
 
     /** 종료 날짜  */
@@ -41,6 +43,7 @@ public class SchedulesCreateRequest {
 
     /** 종료 시간 */
     @Schema(type = "string", example = "09:00:00")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime endTime;
 
     /** 설정한 위치  */

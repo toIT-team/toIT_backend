@@ -1,6 +1,7 @@
 package com.toit.schedules.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,10 +16,12 @@ public class SchedulesSelectedDayResponse {
 
     private String title;
 
-
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
+    @Schema(type = "string", example = "09:00:00")
     private LocalTime startTime;
 
-
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
+    @Schema(type = "string", example = "09:00:00")
     private LocalTime endTime;
 
     private String appColor;

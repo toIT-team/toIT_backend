@@ -14,7 +14,7 @@ import java.time.LocalTime;
 public class SchedulesUpdateRequest {
 
     /** * 수정할 스케줄의 ID*/
-    private Long userId;
+    private Long usersId;
 
     /** * 수정할 스케줄의 ID*/
     private Long schedulesId;
@@ -41,10 +41,12 @@ public class SchedulesUpdateRequest {
     private LocalDate endDate;
 
     /** 시작 시간  */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     @Schema(type = "string", example = "09:00:00")
     private LocalTime startTime;
 
     /** 종료 시간  */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     @Schema(type = "string", example = "09:00:00")
     private LocalTime endTime;
 
