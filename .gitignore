@@ -40,3 +40,6 @@ out/
 .DS_Store
 .env
 application-local.yml
+
+### Firebase Key (보안) ###
+src/main/resources/firebase/firebase-key.json

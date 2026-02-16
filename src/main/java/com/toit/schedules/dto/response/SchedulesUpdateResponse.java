@@ -1,5 +1,7 @@
 package com.toit.schedules.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,8 +29,12 @@ public class SchedulesUpdateResponse {
     /** 종료 날짜 */
     private LocalDate endDate;
     /** 시작 시간 */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
+    @Schema(type = "string", example = "09:00:00")
     private LocalTime startTime;
     /** 종료 시간 */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
+    @Schema(type = "string", example = "09:00:00")
     private LocalTime endTime;
     /** 위치 */
     private String location;
