@@ -1,4 +1,4 @@
-package com.toit.items.dto.request;
+package com.toit.contents.links.dto.request;
 
 import java.util.List;
 import lombok.AccessLevel;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ItemsLinkCreateRequest {
+public class LinksCreateInFoldersRequest {
     /** 사용자 ID */
     private Long usersId;
 
@@ -15,12 +15,11 @@ public class ItemsLinkCreateRequest {
     private List<Long> foldersIdList;
 
     /** 링크 URL */
-    private String filePath;
+    private String linksUrl;
 
-
-    public ItemsLinkCreateRequest(Long usersId, List<Long> foldersIdList, String filePath){
+    public LinksCreateInFoldersRequest(Long usersId, List<Long> foldersIdList, String linksUrl){
         this.usersId = usersId;
         this.foldersIdList = foldersIdList;
-        this.filePath = filePath;
+        this.linksUrl = linksUrl;
     }
 }

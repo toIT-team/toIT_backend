@@ -1,33 +1,26 @@
-package com.toit.items;
+package com.toit.contents.texts;
 
 import com.toit.common.enums.EntityStatus;
-import com.toit.common.enums.ItemsType;
-import com.toit.common.enums.StorageTarget;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface ItemsRepository extends JpaRepository<Items, Long>{
-
+public interface TextsRepository extends JpaRepository<Texts, Long> {
     /**
-     * 사용자의 하나의 폴더의 자료 List 조회
+     * 사용자의 Texts 테이블에서 하나의 폴더에서 여러 개 텍스트 조회
      */
     @Query("""
         select i
-        from Items i
+        from Texts i
         where i.users.usersId = :usersId
-          and i.storageTarget = :storageTarget
           and i.storageId = :foldersId
-          and i.itemsType = :itemsType
           and i.status = :status
         order by i.createdAt desc
     """)
-    List<Items> findFoldersItems(
+    List<Texts> findTextsInFolders(
             @Param("usersId") Long usersId,
-            @Param("storageTarget") StorageTarget storageTarget,
             @Param("foldersId") Long foldersId,
-            @Param("itemsType") ItemsType itemsType,
             @Param("status") EntityStatus status
     );
 }

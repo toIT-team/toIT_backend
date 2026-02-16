@@ -1,4 +1,4 @@
-package com.toit.items.dto.request;
+package com.toit.contents.texts.dto.request;
 
 import java.util.List;
 import lombok.AccessLevel;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ItemsTextCreateReqeust {
+public class TextsCreateInFoldersRequest {
     /** 사용자 ID */
     private Long usersId;
 
@@ -17,10 +17,9 @@ public class ItemsTextCreateReqeust {
     /** 텍스트 내용 */
     private String textContent;
 
-    public ItemsTextCreateReqeust(Long usersId, List<Long> foldersIdList, String textContent){
+    public TextsCreateInFoldersRequest(Long usersId, List<Long> foldersIdList, String textContent){
         this.usersId = usersId;
         this.foldersIdList = foldersIdList;
         this.textContent = textContent;
     }
-
 }

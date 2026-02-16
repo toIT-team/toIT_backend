@@ -1,4 +1,4 @@
-package com.toit.items.linkpreview;
+package com.toit.contents.shared.linkpreview;
 
 
 import org.jsoup.Jsoup;
