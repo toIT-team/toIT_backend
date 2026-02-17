@@ -1,33 +1,29 @@
-package com.toit.items;
+package com.toit.items.attachments;
 
+import com.toit.common.enums.AttachMentsType;
 import com.toit.common.enums.EntityStatus;
-import com.toit.common.enums.ItemsType;
-import com.toit.common.enums.StorageTarget;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface ItemsRepository extends JpaRepository<Items, Long>{
-
+public interface AttachMentsRepository extends JpaRepository<AttachMents, Long> {
     /**
-     * 사용자의 하나의 폴더의 자료 List 조회
+     * 사용자의 attachments 테이블에서 하나의 폴더에서 여러 개의 이미지 조회
      */
     @Query("""
         select i
-        from Items i
+        from AttachMents i
         where i.users.usersId = :usersId
-          and i.storageTarget = :storageTarget
+          and i.attachmentsType = :attachMentsType
           and i.storageId = :foldersId
-          and i.itemsType = :itemsType
           and i.status = :status
         order by i.createdAt desc
     """)
-    List<Items> findFoldersItems(
+    List<AttachMents> findAttachMentsInFolders(
             @Param("usersId") Long usersId,
-            @Param("storageTarget") StorageTarget storageTarget,
+            @Param("attachMentsType") AttachMentsType attachMentsType,
             @Param("foldersId") Long foldersId,
-            @Param("itemsType") ItemsType itemsType,
             @Param("status") EntityStatus status
     );
 }
