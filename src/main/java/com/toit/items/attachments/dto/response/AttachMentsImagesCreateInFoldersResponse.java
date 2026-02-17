@@ -9,58 +9,27 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AttachMentsImagesGetInFoldersResponse {
+public class AttachMentsImagesCreateInFoldersResponse{
     private Long attachmentsId;
-
     private Long usersId;
 
     /**
      * ENUM형태("IMAGE")
      */
     private AttachMentsType attachmentsType;
-
-    /**
-     * 같이 씀 - 파일 및 이미지 오브젝트 키(S3)
-     */
     private String objectKey;
-
-    /**
-     * 같이 씀 - 파일 및 이미지 미리보기 및 다운로드 경로
-     */
     private String presignedUrl;
-
-    /**
-     * 같이 씀 - 파일 및 이미지 확장자
-     */
-    private String attachmentsExtension;
-
-    /**
-     * 같이 씀 - 파일 및 이미지 DATA 크기
-     */
     private Double attachmentsSize;
-
-
     private String fileName;
-
-    /**
-     * attachments_type이 IMAGE일 경우 - 이미지의 넓이
-     */
     private Long imagesWidth;
-
-    /**
-     * attachments_type이 IMAGE일 경우 - 이미지의 높이
-     */
     private Long imagesHeight;
-
-    /**
-     * 자료 생성시간
-     */
+    private String attachmentsExtension;
     private LocalDateTime createdAt;
 
-    public AttachMentsImagesGetInFoldersResponse(Long attachmentsId, Long usersId, AttachMentsType attachmentsType,
-                                                String objectKey, String presignedUrl, String attachmentsExtension,
-                                                Double attachmentsSize,  String fileName, Long imagesWidth, Long imagesHeight,
-                                                 LocalDateTime createdAt){
+    public AttachMentsImagesCreateInFoldersResponse(Long attachmentsId, Long usersId, AttachMentsType attachmentsType,
+                                                 String objectKey, String presignedUrl, String attachmentsExtension,
+                                                 Double attachmentsSize,  String fileName, Long imagesWidth,
+                                                    Long imagesHeight, LocalDateTime createdAt){
         this.attachmentsId = attachmentsId;
         this.usersId = usersId;
         this.attachmentsType = attachmentsType;
@@ -74,7 +43,7 @@ public class AttachMentsImagesGetInFoldersResponse {
         this.createdAt = createdAt;
     }
 
-    public AttachMentsImagesGetInFoldersResponse(AttachMents attachments){
+    public AttachMentsImagesCreateInFoldersResponse(AttachMents attachments) {
         this.attachmentsId = attachments.getAttachmentsId();
         this.usersId = attachments.getUsers().getUsersId();
         this.attachmentsType = attachments.getAttachmentsType();
