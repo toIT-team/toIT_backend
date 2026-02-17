@@ -4,10 +4,11 @@ import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ItemsTextCreateReqeust {
+@NoArgsConstructor
+public class AttachMentsImagesCreateReqeust {
     /** 사용자 ID */
     private Long usersId;
 
@@ -17,10 +18,13 @@ public class ItemsTextCreateReqeust {
     /** 텍스트 내용 */
     private String textContent;
 
-    public ItemsTextCreateReqeust(Long usersId, List<Long> foldersIdList, String textContent){
+    private MultipartFile image;
+
+    public AttachMentsImagesCreateReqeust(Long usersId, List<Long> foldersIdList, String textContent, MultipartFile image){
         this.usersId = usersId;
         this.foldersIdList = foldersIdList;
         this.textContent = textContent;
+        this.image = image;
     }
 
 }
