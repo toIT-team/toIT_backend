@@ -1,9 +1,9 @@
 package com.toit.view.pageitems.dto.response;
 
-import com.toit.contents.attachments.dto.response.AttachMentsFoldersImagesResponse;
-import com.toit.contents.attachments.dto.response.ItemsFoldersInFilesResponse;
-import com.toit.contents.links.dto.response.LinksGetInFoldersResponse;
-import com.toit.contents.texts.dto.response.TextsGetInFoldersResponse;
+import com.toit.items.attachments.dto.response.AttachMentsImagesGetInFoldersResponse;
+import com.toit.items.attachments.dto.response.AttachMentsFilesGetInFoldersResponse;
+import com.toit.items.links.dto.response.LinksGetInFoldersResponse;
+import com.toit.items.texts.dto.response.TextsGetInFoldersResponse;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -18,12 +18,12 @@ public class PageFoldersInItemsAllResponse {
     private List<LinksGetInFoldersResponse> links;
     private List<TextsGetInFoldersResponse> texts;
 
-    private List<ItemsFoldersInFilesResponse> files;
+    private List<AttachMentsFilesGetInFoldersResponse> files;
 
-    private List<AttachMentsFoldersImagesResponse> images;
+    private List<AttachMentsImagesGetInFoldersResponse> images;
 
     public PageFoldersInItemsAllResponse(Long usersId, Long foldersId, List<LinksGetInFoldersResponse> links , List<TextsGetInFoldersResponse> texts,
-                                         List<ItemsFoldersInFilesResponse> files, List<AttachMentsFoldersImagesResponse> images){
+                                         List<AttachMentsFilesGetInFoldersResponse> files, List<AttachMentsImagesGetInFoldersResponse> images){
         this.usersId = usersId;
         this.foldersId = foldersId;
         this.links = links;
