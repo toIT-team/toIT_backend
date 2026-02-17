@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
@@ -54,4 +55,9 @@ public class SchedulesCreateRequest {
 
     /** 입력한 메모  */
     private String memo;
+
+    /***
+     * 알림 시간
+     */
+    private LocalDateTime alarmDateTime;
 }

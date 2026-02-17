@@ -1,5 +1,6 @@
 package com.toit.exception;
 
+import com.toit.exception.schedules.SchedulesNotFoundException;
 import com.toit.exception.users.UsersNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,15 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(UsersNotFoundException.class)
     public ResponseEntity<ErrorResponse> UsersNotFoundException(UsersNotFoundException ex) {
+        ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    /***
+     *Schedules -> 404, 일정을 찾을 수 없음
+     */
+    @ExceptionHandler(SchedulesNotFoundException.class)
+    public ResponseEntity<ErrorResponse> SchedulesNotFoundException(SchedulesNotFoundException ex) {
         ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
