@@ -1,4 +1,4 @@
-package com.toit.swagger.docs.links;
+package com.toit.swagger.docs.items.attachments;
 
 import com.toit.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,7 +16,27 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "링크 업로드 성공"),
+        @ApiResponse(responseCode = "200", description = "이미지 업로드 성공"),
+        @ApiResponse(
+                responseCode = "400",
+                description = "잘못된 요청",
+                content = @Content(
+                        mediaType = "application/json",
+                        schema = @Schema(implementation = ErrorResponse.class),
+                        examples = {
+                                @ExampleObject(
+                                        name = "UnsupportedImageTypeException",
+                                        summary = "잘못된 이미지 형식",
+                                        value = """
+                                        {
+                                          "code": 400,
+                                          "message": "이미지 파일만 업로드 가능합니다"
+                                        }
+                                        """
+                                )
+                        }
+                )
+        ),
         @ApiResponse(
                 responseCode = "404",
                 description = "존재하지 않음",
@@ -46,7 +66,25 @@ import java.lang.annotation.Target;
                                 )
                         }
                 )
+        ),
+        @ApiResponse(
+                responseCode = "500",
+                description = "서버 내부 오류",
+                content = @Content(
+                        mediaType = "application/json",
+                        schema = @Schema(implementation = ErrorResponse.class),
+                        examples = @ExampleObject(
+                                name = "AttachmentReadException",
+                                value = """
+                                {
+                                  "code": 500,
+                                  "message": "서버에서 파일을 읽지 못 했거나 size를 읽지 못 했습니다."
+                                }
+                                """
+                        )
+                )
         )
 })
-public @interface LinksCreateApiDocs {
+
+public @interface AttachMentsImagesUploadApiDocs {
 }

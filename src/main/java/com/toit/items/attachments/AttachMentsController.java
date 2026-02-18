@@ -2,8 +2,8 @@ package com.toit.items.attachments;
 
 import com.toit.items.attachments.dto.response.AttachMentsFilesCreateInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsImagesCreateInFoldersResponse;
-import com.toit.swagger.docs.attachments.AttachMentsFilesUploadApiDocs;
-import com.toit.swagger.docs.attachments.AttachMentsImagesUploadApiDocs;
+import com.toit.swagger.docs.items.attachments.AttachMentsFilesUploadApiDocs;
+import com.toit.swagger.docs.items.attachments.AttachMentsImagesUploadApiDocs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

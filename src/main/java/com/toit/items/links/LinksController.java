@@ -2,7 +2,7 @@ package com.toit.items.links;
 
 import com.toit.items.links.dto.request.LinksCreateInFoldersRequest;
 import com.toit.items.links.dto.response.LinksCreateInFoldersResponse;
-import com.toit.swagger.docs.links.LinksCreateApiDocs;
+import com.toit.swagger.docs.items.links.LinksCreateApiDocs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

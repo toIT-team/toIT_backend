@@ -1,4 +1,4 @@
-package com.toit.swagger.docs.attachments;
+package com.toit.swagger.docs.items.attachments;
 
 import com.toit.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.media.Content;
