@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -30,4 +31,13 @@ public interface SchedulesRepository extends JpaRepository<Schedules, Long> {
     List<Schedules> findSchedulesBetween(@Param("userId") Long userId,
                                          @Param("startDate") LocalDate startDate,
                                          @Param("endDate") LocalDate endDate);
+
+
+    /***
+     *  [추가] 알림 시간이 start와 end 사이인 일정 조회
+     *  스케줄러 실행할 메서드
+     */
+    @Query("select s from Schedules s join fetch s.users where s.alarmDateTime between :start and :end")
+    List<Schedules> findAllByAlarmDateTimeBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
 }

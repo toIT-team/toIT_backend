@@ -3,6 +3,7 @@ package com.toit.schedules;
 
 
 import com.toit.common.enums.EntityStatus;
+import com.toit.exception.schedules.SchedulesNotFoundException;
 import com.toit.folders.Folders;
 import com.toit.folders.FoldersRepository;
 import com.toit.folders.FoldersService;
@@ -15,11 +16,9 @@ import com.toit.user.UsersService;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -32,14 +31,12 @@ public class SchedulesService {
     private final FoldersRepository foldersRepository;
     private final FoldersService foldersService;
 
-    public Schedules findBySchedules(Long schedulesId){
-        Optional<Schedules> schedules = schedulesRepository.findById(schedulesId);
 
-        if (schedules.isPresent()) {
-            return schedules.get();
-        } else {
-            throw new IllegalArgumentException("존재하지 않는 일정입니다. usersId=" + schedulesId);
-        }
+    public Schedules findBySchedules(Long schedulesId){
+        return schedulesRepository.findById(schedulesId).
+                orElseThrow(()-> new SchedulesNotFoundException(
+                        "schedulesId 가 " + schedulesId +"인 해당 사용자를 찾을 수 없습니다."));
+
     }
 
     public ScheduleViewResponse getSchedule(Long usersId,Long schedulesId){
@@ -162,7 +159,8 @@ public class SchedulesService {
                 request.getLocation(),
                 request.getNotification(),
                 request.getMemo(),
-                user
+                user,
+                request.getAlarmDateTime()
         );
 
 
@@ -181,7 +179,7 @@ public class SchedulesService {
      * 스케줄 수정 로직
      * @param request
      */
-    @Transactional // 수정이 일어나므로 readOnly = false (기본값)
+    // 수정이 일어나므로 readOnly = false (기본값)
     public SchedulesUpdateResponse updateSchedules(SchedulesUpdateRequest request) {
 
         // 1. 스케줄 조회 (없으면 예외 발생)
@@ -207,7 +205,8 @@ public class SchedulesService {
                 request.getEndTime(),
                 request.getLocation(),
                 request.getNotification(),
-                request.getMemo()
+                request.getMemo(),
+                request.getAlarmDateTime()
         );
 
         // 5. 변경된 엔티티를 Response DTO로 변환하여 반환
@@ -223,7 +222,8 @@ public class SchedulesService {
                 schedule.getEndTime(),
                 schedule.getLocation(),
                 schedule.getNotification(),
-                schedule.getMemo()
+                schedule.getMemo(),
+                schedule.getAlarmDateTime()
         );
     }
 
