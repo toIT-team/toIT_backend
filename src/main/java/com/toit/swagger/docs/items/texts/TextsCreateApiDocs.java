@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "링크 업로드 성공"),
+        @ApiResponse(responseCode = "200", description = "텍스트 업로드 성공"),
         @ApiResponse(
                 responseCode = "404",
                 description = "존재하지 않음",
