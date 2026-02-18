@@ -1,16 +1,22 @@
 package com.toit.common.S3.attachmentprocessor;
 
+import com.toit.common.S3.config.S3Config;
 import com.toit.common.enums.AttachMentsType;
 import com.toit.exception.items.attachments.AttachmentReadException;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.time.Duration;
 import javax.imageio.ImageIO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 @Component
+@RequiredArgsConstructor
 public class ImageAttachmentProcessor implements AttachmentProcessor {
+    private final S3KeyFactory s3KeyFactory;
+    private final S3Config s3Storage;
 
     @Override
     public AttachMentsType supports() {
@@ -70,6 +76,30 @@ public class ImageAttachmentProcessor implements AttachmentProcessor {
             return "bin";
         }
         return cleanName.substring(lastDotIndex + 1).toLowerCase();
+    }
+
+    @Override
+    public StorageResult S3Store(Long usersId, AttachmentPayload payload){
+
+        /** 키 생성 확장자는 payload.getExtension() */
+        String objectKey = s3KeyFactory.imageKey(
+                usersId,
+                payload.getExt()
+        );
+
+        /** S3 업로드 */
+        s3Storage.S3upload(
+                objectKey,
+                new ByteArrayInputStream(payload.getBytes()),
+                payload.getAttachmentsExtension(),
+                payload.getAttachmentsSize().longValue()
+        );
+
+        /** presigned url 생성 (예: 30분) */
+        String presignedUrl =
+                s3Storage.presignGetUrl(objectKey, Duration.ofMinutes(30));
+
+        return new StorageResult(objectKey, presignedUrl);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.toit.exception;
 
 import com.toit.exception.items.attachments.AttachmentReadException;
+import com.toit.exception.items.attachments.UnsupportedFileTypeException;
 import com.toit.exception.items.attachments.UnsupportedImageTypeException;
 import com.toit.exception.users.UsersNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -30,9 +31,17 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
+    /**
+     * items의 file 지정된 파일이 아닐 경우 -> 400
+     */
+    @ExceptionHandler(UnsupportedFileTypeException.class)
+    public ResponseEntity<ErrorResponse> UnsupportedFileTypeException(UnsupportedFileTypeException ex) {
+        ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
 
     /**
-     * items의 Image 지정된 파일이 아닐 경우 -> 400
+     * items의 서버에서 이미지 및 파일을 읽지 못한 경우 -> 500
      */
     @ExceptionHandler(AttachmentReadException.class)
     public ResponseEntity<ErrorResponse> AttachmentReadException(AttachmentReadException ex) {
