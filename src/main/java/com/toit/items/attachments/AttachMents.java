@@ -2,6 +2,8 @@ package com.toit.items.attachments;
 
 import com.toit.common.enums.AttachMentsType;
 
+import com.toit.common.enums.EntityStatus;
+import com.toit.items.links.Links;
 import com.toit.items.shared.ItemsBase;
 import com.toit.user.Users;
 import jakarta.persistence.Column;
@@ -14,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.Getter;
 
 @Entity
@@ -56,21 +59,19 @@ public class AttachMents extends ItemsBase {
     private Double attachmentsSize;
 
     /**
-     * attachments_type이 FILE일 경우 - 파일의 이름
-     * 길이 제한 255
+     * 같이 씀 - 이름
      */
     private String fileName;
 
     /**
      * attachments_type이 IMAGE인 경우 - 이미지의 넓이
      */
-    private Double imagesWidth;
+    private Long imagesWidth;
 
     /**
      * attachments_type이 IMAGE인 경우 - 이미지의 높이
      */
-    private Double imagesHeight;
-
+    private Long imagesHeight;
 
     /**
      * Users와 N:1 관계 설정
@@ -78,5 +79,35 @@ public class AttachMents extends ItemsBase {
     @ManyToOne
     @JoinColumn(name = "users_id", nullable = false)
     private Users users;
+
+    public static AttachMents createImagesInFolders(
+            Users users,
+            Long foldersId,
+            String objectKey,
+            String presignedUrl,
+            String attachmentsExtension,
+            Double attachmentsSize,
+            String fileName,
+            String textContent,
+            Long width,
+            Long height
+
+    ) {
+        AttachMents attachments = new AttachMents();
+        attachments.attachmentsType = AttachMentsType.IMAGE;
+        attachments.objectKey = objectKey;
+        attachments.presignedUrl = presignedUrl;
+        attachments.attachmentsExtension = attachmentsExtension;
+        attachments.attachmentsSize = attachmentsSize;
+        attachments.fileName = fileName;
+        attachments.storageId = foldersId;
+        attachments.textContent = textContent;
+        attachments.status = EntityStatus.ACTIVE;
+        attachments.createdAt = LocalDateTime.now();
+        attachments.users = users;
+        attachments.imagesWidth = width;
+        attachments.imagesHeight = height;
+        return attachments;
+    }
 
 }
