@@ -1,4 +1,4 @@
-package com.toit.foldersview.dto.request;
+package com.toit.foldersviews.dto.request;
 
 import lombok.AccessLevel;
 import lombok.Getter;

@@ -1,6 +1,6 @@
-package com.toit.foldersview.dto.response;
+package com.toit.foldersviews.dto.response;
 
-import com.toit.foldersview.FoldersViews;
+import com.toit.foldersviews.FoldersViews;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;

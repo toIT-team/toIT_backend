@@ -2,8 +2,8 @@ package com.toit.view.pagehome;
 
 import com.toit.folders.FoldersService;
 import com.toit.folders.dto.response.FoldersItemResponse;
-import com.toit.foldersview.FoldersViewsService;
-import com.toit.foldersview.dto.response.RecentFoldersResponse;
+import com.toit.foldersviews.FoldersViewsService;
+import com.toit.foldersviews.dto.response.RecentFoldersResponse;
 import com.toit.schedules.SchedulesService;
 import com.toit.schedules.dto.response.SchedulesSelectedDayResponse;
 import com.toit.view.pagehome.dto.response.PageHomeViewResponse;

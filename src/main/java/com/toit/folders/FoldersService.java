@@ -111,6 +111,15 @@ public class FoldersService {
         }
     }
 
+    public Folders findById(Long foldersId){
+        Optional<Folders> folders = foldersRepository.findById(foldersId);
+        if (folders.isPresent()) {
+            return folders.get();
+        } else {
+            throw new FoldersNotFoundException(foldersId + "은 존재하지 않는 보관함입니다.");
+        }
+    }
+
     public void updateSoftDelete(Folders folders){
 
     }
