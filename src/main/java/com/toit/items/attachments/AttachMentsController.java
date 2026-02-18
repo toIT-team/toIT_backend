@@ -2,6 +2,8 @@ package com.toit.items.attachments;
 
 import com.toit.items.attachments.dto.response.AttachMentsFilesCreateInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsImagesCreateInFoldersResponse;
+import com.toit.swagger.docs.attachments.AttachMentsFilesUploadApiDocs;
+import com.toit.swagger.docs.attachments.AttachMentsImagesUploadApiDocs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -9,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,7 +29,7 @@ public class AttachMentsController {
             summary = "자료 이미지 추가 API - 화면이름 : 자료-이미지저장, 자료-이미지 저장_이미지추가",
             description = "자료 추가는 POST입니다."
     )
-
+    @AttachMentsImagesUploadApiDocs
     @PostMapping("/images")
     public ResponseEntity<List<AttachMentsImagesCreateInFoldersResponse>> createImagesInFolders(
             @RequestBody
@@ -50,6 +51,7 @@ public class AttachMentsController {
             summary = "자료 파일 추가 API - 화면이름 : 자료-파일저장",
             description = "자료 추가는 POST입니다."
     )
+    @AttachMentsFilesUploadApiDocs
     @PostMapping("files")
     public ResponseEntity<List<AttachMentsFilesCreateInFoldersResponse>> createFilesInFolders(
             @RequestBody
