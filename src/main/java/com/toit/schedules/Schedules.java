@@ -105,6 +105,12 @@ public class Schedules {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    /***
+     * 알림 시간 설정
+     */
+    @Column(nullable = true) // 255자 이상일 경우 TEXT 타입 권장
+    private LocalDateTime alarmDateTime;
+
     /**
      * 스케줄 서비스 상태가 DELETED 되면 업데이트
      */
@@ -125,7 +131,8 @@ public class Schedules {
     public Schedules(String title, String appColor, Folders folders,
                       Boolean timeSetting, LocalDate startDate, LocalDate endDate,
                       LocalTime startTime, LocalTime endTime,
-                      String location, Boolean notification, String memo, Users users) {
+                      String location, Boolean notification, String memo, Users users,
+                     LocalDateTime alarmDateTime) {
         this.title = title;
         this.appColor = appColor;
         this.folders = folders;
@@ -138,6 +145,7 @@ public class Schedules {
         this.notification = notification;
         this.memo = memo;
         this.users = users;
+        this.alarmDateTime = alarmDateTime;
         this.status = EntityStatus.ACTIVE; // 초기값 강제
         this.createdAt = LocalDateTime.now(); // 이 줄을 추가하세요!
     }
@@ -149,7 +157,8 @@ public class Schedules {
     public void update(String title, String appColor, Folders folders,
                        Boolean timeSetting, LocalDate startDate, LocalDate endDate,
                        LocalTime startTime, LocalTime endTime,
-                       String location, Boolean notification, String memo) {
+                       String location, Boolean notification, String memo,
+                       LocalDateTime alarmDateTime) {
         this.title = title;
         this.appColor = appColor;
         this.folders = folders; // 폴더가 변경되거나 null(폴더 없음)로 설정될 수 있음
@@ -161,6 +170,7 @@ public class Schedules {
         this.location = location;
         this.notification = notification;
         this.memo = memo;
+        this.alarmDateTime = alarmDateTime;
     }
 
     public EntityStatus changeStatusDelete(){

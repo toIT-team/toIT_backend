@@ -22,6 +22,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
+    /***
+     *Schedules -> 404, 일정을 찾을 수 없음
+     */
+    @ExceptionHandler(SchedulesNotFoundException.class)
+    public ResponseEntity<ErrorResponse> SchedulesNotFoundException(SchedulesNotFoundException ex) {
+        ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
     /**
      * items의 Image 지정된 파일이 아닐 경우 -> 400
      */

@@ -1,4 +1,4 @@
-package com.toit.config;
+package com.toit.fcm.config;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
