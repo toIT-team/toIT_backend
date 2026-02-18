@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
@@ -58,5 +59,7 @@ public class SchedulesUpdateRequest {
 
     /** 메모 */
     private String memo;
+
+    private LocalDateTime alarmDateTime;
 
 }

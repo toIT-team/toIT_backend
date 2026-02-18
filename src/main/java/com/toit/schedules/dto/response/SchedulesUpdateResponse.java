@@ -43,10 +43,12 @@ public class SchedulesUpdateResponse {
     /** 스케줄의 메모  */
     private String memo;
 
+    private LocalDateTime alarmDateTime;
+
     public SchedulesUpdateResponse(Long schedulesId, String title, String appColor, Long foldersId,
                                    Boolean timeSetting, LocalDate startDate, LocalDate endDate,
                                    LocalTime startTime, LocalTime endTime, String location,
-                                   Boolean notification, String memo) {
+                                   Boolean notification, String memo,LocalDateTime alarmDateTime) {
         this.schedulesId = schedulesId;
         this.title = title;
         this.appColor = appColor;
@@ -59,5 +61,6 @@ public class SchedulesUpdateResponse {
         this.location = location;
         this.notification = notification;
         this.memo = memo;
+        this.alarmDateTime = alarmDateTime;
     }
 }
