@@ -1,4 +1,4 @@
-package com.toit.foldersview;
+package com.toit.foldersviews;
 
 import java.util.List;
 import java.util.Optional;

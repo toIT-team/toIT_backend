@@ -1,5 +1,6 @@
 package com.toit.view.pagehome;
 
+import com.toit.swagger.docs.view.pagehome.PageHomeViewApiDocs;
 import com.toit.view.pagehome.dto.response.PageHomeViewResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,6 +23,7 @@ public class PageHomeViewController {
     @Operation(
             summary = "Home 화면 API - 화면이름 : 홈-일정, 홈-일정-연속, 홈-기본, 홈-일정"
     )
+    @PageHomeViewApiDocs
     @GetMapping
     public ResponseEntity<PageHomeViewResponse> getHome(
             @RequestParam("usersId") Long usersId,

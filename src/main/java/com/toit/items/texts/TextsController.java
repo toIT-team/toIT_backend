@@ -2,6 +2,7 @@ package com.toit.items.texts;
 
 import com.toit.items.texts.dto.request.TextsCreateInFoldersRequest;
 import com.toit.items.texts.dto.response.TextsCreateInFoldersResponse;
+import com.toit.swagger.docs.items.texts.TextsCreateApiDocs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class TextsController {
             summary = "자료 텍스트 추가 API - 화면이름 : 자료-노트저장",
             description = "자료 추가는 POST입니다."
     )
+    @TextsCreateApiDocs
     @PostMapping
     public ResponseEntity<TextsCreateInFoldersResponse> createTextsInFolders(
             @RequestBody TextsCreateInFoldersRequest request

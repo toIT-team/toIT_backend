@@ -1,5 +1,6 @@
 package com.toit.view.pagefolders;
 
+import com.toit.swagger.docs.view.pagefolders.PageFoldersApiDocs;
 import com.toit.view.pagefolders.dto.response.PageFoldersMemoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,6 +23,7 @@ public class PageFoldersController {
     @Operation(
             summary = "보관함 메모 화면 API - 화면이름 : 보관함-더보기-메모보기, 보관함 내부-상단 케밥 메뉴-메모보기"
     )
+    @PageFoldersApiDocs
     @GetMapping("/memo")
     public ResponseEntity<PageFoldersMemoResponse> getOneFoldersMemo(
             @RequestParam("usersId") Long usersId,

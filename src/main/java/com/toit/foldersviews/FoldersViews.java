@@ -1,4 +1,4 @@
-package com.toit.foldersview;
+package com.toit.foldersviews;
 
 import com.toit.folders.Folders;
 import com.toit.user.Users;
@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 @Table(name = "folders_views")

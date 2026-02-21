@@ -1,4 +1,4 @@
-package com.toit.common.S3;
+package com.toit.common.S3.attachmentprocessor;
 
 import org.springframework.stereotype.Component;
 
