@@ -39,6 +39,7 @@ public class SchedulesService {
 
     }
 
+    //일정 상세조회
     public ScheduleViewResponse getSchedule(Long usersId,Long schedulesId){
 
         usersService.findById(usersId);

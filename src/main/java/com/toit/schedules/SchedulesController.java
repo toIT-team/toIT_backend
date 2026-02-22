@@ -8,6 +8,7 @@ import com.toit.schedules.dto.request.SchedulesUpdateRequest;
 import com.toit.schedules.dto.response.SchedulesCreateResponse;
 import com.toit.schedules.dto.response.SchedulesDeleteResponse;
 import com.toit.schedules.dto.response.SchedulesUpdateResponse;
+import com.toit.swagger.docs.schedules.SchedulesApiDocs;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 public class SchedulesController {
     private final SchedulesService schedulesService;
 
-
     /***
      * 일정 생성
      */
@@ -29,6 +29,7 @@ public class SchedulesController {
             summary = "하나의 일정 생성 - 화면이름 : 캘린더 - 일정추가",
             description = "일정 생성은 POST입니다."
     )
+    @SchedulesApiDocs
     @PostMapping
     public ResponseEntity<SchedulesCreateResponse> createSchedule(
             @RequestBody SchedulesCreateRequest request
@@ -44,6 +45,7 @@ public class SchedulesController {
             description = "일정 수정은 PATCH입니다."
     )
     @PatchMapping
+    @SchedulesApiDocs
     public ResponseEntity<SchedulesUpdateResponse> updateSchedule(
             @RequestBody SchedulesUpdateRequest request
     ) {
@@ -58,10 +60,10 @@ public class SchedulesController {
             description = "일정  삭제는 DELETE입니다. 삭제 요청을 보낼 시에 Hard 삭제가 되지 않고 Soft 삭제가 일어납니다."
     )
     @DeleteMapping
+    @SchedulesApiDocs
     public ResponseEntity<SchedulesDeleteResponse> deleteSchedule(
             @RequestBody SchedulesDeleteRequest request
     ){
         return ResponseEntity.ok(schedulesService.deleteSchedule(request));
     }
-
 }
