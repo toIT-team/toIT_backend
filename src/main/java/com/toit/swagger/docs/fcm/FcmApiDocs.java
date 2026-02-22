@@ -22,7 +22,7 @@ import java.lang.annotation.*;
                         schema = @Schema(implementation = ErrorResponse.class),
                         examples = {
                                 @ExampleObject(
-                                        name = "SchedulesNotFound",
+                                        name = "UsersNotFound",
                                         summary = "사용자가 존재하지 않음",
                                         value = """
                                         {
