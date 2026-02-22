@@ -3,6 +3,7 @@ package com.toit.fcm;
 
 import com.toit.fcm.request.FcmCreateRequest;
 import com.toit.fcm.response.FcmCreateResponse;
+import com.toit.swagger.docs.fcm.FcmApiDocs;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +25,10 @@ public class FcmTokenController {
             description = "Token 생성은 POST입니다."
     )
     @PostMapping()
+    @FcmApiDocs
     public ResponseEntity<FcmCreateResponse> createFcmToken(
             @RequestBody @Valid FcmCreateRequest request
     ){
         return ResponseEntity.ok(fcmTokenService.createFcmToken(request));
-
     }
 }

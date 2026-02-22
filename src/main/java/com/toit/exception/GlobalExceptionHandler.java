@@ -81,6 +81,4 @@ public class GlobalExceptionHandler {
         ErrorResponse response = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
-
-
 }
