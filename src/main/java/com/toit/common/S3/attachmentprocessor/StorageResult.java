@@ -1,4 +1,4 @@
-package com.toit.common.S3.service;
+package com.toit.common.S3.attachmentprocessor;
 
 import lombok.Getter;
 

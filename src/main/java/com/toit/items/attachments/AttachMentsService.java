@@ -1,7 +1,6 @@
 package com.toit.items.attachments;
 
-import com.toit.common.S3.service.AttachmentStorageService;
-import com.toit.common.S3.service.StorageResult;
+import com.toit.common.S3.attachmentprocessor.StorageResult;
 import com.toit.common.S3.attachmentprocessor.AttachmentPayload;
 import com.toit.common.S3.attachmentprocessor.AttachmentProcessor;
 import com.toit.common.S3.attachmentprocessor.AttachmentProcessorRouter;
@@ -9,6 +8,7 @@ import com.toit.common.S3.attachmentvaildator.AttachmentValidator;
 import com.toit.common.enums.AttachMentsType;
 import com.toit.common.enums.EntityStatus;
 import com.toit.folders.FoldersService;
+import com.toit.items.attachments.dto.response.AttachMentsFilesCreateInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsImagesCreateInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsImagesGetInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsFilesGetInFoldersResponse;
@@ -29,7 +29,6 @@ public class AttachMentsService {
 
     private final AttachmentValidator attachmentValidator;
     private final AttachmentProcessorRouter processorRouter;
-    private final AttachmentStorageService attachmentStorageService;
 
     private final AttachMentsRepository attachMentsRepository;
 
@@ -59,11 +58,7 @@ public class AttachMentsService {
         /**
          * 이미지 똑같은 걸 여러 개의 폴더에 저장할 필요 없음 그래서 하나만 저장하고 DB에는 다 같은 걸로 진행
          */
-        StorageResult result =
-                attachmentStorageService.storeImage(
-                        usersId,
-                        payload
-                );
+        StorageResult result = processor.S3Store(usersId, payload);
 
         List<AttachMentsImagesCreateInFoldersResponse> responses = new ArrayList<>();
 
@@ -94,6 +89,59 @@ public class AttachMentsService {
         return responses;
     }
 
+    /**
+     * 파일 저장 메소드
+     * @param usersId
+     * @param foldersIdList
+     * @param textContent
+     * @param file
+     * @return
+     */
+    public List<AttachMentsFilesCreateInFoldersResponse> createFilesInFolders(Long usersId, List<Long> foldersIdList, String textContent, MultipartFile file) {
+        Users users = usersService.findById(usersId);
+        for (Long folderId : foldersIdList){
+            foldersService.findByFoldersIdAndUsers_UsersId(usersId, folderId);
+        }
+
+        /* 확장자 검사 */
+        attachmentValidator.validateFilesContentType(file.getContentType());
+
+        /** File 타입 Processor 가져오기 */
+        AttachmentProcessor processor = processorRouter.getProcessor(AttachMentsType.FILE);
+
+        /** 파일 처리 (bytes + width + height + 확장자 추출) */
+        AttachmentPayload payload = processor.getSizeWithDimensions(file);
+
+        /**
+         * 파일 똑같은 걸 여러 개의 폴더에 저장할 필요 없음 그래서 하나만 저장하고 DB에는 다 같은 걸로 진행
+         */
+        StorageResult result = processor.S3Store(usersId, payload);
+
+        List<AttachMentsFilesCreateInFoldersResponse> responses = new ArrayList<>();
+
+        for (Long folderId : foldersIdList) {
+            AttachMents entity =
+                    AttachMents.createImagesInFolders(
+                            users,
+                            folderId,
+                            result.getObjectKey(),
+                            result.getPresignedUrl(),
+                            payload.getAttachmentsExtension(),
+                            payload.getAttachmentsSize(),
+                            payload.getFileName(),
+                            textContent,
+                            payload.getWidth(),
+                            payload.getHeight()
+                    );
+
+            AttachMents saved = attachMentsRepository.save(entity);
+
+            responses.add(
+                    new AttachMentsFilesCreateInFoldersResponse(saved)
+            );
+        }
+        return responses;
+    }
 
     /**
      * 하나의 사용자 폴더 내부 FILES 조회

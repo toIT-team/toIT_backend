@@ -1,10 +1,19 @@
 package com.toit.common.S3.attachmentvaildator;
 
+import com.toit.exception.items.attachments.UnsupportedFileTypeException;
 import com.toit.exception.items.attachments.UnsupportedImageTypeException;
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AttachmentValidator {
+
+    private static final List<String> ALLOWED_TYPES_FILES = List.of(
+            "application/pdf",
+            "application/zip",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    );
 
     /**
      * 확장자 검사 -> 400에러 반환
@@ -12,6 +21,12 @@ public class AttachmentValidator {
     public void validateImageContentType(String contentType) {
         if (contentType == null || !contentType.startsWith("image/")) {
             throw new UnsupportedImageTypeException("이미지 파일만 업로드 가능합니다.");
+        }
+    }
+
+    public void validateFilesContentType(String contentType) {
+        if (contentType == null || !ALLOWED_TYPES_FILES.contains(contentType)) {
+            throw new UnsupportedFileTypeException("허용되지 않은 파일 형식입니다.");
         }
     }
 }

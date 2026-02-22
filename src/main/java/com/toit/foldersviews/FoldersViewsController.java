@@ -1,7 +1,8 @@
-package com.toit.foldersview;
+package com.toit.foldersviews;
 
-import com.toit.foldersview.dto.request.FoldersViewsRequest;
-import com.toit.foldersview.dto.response.FoldersViewsResponse;
+import com.toit.foldersviews.dto.request.FoldersViewsRequest;
+import com.toit.foldersviews.dto.response.FoldersViewsResponse;
+import com.toit.swagger.docs.foldersviews.FoldersViewsApiDocs;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ public class FoldersViewsController {
             summary = "최근 본 보관함 생성 API - 화면이름 : 보관함 내부",
             description = "화면이름이 보관함 내부는 없습니다. 보관함 내부에 들어가실 때 이 API 요청하시면 됩니다."
     )
+    @FoldersViewsApiDocs
     @PostMapping
     public ResponseEntity<FoldersViewsResponse> recordFoldersViews(
             @RequestBody FoldersViewsRequest request

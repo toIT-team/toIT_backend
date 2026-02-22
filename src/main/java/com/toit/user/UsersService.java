@@ -29,6 +29,6 @@ public class UsersService {
 
     public Users findById(Long usersId){
         return usersRepository.findById(usersId)
-                .orElseThrow(() -> new UsersNotFoundException("usersId가 " + usersId + "인 해당 사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new UsersNotFoundException(usersId + "은 존재하지 않는 사용자입니다."));
     }
 }

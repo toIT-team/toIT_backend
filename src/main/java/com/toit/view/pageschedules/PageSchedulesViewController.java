@@ -2,6 +2,7 @@ package com.toit.view.pageschedules;
 
 
 import com.toit.schedules.dto.response.ScheduleViewResponse;
+import com.toit.swagger.docs.schedules.SchedulesApiDocs;
 import com.toit.view.pageschedules.dto.response.PageSchedulesSearchResponse;
 import com.toit.view.pageschedules.dto.response.PageSchedulesSelectDayViewResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +27,7 @@ public class PageSchedulesViewController {
     @Operation(
             summary = "Schedules 화면 API - 화면이름 : 캘린더 - 홈"
     )
+    @SchedulesApiDocs
     @GetMapping("/search")
     public ResponseEntity<PageSchedulesSearchResponse> getSearchSchedules(
             @RequestParam("usersId") Long usersId,
@@ -40,13 +42,13 @@ public class PageSchedulesViewController {
     }
 
 
-
     /**
      * 선택한 날짜에 해당하는 일정 조회
      */
     @Operation(
             summary = "Schedules 화면 API - 화면이름 : 캘린더 - 일정 , 홈-일정"
     )
+    @SchedulesApiDocs
     @GetMapping("/selected")
     public ResponseEntity<PageSchedulesSelectDayViewResponse> getSelectedDaySchedules(
             @RequestParam("usersId") Long usersId,
@@ -64,6 +66,7 @@ public class PageSchedulesViewController {
     @Operation(
             summary = "Schedules 화면 API - 화면이름 : 캘린더 - 일정 상세"
     )
+    @SchedulesApiDocs
     @GetMapping
     public ResponseEntity<ScheduleViewResponse> getSchedule(
             @RequestParam("usersId") Long usersId,

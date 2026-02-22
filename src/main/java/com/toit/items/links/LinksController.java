@@ -2,6 +2,7 @@ package com.toit.items.links;
 
 import com.toit.items.links.dto.request.LinksCreateInFoldersRequest;
 import com.toit.items.links.dto.response.LinksCreateInFoldersResponse;
+import com.toit.swagger.docs.items.links.LinksCreateApiDocs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class LinksController {
             summary = "자료 링크 추가 API - 화면이름 : 자료-링크저장",
             description = "자료 추가는 POST입니다."
     )
+    @LinksCreateApiDocs
     @PostMapping
     public ResponseEntity<LinksCreateInFoldersResponse> createLinksInFolders(
             @RequestBody LinksCreateInFoldersRequest request

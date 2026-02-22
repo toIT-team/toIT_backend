@@ -1,10 +1,10 @@
-package com.toit.foldersview;
+package com.toit.foldersviews;
 
 import com.toit.folders.Folders;
 import com.toit.folders.FoldersRepository;
-import com.toit.foldersview.dto.request.FoldersViewsRequest;
-import com.toit.foldersview.dto.response.FoldersViewsResponse;
-import com.toit.foldersview.dto.response.RecentFoldersResponse;
+import com.toit.folders.FoldersService;
+import com.toit.foldersviews.dto.response.FoldersViewsResponse;
+import com.toit.foldersviews.dto.response.RecentFoldersResponse;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
 import java.util.List;
@@ -20,6 +20,7 @@ public class FoldersViewsService {
     private final FoldersViewsRepository foldersViewsRepository;
     private final UsersService usersService;
     private final FoldersRepository foldersRepository;
+    private final FoldersService foldersService;
 
     /**
      * 사용자가 본 폴더가 이미 리소스가 있으면 본 시간 업데이트
@@ -30,11 +31,8 @@ public class FoldersViewsService {
      */
     public FoldersViewsResponse recordFoldersViews(Long usersId, Long foldersId) {
         Users user = usersService.findById(usersId);
-        Folders folder = foldersRepository.findById(foldersId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 폴더입니다. folderId=" + foldersId));
-
-        Optional<FoldersViews> optionalViews =
-                foldersViewsRepository.findByUsers_UsersIdAndFolder_FoldersId(usersId, foldersId);
+        Folders folder = foldersService.findById(foldersId);
+        Optional<FoldersViews> optionalViews = findByUsers_UsersIdAndFolder_FoldersId(usersId, foldersId);
 
         FoldersViews result;
 
@@ -62,5 +60,9 @@ public class FoldersViewsService {
                 .stream()
                 .map(RecentFoldersResponse::new)
                 .toList();
+    }
+
+    private Optional<FoldersViews> findByUsers_UsersIdAndFolder_FoldersId(Long usersId, Long foldersId) {
+        return foldersViewsRepository.findByUsers_UsersIdAndFolder_FoldersId(usersId, foldersId);
     }
 }

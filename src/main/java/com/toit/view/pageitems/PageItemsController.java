@@ -1,5 +1,6 @@
 package com.toit.view.pageitems;
 
+import com.toit.swagger.docs.view.pageitems.PageItemsApiDocs;
 import com.toit.view.pageitems.dto.response.PageFoldersInItemsAllResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,6 +21,7 @@ public class PageItemsController {
     @Operation(
             summary = "보관함 내부 API - 화면이름 : 보관함-내부-링크, 보관함-내부-노트, 보관함-내부-파일, 보관함-내부-이미지"
     )
+    @PageItemsApiDocs
     @GetMapping
     public ResponseEntity<PageFoldersInItemsAllResponse> getOneFoldersMemo(
             @RequestParam("usersId") Long usersId,

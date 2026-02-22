@@ -1,5 +1,6 @@
 package com.toit.folders;
 
+import com.toit.exception.folders.FoldersNotFoundException;
 import com.toit.folders.dto.response.FoldersCreateResponse;
 import com.toit.folders.dto.response.FoldersDeleteResponse;
 import com.toit.folders.dto.response.FoldersItemResponse;
@@ -106,7 +107,16 @@ public class FoldersService {
         if (folders.isPresent()) {
             return folders.get();
         } else {
-            throw new IllegalArgumentException("존재하지 않는 보관함입니다. foldersId=" + foldersId);
+            throw new FoldersNotFoundException(foldersId + "은 존재하지 않는 보관함입니다.");
+        }
+    }
+
+    public Folders findById(Long foldersId){
+        Optional<Folders> folders = foldersRepository.findById(foldersId);
+        if (folders.isPresent()) {
+            return folders.get();
+        } else {
+            throw new FoldersNotFoundException(foldersId + "은 존재하지 않는 보관함입니다.");
         }
     }
 
