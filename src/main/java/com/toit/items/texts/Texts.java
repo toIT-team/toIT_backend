@@ -47,4 +47,8 @@ public class Texts extends ItemsBase {
         this.deletedAt = LocalDateTime.now();
     }
 
+    public void moveFolders(Long moveFoldersId){
+        this.storageId = moveFoldersId;
+    }
+
 }

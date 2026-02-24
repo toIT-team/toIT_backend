@@ -8,6 +8,7 @@ import com.toit.items.texts.dto.response.TextsCreateInFoldersResponse;
 import com.toit.items.texts.dto.response.TextsDeleteInFoldersResponse;
 import com.toit.items.texts.dto.response.TextsGetInFoldersResponse;
 import com.toit.folders.FoldersService;
+import com.toit.items.texts.dto.response.TextsMoveInFoldersResponse;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
 import java.util.ArrayList;
@@ -77,6 +78,18 @@ public class TextsService {
         textsRepository.save(texts);
         return new TextsDeleteInFoldersResponse(texts);
     }
+
+
+    public TextsMoveInFoldersResponse moveTextsInFolders(Long usersId, Long foldersId, Long moveFoldersId, Long textsId){
+        usersService.findById(usersId);
+        foldersService.findByFoldersIdAndUsers_UsersId(usersId, foldersId);
+        foldersService.findById(moveFoldersId);
+        Texts texts = findById(textsId);
+        texts.moveFolders(moveFoldersId);
+        textsRepository.save(texts);
+        return new TextsMoveInFoldersResponse(texts);
+    }
+
 
     /**
      * 텍스트 검색
