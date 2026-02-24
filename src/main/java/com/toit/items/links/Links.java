@@ -68,4 +68,9 @@ public class Links extends ItemsBase {
         return links;
     }
 
+    public void softDelete() {
+        this.status = EntityStatus.DELETED;
+        this.deletedAt = LocalDateTime.now();
+    }
+
 }

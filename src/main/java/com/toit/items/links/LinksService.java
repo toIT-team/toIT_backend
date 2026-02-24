@@ -1,15 +1,21 @@
 package com.toit.items.links;
 
 import com.toit.common.enums.EntityStatus;
+import com.toit.exception.items.links.LinksNotFoundException;
+import com.toit.exception.items.texts.TextsNotFoundException;
 import com.toit.items.links.dto.response.LinksCreateInFoldersResponse;
+import com.toit.items.links.dto.response.LinksDeleteInFoldersResponse;
 import com.toit.items.links.dto.response.LinksGetInFoldersResponse;
 import com.toit.items.shared.linkpreview.LinkPreview;
 import com.toit.items.shared.linkpreview.LinkPreviewExtractor;
 import com.toit.folders.FoldersService;
+import com.toit.items.texts.Texts;
+import com.toit.items.texts.dto.response.TextsDeleteInFoldersResponse;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -85,6 +91,32 @@ public class LinksService {
             result.add(new LinksGetInFoldersResponse(link));
         }
         return result;
+    }
+
+    /**
+     * 링크 삭제(소프트 삭제)
+     */
+    public LinksDeleteInFoldersResponse deleteLinksInFolders(Long usersId, Long foldersId, Long linksId){
+        usersService.findById(usersId);
+        foldersService.findByFoldersIdAndUsers_UsersId(usersId, foldersId);
+        Links links = findById(linksId);
+        links.softDelete();
+        linksRepository.save(links);
+        return new LinksDeleteInFoldersResponse(links);
+    }
+
+    /**
+     * 링크 찾기
+     * @param linksId
+     * @return
+     */
+    public Links findById(Long linksId){
+        Optional<Links> links = linksRepository.findById(linksId);
+        if (links.isPresent()) {
+            return links.get();
+        } else {
+            throw new LinksNotFoundException(linksId + "는 존재하지 않는 링크입니다.");
+        }
     }
 
 
