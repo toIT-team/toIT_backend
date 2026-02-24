@@ -2,14 +2,18 @@ package com.toit.items.links;
 
 import com.toit.items.links.dto.request.LinksCreateInFoldersRequest;
 import com.toit.items.links.dto.request.LinksDeleteInFoldersRequest;
+import com.toit.items.links.dto.request.LinksMoveInFoldersRequest;
 import com.toit.items.links.dto.response.LinksCreateInFoldersResponse;
 import com.toit.items.links.dto.response.LinksDeleteInFoldersResponse;
+import com.toit.items.links.dto.response.LinksMoveInFoldersResponse;
 import com.toit.swagger.docs.items.links.LinksCreateApiDocs;
+import com.toit.swagger.docs.items.links.LinksDeleteApiDocs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,11 +46,26 @@ public class LinksController {
             summary = "자료 링크 삭제 API - 화면이름 : 링크 미트볼메뉴",
             description = "자료 추가는 DELETE입니다."
     )
-    @LinksCreateApiDocs
+    @LinksDeleteApiDocs
     @DeleteMapping
     public ResponseEntity<LinksDeleteInFoldersResponse> deleteLinksInFolders(
             @RequestBody LinksDeleteInFoldersRequest request
     ){
         return ResponseEntity.ok(linksService.deleteLinksInFolders(request.getUsersId(), request.getFoldersId(), request.getLinksId()));
+    }
+
+    /**
+     * <h2>items의 link 보관함 이동 컨트롤러</h2>
+     */
+    @Operation(
+            summary = "자료 링크 보관함 이동 API - 화면이름 : 링크 미트볼메뉴",
+            description = "자료 추가는 PATCHE입니다."
+    )
+    @LinksDeleteApiDocs
+    @PatchMapping
+    public ResponseEntity<LinksMoveInFoldersResponse> moveLinksInFolders(
+            @RequestBody LinksMoveInFoldersRequest request
+            ){
+        return ResponseEntity.ok(linksService.moveLinksInFolders(request.getUsersId(), request.getFoldersId(), request.getMoveFoldersId(), request.getLinksId()));
     }
 }

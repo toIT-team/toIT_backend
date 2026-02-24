@@ -6,11 +6,13 @@ import com.toit.exception.items.texts.TextsNotFoundException;
 import com.toit.items.links.dto.response.LinksCreateInFoldersResponse;
 import com.toit.items.links.dto.response.LinksDeleteInFoldersResponse;
 import com.toit.items.links.dto.response.LinksGetInFoldersResponse;
+import com.toit.items.links.dto.response.LinksMoveInFoldersResponse;
 import com.toit.items.shared.linkpreview.LinkPreview;
 import com.toit.items.shared.linkpreview.LinkPreviewExtractor;
 import com.toit.folders.FoldersService;
 import com.toit.items.texts.Texts;
 import com.toit.items.texts.dto.response.TextsDeleteInFoldersResponse;
+import com.toit.items.texts.dto.response.TextsMoveInFoldersResponse;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
 import java.util.ArrayList;
@@ -104,6 +106,20 @@ public class LinksService {
         linksRepository.save(links);
         return new LinksDeleteInFoldersResponse(links);
     }
+
+    /**
+     * 링크 보관함 이동
+     */
+    public LinksMoveInFoldersResponse moveLinksInFolders(Long usersId, Long foldersId, Long moveFoldersId, Long linksId){
+        usersService.findById(usersId);
+        foldersService.findByFoldersIdAndUsers_UsersId(usersId, foldersId);
+        foldersService.findById(moveFoldersId);
+        Links links = findById(linksId);
+        links.moveFolders(moveFoldersId);
+        linksRepository.save(links);
+        return new LinksMoveInFoldersResponse(links);
+    }
+
 
     /**
      * 링크 찾기
