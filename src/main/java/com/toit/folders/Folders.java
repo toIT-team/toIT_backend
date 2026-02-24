@@ -26,7 +26,6 @@ import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 @Table(name = "folders")
-@Where(clause = "status = 'ACTIVE'")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Folders {

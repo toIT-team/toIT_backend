@@ -1,5 +1,6 @@
 package com.toit.folders;
 
+import com.toit.common.enums.EntityStatus;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,4 +12,6 @@ public interface FoldersRepository extends  JpaRepository<Folders, Long>{
     List<Folders> findByUsers_UsersId(Long usersId);
 
     Optional<Folders> findByFoldersIdAndUsers_UsersId(Long foldersId, Long usersId);
+
+    List<Folders> findByUsers_UsersIdAndStatus(Long usersId, EntityStatus status);
 }

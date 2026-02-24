@@ -1,5 +1,6 @@
 package com.toit.folders;
 
+import com.toit.common.enums.EntityStatus;
 import com.toit.exception.folders.FoldersNotFoundException;
 import com.toit.folders.dto.response.FoldersCreateResponse;
 import com.toit.folders.dto.response.FoldersDeleteResponse;
@@ -30,7 +31,7 @@ public class FoldersService {
      */
     public List<FoldersItemResponse> getAllFoldersByUser(Long usersId) {
         usersService.findById(usersId);
-        List<FoldersItemResponse> folders = foldersRepository.findByUsers_UsersId(usersId)
+        List<FoldersItemResponse> folders = foldersRepository.findByUsers_UsersIdAndStatus(usersId, EntityStatus.ACTIVE)
                 .stream()
                 .map(FoldersItemResponse::new)
                 .toList();
