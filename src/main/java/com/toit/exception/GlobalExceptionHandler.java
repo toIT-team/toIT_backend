@@ -4,6 +4,7 @@ import com.toit.exception.folders.FoldersNotFoundException;
 import com.toit.exception.items.attachments.AttachmentReadException;
 import com.toit.exception.items.attachments.UnsupportedFileTypeException;
 import com.toit.exception.items.attachments.UnsupportedImageTypeException;
+import com.toit.exception.items.texts.TextsNotFoundException;
 import com.toit.exception.schedules.SchedulesNotFoundException;
 import com.toit.exception.users.UsersNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -61,7 +62,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UnsupportedImageTypeException.class)
     public ResponseEntity<ErrorResponse> UnsupportedImageTypeException(UnsupportedImageTypeException ex) {
         ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -70,7 +71,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UnsupportedFileTypeException.class)
     public ResponseEntity<ErrorResponse> UnsupportedFileTypeException(UnsupportedFileTypeException ex) {
         ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -79,6 +80,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AttachmentReadException.class)
     public ResponseEntity<ErrorResponse> AttachmentReadException(AttachmentReadException ex) {
         ErrorResponse response = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * items의 서버에서 텍스트가 없는 경우 -> 404
+     */
+    @ExceptionHandler(TextsNotFoundException.class)
+    public ResponseEntity<ErrorResponse> TextsNotFoundException(TextsNotFoundException ex) {
+        ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
+
+
 }

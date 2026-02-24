@@ -42,5 +42,5 @@ public abstract class ItemsBase {
      * 자료 서비스 상태가 DELETED 되면 업데이트
      */
     @Column(nullable = true)
-    private LocalDateTime deletedAt;
+    protected LocalDateTime deletedAt;
 }

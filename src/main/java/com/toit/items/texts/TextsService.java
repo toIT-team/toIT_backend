@@ -1,13 +1,18 @@
 package com.toit.items.texts;
 
 import com.toit.common.enums.EntityStatus;
+import com.toit.exception.folders.FoldersNotFoundException;
+import com.toit.exception.items.texts.TextsNotFoundException;
+import com.toit.folders.Folders;
 import com.toit.items.texts.dto.response.TextsCreateInFoldersResponse;
+import com.toit.items.texts.dto.response.TextsDeleteInFoldersResponse;
 import com.toit.items.texts.dto.response.TextsGetInFoldersResponse;
 import com.toit.folders.FoldersService;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -59,6 +64,32 @@ public class TextsService {
             result.add(new TextsGetInFoldersResponse(item));
         }
         return result;
+    }
+
+    /**
+     * 하나의 사용자 폴더 내부 텍스트 삭제
+     */
+    public TextsDeleteInFoldersResponse deleteTextsInFolders(Long usersId, Long foldersId, Long textsId){
+        usersService.findById(usersId);
+        foldersService.findByFoldersIdAndUsers_UsersId(usersId, foldersId);
+        Texts texts = findById(textsId);
+        texts.softDelete();
+        textsRepository.save(texts);
+        return new TextsDeleteInFoldersResponse(texts);
+    }
+
+    /**
+     * 텍스트 검색
+     * @param textsId
+     * @return
+     */
+    public Texts findById(Long textsId){
+        Optional<Texts> texts = textsRepository.findById(textsId);
+        if (texts.isPresent()) {
+            return texts.get();
+        } else {
+            throw new TextsNotFoundException(textsId + "는 존재하지 않는 노트입니다.");
+        }
     }
 
 }

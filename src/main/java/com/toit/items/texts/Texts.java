@@ -42,4 +42,9 @@ public class Texts extends ItemsBase {
         return texts;
     }
 
+    public void softDelete() {
+        this.status = EntityStatus.DELETED;
+        this.deletedAt = LocalDateTime.now();
+    }
+
 }
