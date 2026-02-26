@@ -41,7 +41,6 @@ class SchedulesServiceTest {
                 LocalDate.now(),
                 null,
                 null,
-                "기존 장소",
                 true, // notification (핵심: 기존에는 알림이 켜져 있었음!)
                 "기존 메모",
                 null,
@@ -64,7 +63,6 @@ class SchedulesServiceTest {
                 LocalDate.now(),
                 null,
                 null,
-                "테스트 장소",
                 false,                  // notification  (핵심: 알림 끄기)
                 "테스트 메모",
                 LocalDateTime.of(2026, 2, 22, 13, 50) // alarmDateTime (시간은 그대로 보내게 됨)
@@ -72,7 +70,6 @@ class SchedulesServiceTest {
 
         // [When] 실제 서비스의 업데이트 로직 실행
         schedulesService.updateSchedules(request);
-
 
         // [Then] 결과 검증
         assertFalse(existingSchedule.getNotification(), "알림 플래그는 false여야 합니다.");

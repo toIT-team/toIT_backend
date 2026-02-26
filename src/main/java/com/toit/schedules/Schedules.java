@@ -69,12 +69,6 @@ public class Schedules {
     @Column(nullable = true)
     private LocalTime endTime;
 
-    /**
-     * 스케줄 제목
-     * 길이 제한 255
-     */
-    @Column(nullable = false)
-    private String location;
 
     /**
      * 보관함 서비스 상태
@@ -131,7 +125,7 @@ public class Schedules {
     public Schedules(String title, String appColor, Folders folders,
                       Boolean timeSetting, LocalDate startDate, LocalDate endDate,
                       LocalTime startTime, LocalTime endTime,
-                      String location, Boolean notification, String memo, Users users,
+                     Boolean notification, String memo, Users users,
                      LocalDateTime alarmDateTime) {
         this.title = title;
         this.appColor = appColor;
@@ -141,7 +135,6 @@ public class Schedules {
         this.endDate = endDate;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.location = location;
         this.notification = notification;
         this.memo = memo;
         this.users = users;
@@ -156,8 +149,7 @@ public class Schedules {
      */
     public void update(String title, String appColor, Folders folders,
                        Boolean timeSetting, LocalDate startDate, LocalDate endDate,
-                       LocalTime startTime, LocalTime endTime,
-                       String location, Boolean notification, String memo,
+                       LocalTime startTime, LocalTime endTime, Boolean notification, String memo,
                        LocalDateTime alarmDateTime) {
         this.title = title;
         this.appColor = appColor;
@@ -167,7 +159,6 @@ public class Schedules {
         this.endDate = endDate;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.location = location;
         this.notification = notification;
         this.memo = memo;
         this.alarmDateTime = notification ? alarmDateTime : null;
