@@ -47,8 +47,6 @@ public class SchedulesCreateRequest {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime endTime;
 
-    /** 설정한 위치  */
-    private String location;
 
     /** 알림 설정 */
     private Boolean notification;

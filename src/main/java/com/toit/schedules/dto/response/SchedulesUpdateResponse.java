@@ -36,8 +36,6 @@ public class SchedulesUpdateResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     @Schema(type = "string", example = "09:00:00")
     private LocalTime endTime;
-    /** 위치 */
-    private String location;
     /** 알림 설정 */
     private Boolean notification;
     /** 스케줄의 메모  */
@@ -47,7 +45,7 @@ public class SchedulesUpdateResponse {
 
     public SchedulesUpdateResponse(Long schedulesId, String title, String appColor, Long foldersId,
                                    Boolean timeSetting, LocalDate startDate, LocalDate endDate,
-                                   LocalTime startTime, LocalTime endTime, String location,
+                                   LocalTime startTime, LocalTime endTime,
                                    Boolean notification, String memo,LocalDateTime alarmDateTime) {
         this.schedulesId = schedulesId;
         this.title = title;
@@ -58,7 +56,6 @@ public class SchedulesUpdateResponse {
         this.endDate = endDate;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.location = location;
         this.notification = notification;
         this.memo = memo;
         this.alarmDateTime = alarmDateTime;
