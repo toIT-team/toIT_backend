@@ -14,6 +14,7 @@ import java.time.LocalTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SchedulesUpdateRequest {
 
+
     /** * 수정할 스케줄의 ID*/
     private Long usersId;
 
@@ -61,5 +62,26 @@ public class SchedulesUpdateRequest {
     private String memo;
 
     private LocalDateTime alarmDateTime;
+
+
+    public SchedulesUpdateRequest(Long usersId, Long schedulesId, String title, String appColor,
+                                  Long foldersId, Boolean timeSetting, LocalDate startDate,
+                                  LocalDate endDate, LocalTime startTime, LocalTime endTime, String location,
+                                  Boolean notification, String memo, LocalDateTime alarmDateTime) {
+        this.usersId = usersId;
+        this.schedulesId = schedulesId;
+        this.title = title;
+        this.appColor = appColor;
+        this.foldersId = foldersId;
+        this.timeSetting = timeSetting;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.location = location;
+        this.notification = notification;
+        this.memo = memo;
+        this.alarmDateTime = alarmDateTime;
+    }
 
 }

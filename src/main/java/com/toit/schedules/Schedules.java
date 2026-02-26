@@ -170,7 +170,7 @@ public class Schedules {
         this.location = location;
         this.notification = notification;
         this.memo = memo;
-        this.alarmDateTime = alarmDateTime;
+        this.alarmDateTime = notification ? alarmDateTime : null;
     }
 
     public EntityStatus changeStatusDelete(){
