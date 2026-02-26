@@ -18,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,7 +59,6 @@ public class SchedulesService {
                 schedules.getEndDate(),
                 schedules.getStartTime(),
                 schedules.getEndTime(),
-                schedules.getLocation(),
                 schedules.getNotification(),
                 schedules.getMemo()
         );
@@ -154,7 +152,6 @@ public class SchedulesService {
                 request.getEndDate(),
                 request.getStartTime(),
                 request.getEndTime(),
-                request.getLocation(),
                 request.getNotification(),
                 request.getMemo(),
                 user,
@@ -201,7 +198,6 @@ public class SchedulesService {
                 request.getEndDate(),
                 request.getStartTime(),
                 request.getEndTime(),
-                request.getLocation(),
                 request.getNotification(),
                 request.getMemo(),
                 request.getAlarmDateTime()
@@ -218,7 +214,6 @@ public class SchedulesService {
                 schedule.getEndDate(),
                 schedule.getStartTime(),
                 schedule.getEndTime(),
-                schedule.getLocation(),
                 schedule.getNotification(),
                 schedule.getMemo(),
                 schedule.getAlarmDateTime()

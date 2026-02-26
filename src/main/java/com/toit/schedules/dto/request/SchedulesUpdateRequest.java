@@ -52,8 +52,6 @@ public class SchedulesUpdateRequest {
     @Schema(type = "string", example = "09:00:00")
     private LocalTime endTime;
 
-    /** 장소 */
-    private String location;
 
     /** 알림 설정 여부 */
     private Boolean notification;
@@ -66,7 +64,7 @@ public class SchedulesUpdateRequest {
 
     public SchedulesUpdateRequest(Long usersId, Long schedulesId, String title, String appColor,
                                   Long foldersId, Boolean timeSetting, LocalDate startDate,
-                                  LocalDate endDate, LocalTime startTime, LocalTime endTime, String location,
+                                  LocalDate endDate, LocalTime startTime, LocalTime endTime,
                                   Boolean notification, String memo, LocalDateTime alarmDateTime) {
         this.usersId = usersId;
         this.schedulesId = schedulesId;
@@ -78,7 +76,6 @@ public class SchedulesUpdateRequest {
         this.endDate = endDate;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.location = location;
         this.notification = notification;
         this.memo = memo;
         this.alarmDateTime = alarmDateTime;

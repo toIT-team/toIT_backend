@@ -56,7 +56,6 @@ public class PageSchedulesUseCaseImpl implements PageSchedulesUseCase {
                 schedule.getEndDate(),
                 schedule.getStartTime(),
                 schedule.getEndTime(),
-                schedule.getLocation(),
                 schedule.getNotification(),
                 schedule.getMemo()
         );

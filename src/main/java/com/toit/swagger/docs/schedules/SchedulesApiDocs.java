@@ -41,12 +41,21 @@ import java.lang.annotation.*;
                                           "message": "1은 존재하지 않는 일정입니다."
                                         }
                                         """
+                                ),
+                                @ExampleObject(
+                                        name = "FoldersNotFound",
+                                        summary = "폴더가 존재하지 않음",
+                                        value = """
+                                        {
+                                          "code": 404,
+                                          "message": "1은 존재하지 않는 폴더입니다."
+                                        }
+                                        """
                                 )
                         }
                 )
         )
 })
-
 
 public @interface SchedulesApiDocs {
 }
