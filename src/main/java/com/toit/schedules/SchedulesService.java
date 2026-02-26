@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -97,9 +98,6 @@ public class SchedulesService {
         return scheduleDto;
     }
 
-
-
-
     /** 시작날짜 ~ 종료날짜 사이 일정 조회 */
     public List<SchedulesMonthResponse> getSearchSchedules(Long usersId,LocalDate startDate, LocalDate endDate) {
         // 1. DB 조회 (기간 내 겹치는 모든 일정 가져오기)
@@ -128,7 +126,6 @@ public class SchedulesService {
     /***
      * 생성 영역 ------
      */
-
     /***
      *
      * @param request
