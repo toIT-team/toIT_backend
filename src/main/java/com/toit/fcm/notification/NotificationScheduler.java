@@ -29,18 +29,18 @@ public class NotificationScheduler {
      */
     @Scheduled(cron = "0 * * * * *")
     public void checkAndSendAlerts() {
-        // 1. 현재 시간의 '분(Minute)' 범위를 구한다. (예: 14:00:00 ~ 14:00:59)
+        // 현재 시간의 '분(Minute)' 범위를 구한다. (예: 14:00:00 ~ 14:00:59)
         LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
         LocalDateTime nextMinute = now.plusMinutes(1);
         log.info(" 스케줄러 조회 시간: {}", now);
-        List<Schedules> schedules = schedulesRepository.findAllByAlarmDateTimeBetween(now, nextMinute);
+        List<Schedules> schedules = schedulesRepository.findTargetSchedules(now, nextMinute);
 
         if (schedules.isEmpty()) return; // 보낼 게 없으면 종료
 
         log.info("알림 발송 작업 시작: 총 {}건 예정", schedules.size());
 
         for (Schedules schedule : schedules) {
-            // 3. 해당 유저의 모든 토큰을 가져온다. (폰, 태블릿 등 여러 기기일 수 있음)
+            //  해당 유저의 모든 토큰을 가져온다. (폰, 태블릿 등 여러 기기일 수 있음)
             // 주의: FcmTokenRepository에 'findAllByUsers' 메서드가 있어야 한다.
             List<FcmToken> tokens = fcmTokenRepository.findAllByUsers(schedule.getUsers());
 
@@ -49,14 +49,26 @@ public class NotificationScheduler {
                 continue;
             }
 
-            // 4. 알림 내용 구성
-            String title = "일정 제목";
-            String body = schedule.getTitle() + " 일정 내용 ";
+            //  알림 내용 구성
+            String title = schedule.getTitle();
+            String rawMemo = schedule.getMemo();
+            String body;
 
-            // 5. 각 토큰으로 알림 전송
+            if (rawMemo == null || rawMemo.isBlank()) {
+                body = "일정 시간이 되었습니다.";
+            } else {
+                // 메모가 100자보다 길면 자르고 "..." 추가
+                body = (rawMemo.length() > 100) ? rawMemo.substring(0, 100) + "..." : rawMemo;
+            }
+
+
+            //  각 토큰으로 알림 전송
             for (FcmToken fcmToken : tokens) {
                 sendFcmMessage(fcmToken, title, body);
             }
+
+            // 발송 성공 후 상태 변경
+            schedule.markAsSent();
         }
     }
 
