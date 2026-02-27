@@ -37,16 +37,25 @@ public class SchedulesUpdateResponse {
     @Schema(type = "string", example = "09:00:00")
     private LocalTime endTime;
     /** 알림 설정 */
-    private Boolean notification;
+
     /** 스케줄의 메모  */
     private String memo;
+    /***
+     * 알림 설정 여부 (켰는지 , 안 켰는지)
+     */
+    private Boolean alarmState;
 
-    private LocalDateTime alarmDateTime;
+    /***
+     * 정수타입의 몇분전에 알림을 설정 했는지 (5분,10분 , 직접 설정)
+     */
+    private Long alarmOffsetMinutes;
+
+
 
     public SchedulesUpdateResponse(Long schedulesId, String title, String appColor, Long foldersId,
                                    Boolean timeSetting, LocalDate startDate, LocalDate endDate,
                                    LocalTime startTime, LocalTime endTime,
-                                   Boolean notification, String memo,LocalDateTime alarmDateTime) {
+                                  String memo, Boolean alarmState,Long alarmOffsetMinutes) {
         this.schedulesId = schedulesId;
         this.title = title;
         this.appColor = appColor;
@@ -56,8 +65,8 @@ public class SchedulesUpdateResponse {
         this.endDate = endDate;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.notification = notification;
         this.memo = memo;
-        this.alarmDateTime = alarmDateTime;
+        this.alarmState = alarmState;
+        this.alarmOffsetMinutes = alarmOffsetMinutes;
     }
 }

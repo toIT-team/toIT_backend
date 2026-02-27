@@ -3,6 +3,7 @@ package com.toit.schedules.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,9 +50,16 @@ public class ScheduleViewResponse {
     private LocalTime endTime;
 
 
+    /***
+     * 알림 설정 여부 (켰는지 , 안 켰는지)
+     */
+    @Column(nullable = false)
+    private Boolean alarmState;
 
-    /** 알림 설정 */
-    private Boolean notification;
+    /***
+     * 정수타입의 몇분전에 알림을 설정 했는지 (5분,10분 , 직접 설정)
+     */
+    private Long alarmOffsetMinutes;
 
     /** 스케줄의 메모  */
     private String memo;
@@ -62,7 +70,7 @@ public class ScheduleViewResponse {
                                 Boolean timeSetting, LocalDate startDate,
                                 LocalDate endDate, LocalTime startTime,
                                 LocalTime endTime,
-                                Boolean notification, String memo) {
+                                 String memo,Boolean alarmState,Long alarmOffsetMinutes ) {
         this.userId = userId;
         this.schedulesId = schedulesId;
         this.title = title;
@@ -73,7 +81,8 @@ public class ScheduleViewResponse {
         this.endDate = endDate;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.notification = notification;
         this.memo = memo;
+        this.alarmState =alarmState;
+        this.alarmOffsetMinutes = alarmOffsetMinutes;
     }
 }
