@@ -77,7 +77,7 @@ public class Schedules {
      */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private EntityStatus status = EntityStatus.ACTIVE;
+    private EntityStatus status;
 
     /**
      * 알림 설정
@@ -111,6 +111,9 @@ public class Schedules {
     @Column(nullable = true)
     private LocalDateTime deletedAt;
 
+    @Column(nullable = false)
+    private Boolean isSent;
+
 
     /**
      * Users와 N:1 관계 설정
@@ -140,7 +143,8 @@ public class Schedules {
         this.users = users;
         this.alarmDateTime = alarmDateTime;
         this.status = EntityStatus.ACTIVE; // 초기값 강제
-        this.createdAt = LocalDateTime.now(); // 이 줄을 추가하세요!
+        this.createdAt = LocalDateTime.now();
+        this.isSent = false;
     }
 
     /**
@@ -168,4 +172,10 @@ public class Schedules {
         this.status = EntityStatus.DELETED;
         return this.status;
     }
+    // 발송 완료 처리 메서드
+    public void markAsSent() {
+        this.isSent = true;
+    }
+
+
 }
