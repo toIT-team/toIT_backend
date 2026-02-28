@@ -83,9 +83,9 @@ public class FileAttachmentProcessor implements AttachmentProcessor {
                 payload.getAttachmentsSize().longValue()
         );
 
-        /** presigned url 생성 (예: 30분) */
+        /** presigned url 생성 - 90일 */
         String presignedUrl =
-                s3Storage.presignGetUrl(objectKey, Duration.ofMinutes(30));
+                s3Storage.presignGetUrl(objectKey, Duration.ofDays(90));
 
         return new StorageResult(objectKey, presignedUrl);
     }
