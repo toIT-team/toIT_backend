@@ -48,8 +48,7 @@ public class ScheduleViewResponse {
     @Schema(type = "string", example = "09:00:00")
     private LocalTime endTime;
 
-    /** 위치 */
-    private String location;
+
 
     /** 알림 설정 */
     private Boolean notification;
@@ -62,7 +61,7 @@ public class ScheduleViewResponse {
                                 String foldersTitle,
                                 Boolean timeSetting, LocalDate startDate,
                                 LocalDate endDate, LocalTime startTime,
-                                LocalTime endTime, String location,
+                                LocalTime endTime,
                                 Boolean notification, String memo) {
         this.userId = userId;
         this.schedulesId = schedulesId;
@@ -74,7 +73,6 @@ public class ScheduleViewResponse {
         this.endDate = endDate;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.location = location;
         this.notification = notification;
         this.memo = memo;
     }

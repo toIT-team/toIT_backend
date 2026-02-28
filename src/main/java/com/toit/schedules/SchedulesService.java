@@ -59,7 +59,6 @@ public class SchedulesService {
                 schedules.getEndDate(),
                 schedules.getStartTime(),
                 schedules.getEndTime(),
-                schedules.getLocation(),
                 schedules.getNotification(),
                 schedules.getMemo()
         );
@@ -97,9 +96,6 @@ public class SchedulesService {
         return scheduleDto;
     }
 
-
-
-
     /** 시작날짜 ~ 종료날짜 사이 일정 조회 */
     public List<SchedulesMonthResponse> getSearchSchedules(Long usersId,LocalDate startDate, LocalDate endDate) {
         // 1. DB 조회 (기간 내 겹치는 모든 일정 가져오기)
@@ -128,7 +124,6 @@ public class SchedulesService {
     /***
      * 생성 영역 ------
      */
-
     /***
      *
      * @param request
@@ -157,7 +152,6 @@ public class SchedulesService {
                 request.getEndDate(),
                 request.getStartTime(),
                 request.getEndTime(),
-                request.getLocation(),
                 request.getNotification(),
                 request.getMemo(),
                 user,
@@ -204,7 +198,6 @@ public class SchedulesService {
                 request.getEndDate(),
                 request.getStartTime(),
                 request.getEndTime(),
-                request.getLocation(),
                 request.getNotification(),
                 request.getMemo(),
                 request.getAlarmDateTime()
@@ -221,7 +214,6 @@ public class SchedulesService {
                 schedule.getEndDate(),
                 schedule.getStartTime(),
                 schedule.getEndTime(),
-                schedule.getLocation(),
                 schedule.getNotification(),
                 schedule.getMemo(),
                 schedule.getAlarmDateTime()
