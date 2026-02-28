@@ -5,9 +5,11 @@ import com.toit.common.S3.attachmentprocessor.AttachmentPayload;
 import com.toit.common.S3.attachmentprocessor.AttachmentProcessor;
 import com.toit.common.S3.attachmentprocessor.AttachmentProcessorRouter;
 import com.toit.common.S3.attachmentvaildator.AttachmentValidator;
+import com.toit.common.S3.config.S3Config;
 import com.toit.common.enums.AttachMentsType;
 import com.toit.common.enums.EntityStatus;
 import com.toit.folders.FoldersService;
+import com.toit.items.attachments.dto.response.AttachMenetsDeleteInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsFilesCreateInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsImagesCreateInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsImagesGetInFoldersResponse;
@@ -31,6 +33,9 @@ public class AttachMentsService {
     private final AttachmentProcessorRouter processorRouter;
 
     private final AttachMentsRepository attachMentsRepository;
+
+    private final S3Config s3Storage;
+
 
 
     /**
@@ -191,5 +196,36 @@ public class AttachMentsService {
         return attachmentsImagesResponse;
     }
 
+    /**
+     * 이미지 및 파일 삭제
+     */
+    public AttachMenetsDeleteInFoldersResponse deleteAttachment(Long usersId, Long attachmentsId) {
+
+        AttachMents attachment = attachMentsRepository
+                .findByAttachmentsIdAndUsers_UsersId(attachmentsId, usersId)
+                .orElseThrow(() -> new RuntimeException("첨부파일 없음"));
+
+        String objectKey = attachment.getObjectKey();
+
+        /**
+         * DB에서 소프트 삭제
+         */
+        attachment.softDelete();
+        attachMentsRepository.flush();
+
+        /**
+         * 같은 objectKey를 참조하는 ACTIVE 레코드가 남아있나?
+         */
+        long activeCount = attachMentsRepository.countByObjectKeyAndStatus(objectKey, EntityStatus.ACTIVE);
+
+        /**
+         *  아무도 안 쓰면 S3에서도 삭제
+         */
+        if (activeCount == 0) {
+            s3Storage.delete(objectKey);
+        }
+
+        return new AttachMenetsDeleteInFoldersResponse(usersId, attachmentsId);
+    }
 
 }

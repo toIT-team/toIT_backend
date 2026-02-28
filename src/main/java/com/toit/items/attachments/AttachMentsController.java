@@ -1,7 +1,9 @@
 package com.toit.items.attachments;
 
+import com.toit.items.attachments.dto.response.AttachMenetsDeleteInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsFilesCreateInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsImagesCreateInFoldersResponse;
+import com.toit.swagger.docs.items.attachments.AttachMentsDeleteApiDocs;
 import com.toit.swagger.docs.items.attachments.AttachMentsFilesUploadApiDocs;
 import com.toit.swagger.docs.items.attachments.AttachMentsImagesUploadApiDocs;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -52,7 +55,7 @@ public class AttachMentsController {
             description = "자료 추가는 POST입니다."
     )
     @AttachMentsFilesUploadApiDocs
-    @PostMapping("files")
+    @PostMapping("/files")
     public ResponseEntity<List<AttachMentsFilesCreateInFoldersResponse>> createFilesInFolders(
             @RequestBody
             @RequestParam("usersId") Long usersId,
@@ -65,6 +68,20 @@ public class AttachMentsController {
                 attachmentsService.createFilesInFolders(usersId, foldersIdList, textContent, file)
         );
     }
+
+    @Operation(
+            summary = "자료 파일 및 이미지 삭제 API - 화면이름 : 파일 미트볼메뉴, 이미지 미트볼메뉴",
+            description = "자료 삭제는 DELETE입니다."
+    )
+    @AttachMentsDeleteApiDocs
+    @DeleteMapping("/files/images")
+    public ResponseEntity<AttachMenetsDeleteInFoldersResponse> deleteAttachment(
+            @RequestParam("usersId") Long usersId,
+            @RequestParam("attachmentsId") Long attachmentsId
+    ) {
+        return ResponseEntity.ok(attachmentsService.deleteAttachment(usersId, attachmentsId));
+    }
+
 
 
 

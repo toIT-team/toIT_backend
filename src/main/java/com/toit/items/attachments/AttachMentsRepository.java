@@ -3,6 +3,7 @@ package com.toit.items.attachments;
 import com.toit.common.enums.AttachMentsType;
 import com.toit.common.enums.EntityStatus;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,4 +27,8 @@ public interface AttachMentsRepository extends JpaRepository<AttachMents, Long> 
             @Param("foldersId") Long foldersId,
             @Param("status") EntityStatus status
     );
+
+    Optional<AttachMents> findByAttachmentsIdAndUsers_UsersId(Long attachmentsId, Long usersId);
+
+    long countByObjectKeyAndStatus(String objectKey, EntityStatus status);
 }

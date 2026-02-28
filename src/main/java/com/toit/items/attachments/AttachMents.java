@@ -110,4 +110,11 @@ public class AttachMents extends ItemsBase {
         return attachments;
     }
 
+    /**
+     * 소프트 삭제
+     */
+    public void softDelete() {
+        this.status = EntityStatus.DELETED;
+        this.deletedAt = LocalDateTime.now();
+    }
 }
