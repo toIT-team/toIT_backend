@@ -117,4 +117,8 @@ public class AttachMents extends ItemsBase {
         this.status = EntityStatus.DELETED;
         this.deletedAt = LocalDateTime.now();
     }
+
+    public void moveFolders(Long moveFoldersId){
+        this.storageId = moveFoldersId;
+    }
 }

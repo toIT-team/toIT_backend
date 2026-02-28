@@ -6,12 +6,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AttachMenetsDeleteInFoldersResponse {
+public class AttachMentsDeleteInFoldersResponse {
 
     private Long attachmentsId;
     private Long usersId;
 
-    public AttachMenetsDeleteInFoldersResponse(Long attachmentsId, Long usersId){
+    public AttachMentsDeleteInFoldersResponse(Long attachmentsId, Long usersId){
         this.attachmentsId = attachmentsId;
         this.usersId = usersId;
     }

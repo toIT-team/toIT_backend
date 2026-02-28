@@ -8,16 +8,22 @@ import com.toit.common.S3.attachmentvaildator.AttachmentValidator;
 import com.toit.common.S3.config.S3Config;
 import com.toit.common.enums.AttachMentsType;
 import com.toit.common.enums.EntityStatus;
+import com.toit.exception.items.attachments.AttachmentsNotFoundException;
+import com.toit.exception.items.links.LinksNotFoundException;
 import com.toit.folders.FoldersService;
-import com.toit.items.attachments.dto.response.AttachMenetsDeleteInFoldersResponse;
+import com.toit.items.attachments.dto.response.AttachMentsDeleteInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsFilesCreateInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsImagesCreateInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsImagesGetInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsFilesGetInFoldersResponse;
+import com.toit.items.attachments.dto.response.AttachMentsMoveInFoldersResponse;
+import com.toit.items.links.Links;
+import com.toit.items.links.dto.response.LinksMoveInFoldersResponse;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -199,7 +205,7 @@ public class AttachMentsService {
     /**
      * 이미지 및 파일 삭제
      */
-    public AttachMenetsDeleteInFoldersResponse deleteAttachment(Long usersId, Long attachmentsId) {
+    public AttachMentsDeleteInFoldersResponse deleteAttachments(Long usersId, Long attachmentsId) {
 
         AttachMents attachment = attachMentsRepository
                 .findByAttachmentsIdAndUsers_UsersId(attachmentsId, usersId)
@@ -225,7 +231,26 @@ public class AttachMentsService {
             s3Storage.delete(objectKey);
         }
 
-        return new AttachMenetsDeleteInFoldersResponse(usersId, attachmentsId);
+        return new AttachMentsDeleteInFoldersResponse(usersId, attachmentsId);
+    }
+
+    public AttachMentsMoveInFoldersResponse moveAttachmentsInFolders(Long usersId, Long foldersId, Long moveFoldersId, Long attachmentsId){
+        usersService.findById(usersId);
+        foldersService.findByFoldersIdAndUsers_UsersId(usersId, foldersId);
+        foldersService.findById(moveFoldersId);
+        AttachMents attachments = findById(attachmentsId);
+        attachments.moveFolders(moveFoldersId);
+        attachMentsRepository.save(attachments);
+        return new AttachMentsMoveInFoldersResponse(usersId, foldersId, moveFoldersId, attachmentsId);
+    }
+
+    public AttachMents findById(Long attachmentsId){
+        Optional<AttachMents> attachments = attachMentsRepository.findById(attachmentsId);
+        if (attachments.isPresent()) {
+            return attachments.get();
+        } else {
+            throw new AttachmentsNotFoundException(attachments + "는 존재하지 않는 링크입니다.");
+        }
     }
 
 }

@@ -2,6 +2,7 @@ package com.toit.exception;
 
 import com.toit.exception.folders.FoldersNotFoundException;
 import com.toit.exception.items.attachments.AttachmentReadException;
+import com.toit.exception.items.attachments.AttachmentsNotFoundException;
 import com.toit.exception.items.attachments.UnsupportedFileTypeException;
 import com.toit.exception.items.attachments.UnsupportedImageTypeException;
 import com.toit.exception.items.links.LinksNotFoundException;
@@ -98,6 +99,15 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(LinksNotFoundException.class)
     public ResponseEntity<ErrorResponse> LinksNotFoundException(LinksNotFoundException ex) {
+        ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * items에서 이미지/파일이 없는 경우 -> 404
+     */
+    @ExceptionHandler(AttachmentsNotFoundException.class)
+    public ResponseEntity<ErrorResponse> AttachmentsNotFoundException(AttachmentsNotFoundException ex) {
         ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
