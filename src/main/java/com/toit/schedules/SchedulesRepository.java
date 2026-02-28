@@ -1,6 +1,7 @@
 package com.toit.schedules;
 
 
+import com.toit.common.enums.EntityStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -43,5 +44,21 @@ public interface SchedulesRepository extends JpaRepository<Schedules, Long> {
             "and s.isSent = false")
     List<Schedules> findTargetSchedules(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
+    /**
+     * 스케줄 제목으로 검색
+     */
+    @Query("""
+        select s
+        from Schedules s
+        where s.users.usersId = :usersId
+          and s.status = :status
+          and lower(s.title) like lower(concat('%', :keyword, '%'))
+        order by s.startDate desc, s.createdAt desc
+    """)
+    List<Schedules> searchByTitle(
+            @Param("usersId") Long usersId,
+            @Param("status") EntityStatus status,
+            @Param("keyword") String keyword
+    );
 
 }

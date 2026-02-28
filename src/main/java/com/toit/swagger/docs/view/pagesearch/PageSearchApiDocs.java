@@ -1,5 +1,4 @@
-package com.toit.swagger.docs.view.pageitems;
-
+package com.toit.swagger.docs.view.pagesearch;
 
 import com.toit.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -34,21 +33,11 @@ import java.lang.annotation.Target;
                                           "message": "1은 존재하지 않는 사용자입니다."
                                         }
                                         """
-                                ),
-                                @ExampleObject(
-                                        name = "FoldersNotFound",
-                                        summary = "보관함 존재하지 않음",
-                                        value = """
-                                        {
-                                          "code": 404,
-                                          "message": "1은 존재하지 않는 보관함입니다."
-                                        }
-                                        """
                                 )
                         }
                 )
         )
 })
-public @interface
-PageItemsApiDocs {
+public @interface PageSearchApiDocs {
 }
+

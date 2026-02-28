@@ -31,4 +31,23 @@ public interface AttachMentsRepository extends JpaRepository<AttachMents, Long> 
     Optional<AttachMents> findByAttachmentsIdAndUsers_UsersId(Long attachmentsId, Long usersId);
 
     long countByObjectKeyAndStatus(String objectKey, EntityStatus status);
+
+    /**
+     * fileName으로 검색
+     */
+    @Query("""
+        select a
+        from AttachMents a
+        where a.users.usersId = :usersId
+          and a.status = :status
+          and a.attachmentsType = :type
+          and lower(coalesce(a.fileName, '')) like lower(concat('%', :keyword, '%'))
+        order by a.createdAt desc
+    """)
+    List<AttachMents> searchByTypeAndFileName(
+            @Param("usersId") Long usersId,
+            @Param("status") EntityStatus status,
+            @Param("type") AttachMentsType type,
+            @Param("keyword") String keyword
+    );
 }

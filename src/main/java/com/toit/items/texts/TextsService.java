@@ -4,6 +4,8 @@ import com.toit.common.enums.EntityStatus;
 import com.toit.exception.folders.FoldersNotFoundException;
 import com.toit.exception.items.texts.TextsNotFoundException;
 import com.toit.folders.Folders;
+import com.toit.items.links.Links;
+import com.toit.items.links.dto.response.LinksGetInFoldersResponse;
 import com.toit.items.texts.dto.response.TextsCreateInFoldersResponse;
 import com.toit.items.texts.dto.response.TextsDeleteInFoldersResponse;
 import com.toit.items.texts.dto.response.TextsGetInFoldersResponse;
@@ -90,6 +92,24 @@ public class TextsService {
         return new TextsMoveInFoldersResponse(texts);
     }
 
+    /**
+     * 검색
+     */
+    public List<TextsGetInFoldersResponse> searchTexts(Long usersId, String keyword){
+        String k = (keyword == null) ? "" : keyword.trim();
+        if (k.isEmpty()) {
+            return List.of();
+        }
+        List<Texts> texts =
+                textsRepository.searchByTextContent(usersId, EntityStatus.ACTIVE, k);
+
+        List<TextsGetInFoldersResponse> responses = new ArrayList<>();
+
+        for (Texts text : texts) {
+            responses.add(new TextsGetInFoldersResponse(text));
+        }
+        return responses;
+    }
 
     /**
      * 텍스트 검색

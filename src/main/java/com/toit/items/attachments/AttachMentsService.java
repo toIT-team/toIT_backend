@@ -244,6 +244,45 @@ public class AttachMentsService {
         return new AttachMentsMoveInFoldersResponse(usersId, foldersId, moveFoldersId, attachmentsId);
     }
 
+
+    /**
+     * 파일 검색
+     */
+    public List<AttachMentsFilesGetInFoldersResponse> searchFiles(Long usersId, String keyword) {
+        usersService.findById(usersId);
+
+        String k = keyword == null ? "" : keyword.trim();
+        if (k.isEmpty()) return List.of();
+
+        List<AttachMents> files = attachMentsRepository.searchByTypeAndFileName(usersId, EntityStatus.ACTIVE, AttachMentsType.FILE, k);
+
+        List<AttachMentsFilesGetInFoldersResponse> res = new ArrayList<>(files.size());
+        for (AttachMents a : files) {
+            res.add(new AttachMentsFilesGetInFoldersResponse(a));
+        }
+        return res;
+    }
+
+    /**
+     * 이미지 검색
+     */
+    public List<AttachMentsImagesGetInFoldersResponse> searchImages(Long usersId, String keyword) {
+        usersService.findById(usersId);
+
+        String k = keyword == null ? "" : keyword.trim();
+        if (k.isEmpty()) return List.of();
+
+        List<AttachMents> images = attachMentsRepository.searchByTypeAndFileName(usersId, EntityStatus.ACTIVE, AttachMentsType.IMAGE, k);
+
+        List<AttachMentsImagesGetInFoldersResponse> res = new ArrayList<>(images.size());
+        for (AttachMents a : images) {
+            res.add(new AttachMentsImagesGetInFoldersResponse(a));
+        }
+        return res;
+    }
+
+
+
     public AttachMents findById(Long attachmentsId){
         Optional<AttachMents> attachments = attachMentsRepository.findById(attachmentsId);
         if (attachments.isPresent()) {

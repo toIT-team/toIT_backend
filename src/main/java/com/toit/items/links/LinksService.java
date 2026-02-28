@@ -13,6 +13,8 @@ import com.toit.folders.FoldersService;
 import com.toit.items.texts.Texts;
 import com.toit.items.texts.dto.response.TextsDeleteInFoldersResponse;
 import com.toit.items.texts.dto.response.TextsMoveInFoldersResponse;
+import com.toit.schedules.Schedules;
+import com.toit.schedules.dto.response.ScheduleViewResponse;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
 import java.util.ArrayList;
@@ -120,6 +122,24 @@ public class LinksService {
         return new LinksMoveInFoldersResponse(links);
     }
 
+    /**
+     * 검색
+     */
+    public List<LinksGetInFoldersResponse> searchLinks(Long usersId, String keyword){
+        String k = (keyword == null) ? "" : keyword.trim();
+        if (k.isEmpty()) {
+            return List.of();
+        }
+        List<Links> links =
+                linksRepository.searchLinks(usersId, EntityStatus.ACTIVE, k);
+
+        List<LinksGetInFoldersResponse> responses = new ArrayList<>();
+
+        for (Links link : links) {
+            responses.add(new LinksGetInFoldersResponse(link));
+        }
+        return responses;
+    }
 
     /**
      * 링크 찾기

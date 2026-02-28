@@ -24,4 +24,22 @@ public interface LinksRepository extends JpaRepository<Links, Long> {
             @Param("foldersId") Long foldersId,
             @Param("status") EntityStatus status
     );
+
+
+    /**
+     *
+     */
+    @Query("""
+        select l
+        from Links l
+        where l.users.usersId = :usersId
+          and l.status = :status
+          and lower(coalesce(l.linksName, '')) like lower(concat('%', :keyword, '%'))
+        order by l.createdAt desc
+    """)
+    List<Links> searchLinks(
+            @Param("usersId") Long usersId,
+            @Param("status") EntityStatus status,
+            @Param("keyword") String keyword
+    );
 }

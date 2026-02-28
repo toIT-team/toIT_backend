@@ -7,6 +7,7 @@ import com.toit.exception.schedules.SchedulesNotFoundException;
 import com.toit.folders.Folders;
 import com.toit.folders.FoldersRepository;
 import com.toit.folders.FoldersService;
+import com.toit.folders.dto.response.FoldersItemResponse;
 import com.toit.schedules.dto.request.SchedulesDeleteRequest;
 import com.toit.schedules.dto.request.SchedulesUpdateRequest;
 import com.toit.schedules.dto.response.*;
@@ -14,6 +15,7 @@ import com.toit.schedules.dto.request.SchedulesCreateRequest;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -235,4 +237,39 @@ public class SchedulesService {
 
         return new SchedulesDeleteResponse(request.getSchedulesId() , request.getUserId(),entityStatus );
     }
+
+    /**
+     * 검색
+     */
+
+    public List<ScheduleViewResponse> searchSchedules(Long usersId, String keyword){
+        String k = (keyword == null) ? "" : keyword.trim();
+        if (k.isEmpty()) {
+            return List.of();
+        }
+        List<Schedules> schedules =
+                schedulesRepository.searchByTitle(usersId, EntityStatus.ACTIVE, k);
+
+        List<ScheduleViewResponse> responses = new ArrayList<>();
+
+        for (Schedules schedule : schedules) {
+            responses.add(new ScheduleViewResponse(
+                    usersId,
+                    schedule.getSchedulesId(),
+                    schedule.getTitle(),
+                    schedule.getFolders().getFoldersId(),
+                    schedule.getFolders().getName(),
+                    schedule.getTimeSetting(),
+                    schedule.getStartDate(),
+                    schedule.getEndDate(),
+                    schedule.getStartTime(),
+                    schedule.getEndTime(),
+                    schedule.getNotification(),
+                    schedule.getMemo()
+            ));
+        }
+        return responses;
+    }
+
+
 }
