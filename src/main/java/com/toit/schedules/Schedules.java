@@ -80,12 +80,6 @@ public class Schedules {
     private EntityStatus status;
 
     /**
-     * 알림 설정
-     */
-    @Column(nullable = true)
-    private Boolean notification;
-
-    /**
      * 스케줄 상세 메모
      * 길이 제한 1000 (한글 기준 약 333~500자, 바이트 기준 고려)
      */
@@ -99,21 +93,12 @@ public class Schedules {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    /***
-     * 알림 시간 설정
-     */
-    @Column(nullable = true) // 255자 이상일 경우 TEXT 타입 권장
-    private LocalDateTime alarmDateTime;
 
     /**
      * 스케줄 서비스 상태가 DELETED 되면 업데이트
      */
     @Column(nullable = true)
     private LocalDateTime deletedAt;
-
-    @Column(nullable = false)
-    private Boolean isSent;
-
 
     /**
      * Users와 N:1 관계 설정
@@ -127,9 +112,9 @@ public class Schedules {
      */
     public Schedules(String title, String appColor, Folders folders,
                       Boolean timeSetting, LocalDate startDate, LocalDate endDate,
-                      LocalTime startTime, LocalTime endTime,
-                     Boolean notification, String memo, Users users,
-                     LocalDateTime alarmDateTime) {
+                      LocalTime startTime, LocalTime endTime
+                  , String memo, Users users
+) {
         this.title = title;
         this.appColor = appColor;
         this.folders = folders;
@@ -138,13 +123,10 @@ public class Schedules {
         this.endDate = endDate;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.notification = notification;
         this.memo = memo;
         this.users = users;
-        this.alarmDateTime = alarmDateTime;
         this.status = EntityStatus.ACTIVE; // 초기값 강제
         this.createdAt = LocalDateTime.now();
-        this.isSent = false;
     }
 
     /**
@@ -153,8 +135,8 @@ public class Schedules {
      */
     public void update(String title, String appColor, Folders folders,
                        Boolean timeSetting, LocalDate startDate, LocalDate endDate,
-                       LocalTime startTime, LocalTime endTime, Boolean notification, String memo,
-                       LocalDateTime alarmDateTime) {
+                       LocalTime startTime, LocalTime endTime, String memo
+                    ) {
         this.title = title;
         this.appColor = appColor;
         this.folders = folders; // 폴더가 변경되거나 null(폴더 없음)로 설정될 수 있음
@@ -163,19 +145,15 @@ public class Schedules {
         this.endDate = endDate;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.notification = notification;
         this.memo = memo;
-        this.alarmDateTime = notification ? alarmDateTime : null;
+
     }
 
     public EntityStatus changeStatusDelete(){
         this.status = EntityStatus.DELETED;
         return this.status;
     }
-    // 발송 완료 처리 메서드
-    public void markAsSent() {
-        this.isSent = true;
-    }
+
 
 
 }

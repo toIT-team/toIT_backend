@@ -11,6 +11,8 @@ import com.toit.schedules.dto.request.SchedulesDeleteRequest;
 import com.toit.schedules.dto.request.SchedulesUpdateRequest;
 import com.toit.schedules.dto.response.*;
 import com.toit.schedules.dto.request.SchedulesCreateRequest;
+import com.toit.schedulesalarm.SchedulesAlarm;
+import com.toit.schedulesalarm.SchedulesAlarmRepository;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
 import java.time.LocalDate;
@@ -18,7 +20,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -29,7 +34,7 @@ public class SchedulesService {
     private final SchedulesRepository schedulesRepository;
     private final UsersService usersService;
     private final FoldersRepository foldersRepository;
-    private final FoldersService foldersService;
+    private final SchedulesAlarmRepository schedulesAlarmRepository;
 
 
     public Schedules findBySchedules(Long schedulesId){
@@ -48,6 +53,12 @@ public class SchedulesService {
 
         Folders folders = schedules.getFolders();
 
+        SchedulesAlarm alarm = schedulesAlarmRepository.findBySchedules_SchedulesId(schedulesId)
+                .orElse(null);
+
+        Boolean alarmState = (alarm != null) ? alarm.getAlarmState() : false;
+        Long alarmOffsetMinutes = (alarm != null) ? alarm.getAlarmOffsetMinutes() : null;
+
         return new ScheduleViewResponse(
                 usersId,
                 schedules.getSchedulesId(),
@@ -59,8 +70,9 @@ public class SchedulesService {
                 schedules.getEndDate(),
                 schedules.getStartTime(),
                 schedules.getEndTime(),
-                schedules.getNotification(),
-                schedules.getMemo()
+                schedules.getMemo(),
+                alarmState,
+                alarmOffsetMinutes
         );
     }
 
@@ -131,18 +143,16 @@ public class SchedulesService {
      * @return
      */
     public SchedulesCreateResponse createSchedule(SchedulesCreateRequest request) {
-        // 1. 유저 조회
+
         Users user = usersService.findById(request.getUsersId());
-        // 2. 폴더 조회 (null 허용)
+
         Folders folder = null;
         if (request.getFoldersId() != null) {
             folder = foldersRepository.findById(request.getFoldersId())
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 폴더입니다."));
         }
 
-        // 3. 팩토리 메서드로 엔티티 생성
         // 3. 생성자를 호출하여 엔티티 생성
-        // DTO의 LocalDate/LocalTime을 그대로 전달합니다.
         Schedules schedule = new Schedules(
                 request.getTitle(),
                 request.getAppColor(),
@@ -152,15 +162,40 @@ public class SchedulesService {
                 request.getEndDate(),
                 request.getStartTime(),
                 request.getEndTime(),
-                request.getNotification(),
                 request.getMemo(),
-                user,
-                request.getAlarmDateTime()
+                user
         );
-
-
-        // 3. 저장 및 응답 DTO 변환 반환
         Schedules savedSchedule = schedulesRepository.save(schedule);
+
+        // 알림 설정이 켜져 있는 경우만 실행
+        if (Boolean.TRUE.equals(request.getAlarmState())) {
+
+            LocalDateTime alarmDateTime;
+
+            if (request.getTimeSetting() && request.getEndTime() != null) {
+                // 1. 일정 시간 설정이 켜져 있는 경우: (종료 시간 - N분 전)
+                LocalDateTime baseDateTime = LocalDateTime.of(request.getEndDate(), request.getEndTime());
+
+                // NullPointerException 방지를 위해 offset이 null이면 0으로 처리 (혹은 기획에 맞게 예외처리)
+                long offset = (request.getAlarmOffsetMinutes() != null) ? request.getAlarmOffsetMinutes() : 0L;
+                alarmDateTime = baseDateTime.minusMinutes(offset);
+
+            } else {
+                // 2. 일정 시간 설정이 꺼져 있는 경우 (종일 일정 등):
+                // 시작 날짜(StartDate)의 오전 9시 0분 정각으로 알림 시간 세팅
+                alarmDateTime = LocalDateTime.of(request.getStartDate(), LocalTime.of(9, 0));
+            }
+
+            // 알림 엔티티 생성 및 저장
+            SchedulesAlarm alarm = new SchedulesAlarm(
+                    savedSchedule,
+                    request.getAlarmState(),
+                    alarmDateTime,
+                    request.getAlarmOffsetMinutes()
+            );
+            schedulesAlarmRepository.save(alarm);
+        }
+
         return new  SchedulesCreateResponse(savedSchedule.getSchedulesId(), savedSchedule.getTitle());
     }
 
@@ -176,55 +211,72 @@ public class SchedulesService {
      */
     // 수정이 일어나므로 readOnly = false (기본값)
     public SchedulesUpdateResponse updateSchedules(SchedulesUpdateRequest request) {
-
-        // 1. 스케줄 조회 (없으면 예외 발생)
+        usersService.findById(request.getUsersId());
         Schedules schedule = findBySchedules(request.getSchedulesId());
 
-
-        // 2. 폴더 조회 (폴더 ID가 들어온 경우에만)
         Folders folder = null;
         if (request.getFoldersId() != null) {
             folder = foldersRepository.findById(request.getFoldersId())
                     .orElseThrow(() -> new IllegalArgumentException("해당 폴더를 찾을 수 없습니다. ID=" + request.getFoldersId()));
         }
 
-        // 4. 데이터 수정 (Dirty Checking - save 호출 불필요)
+        // 1. 일정(Schedules) 데이터 수정 (Dirty Checking)
         schedule.update(
-                request.getTitle(),
-                request.getAppColor(),
-                folder,
-                request.getTimeSetting(),
-                request.getStartDate(),
-                request.getEndDate(),
-                request.getStartTime(),
-                request.getEndTime(),
-                request.getNotification(),
-                request.getMemo(),
-                request.getAlarmDateTime()
+                request.getTitle(), request.getAppColor(), folder,
+                request.getTimeSetting(), request.getStartDate(), request.getEndDate(),
+                request.getStartTime(), request.getEndTime(), request.getMemo()
         );
 
-        // 5. 변경된 엔티티를 Response DTO로 변환하여 반환
+        // 기존에 설정된 알림이 있는지 조회
+        Optional<SchedulesAlarm> existingAlarm = schedulesAlarmRepository.findBySchedules_SchedulesId(schedule.getSchedulesId());
+
+        if (Boolean.TRUE.equals(request.getAlarmState())) {
+            // 알림을 켜는(또는 유지하는) 경우: 알림 시간 재계산
+            LocalDateTime alarmDateTime;
+            if (request.getTimeSetting() && request.getEndTime() != null) {
+                long offset = (request.getAlarmOffsetMinutes() != null) ? request.getAlarmOffsetMinutes() : 0L;
+                alarmDateTime = LocalDateTime.of(request.getEndDate(), request.getEndTime()).minusMinutes(offset);
+            } else {
+                alarmDateTime = LocalDateTime.of(request.getStartDate(), LocalTime.of(9, 0));
+            }
+
+            if (existingAlarm.isPresent()) {
+                SchedulesAlarm alarm = existingAlarm.get();
+                //  기존 알림이 있음 -> 정보 업데이트 및 상태(isSent, isRead) 초기화
+                alarm.updateAlarm(request.getAlarmState(), alarmDateTime, request.getAlarmOffsetMinutes());
+            } else {
+                //  기존 알림이 없음 (새로 켬) -> 새로 생성
+                SchedulesAlarm newAlarm = new SchedulesAlarm(schedule, request.getAlarmState(), alarmDateTime, request.getAlarmOffsetMinutes());
+                schedulesAlarmRepository.save(newAlarm);
+            }
+        } else {
+            // 알림을 끄는 경우
+            existingAlarm.ifPresent(alarm -> schedulesAlarmRepository.delete(alarm));
+        }
+
+        // request.getAlarmState()가 null일 수 있으므로 안전하게 boolean으로 변환
+        boolean responseAlarmState = Boolean.TRUE.equals(request.getAlarmState());
+
+        // 알림이 꺼져있다면 offset은 무조건 null로 내려주는 것이 프론트엔드 렌더링에 안전합니다.
+        Long responseAlarmOffset = responseAlarmState ? request.getAlarmOffsetMinutes() : null;
+
+
         return new SchedulesUpdateResponse(
-                schedule.getSchedulesId(),
-                schedule.getTitle(),
-                schedule.getAppColor(),
-                schedule.getFolders() != null ? schedule.getFolders().getFoldersId() : null, // 폴더가 없을 경우 null 처리
-                schedule.getTimeSetting(),
-                schedule.getStartDate(),
-                schedule.getEndDate(),
-                schedule.getStartTime(),
-                schedule.getEndTime(),
-                schedule.getNotification(),
-                schedule.getMemo(),
-                schedule.getAlarmDateTime()
+                schedule.getSchedulesId(), schedule.getTitle(), schedule.getAppColor(),
+                schedule.getFolders() != null ? schedule.getFolders().getFoldersId() : null,
+                schedule.getTimeSetting(), schedule.getStartDate(), schedule.getEndDate(),
+                schedule.getStartTime(), schedule.getEndTime(), schedule.getMemo(),
+                responseAlarmState,responseAlarmOffset
         );
     }
+
 
     /***
      *
      * @param request
      */
     public SchedulesDeleteResponse deleteSchedule(SchedulesDeleteRequest request) {
+        usersService.findById(request.getUserId());
 
         // 1. 스케줄 조회 (없으면 예외 발생)
         Schedules schedule = findBySchedules(request.getSchedulesId());
