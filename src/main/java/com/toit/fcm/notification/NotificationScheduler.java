@@ -5,6 +5,9 @@ import com.toit.fcm.FcmToken;
 import com.toit.fcm.FcmTokenRepository;
 import com.toit.schedules.Schedules;
 import com.toit.schedules.SchedulesRepository;
+import com.toit.schedulesalarm.SchedulesAlarm;
+import com.toit.schedulesalarm.SchedulesAlarmRepository;
+import com.toit.user.Users;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,53 +25,48 @@ public class NotificationScheduler {
 
     private final SchedulesRepository schedulesRepository;
     private final FcmTokenRepository fcmTokenRepository;
+    private final SchedulesAlarmRepository schedulesAlarmRepository;
 
-    /**
-     * 1분마다 실행 (초, 분, 시, 일, 월, 요일)
-     * 예: 14:00:00, 14:01:00 ...
-     */
     @Scheduled(cron = "0 * * * * *")
     public void checkAndSendAlerts() {
-        // 현재 시간의 '분(Minute)' 범위를 구한다. (예: 14:00:00 ~ 14:00:59)
         LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
         LocalDateTime nextMinute = now.plusMinutes(1);
-        log.info(" 스케줄러 조회 시간: {}", now);
-        List<Schedules> schedules = schedulesRepository.findTargetSchedules(now, nextMinute);
 
-        if (schedules.isEmpty()) return; // 보낼 게 없으면 종료
+        log.info("스케줄러 조회 시간: {}", now);
 
-        log.info("알림 발송 작업 시작: 총 {}건 예정", schedules.size());
+        // 보내야 할 알림만 가져옴
+        List<SchedulesAlarm> alarms = schedulesAlarmRepository.findTargetAlarms(now, nextMinute);
 
-        for (Schedules schedule : schedules) {
-            //  해당 유저의 모든 토큰을 가져온다. (폰, 태블릿 등 여러 기기일 수 있음)
-            // 주의: FcmTokenRepository에 'findAllByUsers' 메서드가 있어야 한다.
-            List<FcmToken> tokens = fcmTokenRepository.findAllByUsers(schedule.getUsers());
+        if (alarms.isEmpty()) return; // 보낼 게 없으면 종료
+
+        log.info("알림 발송 작업 시작: 총 {}건 예정", alarms.size());
+
+        for (SchedulesAlarm alarm : alarms) {
+            Schedules schedule = alarm.getSchedules();
+            Users user = schedule.getUsers();
+
+            // 2. 유저의 FCM 토큰들 조회
+            List<FcmToken> tokens = fcmTokenRepository.findAllByUsers(user);
 
             if (tokens.isEmpty()) {
-                log.warn("사용자(ID={})의 FCM 토큰이 없습니다. 알림 건너뜀.", schedule.getUsers().getUsersId());
+                log.warn("사용자(ID={})의 FCM 토큰이 없습니다. 알림 건너뜀.", user.getUsersId());
+                // 주의: 토큰이 없더라도 나중에 중복으로 찾지 않게 isSent 처리는 해주는 게 좋습니다.
+                alarm.markAsSent();
                 continue;
             }
 
-            //  알림 내용 구성
+            // 3. 알림 내용 구성
             String title = schedule.getTitle();
             String rawMemo = schedule.getMemo();
-            String body;
+            String body = (rawMemo == null || rawMemo.isBlank()) ? "일정 시간이 되었습니다." :
+                    (rawMemo.length() > 100 ? rawMemo.substring(0, 100) + "..." : rawMemo);
 
-            if (rawMemo == null || rawMemo.isBlank()) {
-                body = "일정 시간이 되었습니다.";
-            } else {
-                // 메모가 100자보다 길면 자르고 "..." 추가
-                body = (rawMemo.length() > 100) ? rawMemo.substring(0, 100) + "..." : rawMemo;
-            }
-
-
-            //  각 토큰으로 알림 전송
+            // 4. 각 기기(토큰)별로 발송
             for (FcmToken fcmToken : tokens) {
+
                 sendFcmMessage(fcmToken, title, body);
             }
-
-            // 발송 성공 후 상태 변경
-            schedule.markAsSent();
+            alarm.markAsSent();
         }
     }
 

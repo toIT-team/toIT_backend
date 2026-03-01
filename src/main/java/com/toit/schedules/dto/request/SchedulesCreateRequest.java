@@ -47,15 +47,14 @@ public class SchedulesCreateRequest {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime endTime;
 
-
-    /** 알림 설정 */
-    private Boolean notification;
-
     /** 입력한 메모  */
     private String memo;
 
-    /***
-     * 알림 시간
-     */
-    private LocalDateTime alarmDateTime;
+    /** 알림 설정 여부 (true: 켬, false: 끔) */
+    private Boolean alarmState;
+
+    /** 몇 분 전 알림인지 (예: 5, 10, 0) - alarmState가 true일 때만 값 존재 */
+    private Long alarmOffsetMinutes;
+
+
 }

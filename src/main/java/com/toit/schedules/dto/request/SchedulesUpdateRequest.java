@@ -14,7 +14,6 @@ import java.time.LocalTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SchedulesUpdateRequest {
 
-
     /** * 수정할 스케줄의 ID*/
     private Long usersId;
 
@@ -52,20 +51,21 @@ public class SchedulesUpdateRequest {
     @Schema(type = "string", example = "09:00:00")
     private LocalTime endTime;
 
-
-    /** 알림 설정 여부 */
-    private Boolean notification;
-
     /** 메모 */
     private String memo;
 
-    private LocalDateTime alarmDateTime;
+    /** 알림 설정 여부 (true: 켬, false: 끔) */
+    private Boolean alarmState;
+
+    /** 몇 분 전 알림인지 (예: 5, 10, 0) - alarmState가 true일 때만 값 존재 */
+    private Long alarmOffsetMinutes;
+
 
 
     public SchedulesUpdateRequest(Long usersId, Long schedulesId, String title, String appColor,
                                   Long foldersId, Boolean timeSetting, LocalDate startDate,
                                   LocalDate endDate, LocalTime startTime, LocalTime endTime,
-                                  Boolean notification, String memo, LocalDateTime alarmDateTime) {
+                                  String memo,Boolean alarmState , Long alarmOffsetMinutes) {
         this.usersId = usersId;
         this.schedulesId = schedulesId;
         this.title = title;
@@ -76,9 +76,9 @@ public class SchedulesUpdateRequest {
         this.endDate = endDate;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.notification = notification;
         this.memo = memo;
-        this.alarmDateTime = alarmDateTime;
+        this.alarmState = alarmState;
+        this.alarmOffsetMinutes = alarmOffsetMinutes;
     }
 
 }

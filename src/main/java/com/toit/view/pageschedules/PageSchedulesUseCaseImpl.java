@@ -5,6 +5,9 @@ import com.toit.schedules.SchedulesService;
 import com.toit.schedules.dto.response.ScheduleViewResponse;
 import com.toit.schedules.dto.response.SchedulesMonthResponse;
 import com.toit.schedules.dto.response.SchedulesSelectedDayResponse;
+import com.toit.schedulesalarm.SchedulesAlarm;
+import com.toit.schedulesalarm.SchedulesAlarmRepository;
+import com.toit.schedulesalarm.SchedulesAlarmService;
 import com.toit.view.pageschedules.dto.response.PageSchedulesSearchResponse;
 import com.toit.view.pageschedules.dto.response.PageSchedulesSelectDayViewResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ import java.util.List;
 public class PageSchedulesUseCaseImpl implements PageSchedulesUseCase {
 
     private final SchedulesService schedulesService;
+    private final SchedulesAlarmService schedulesAlarmService;
 
     /***
      * startDate ~ endDate 범위 내의 일정들을 반환
@@ -45,6 +49,12 @@ public class PageSchedulesUseCaseImpl implements PageSchedulesUseCase {
     public ScheduleViewResponse getScheduleView(Long usersId, Long schedulesId){
         ScheduleViewResponse schedule = schedulesService.getSchedule(usersId, schedulesId);
 
+        SchedulesAlarm alarm = schedulesAlarmService.findBySchedulesAlarm(schedulesId);
+
+        Boolean alarmState = (alarm != null) ? alarm.getAlarmState() : false;
+        Long alarmOffsetMinutes = (alarm != null) ? alarm.getAlarmOffsetMinutes() : null;
+
+
         return new ScheduleViewResponse(
                 schedule.getUserId(),
                 schedule.getSchedulesId(),
@@ -56,8 +66,10 @@ public class PageSchedulesUseCaseImpl implements PageSchedulesUseCase {
                 schedule.getEndDate(),
                 schedule.getStartTime(),
                 schedule.getEndTime(),
-                schedule.getNotification(),
-                schedule.getMemo()
+                schedule.getMemo(),
+                alarmState,
+                alarmOffsetMinutes
+
         );
     }
 

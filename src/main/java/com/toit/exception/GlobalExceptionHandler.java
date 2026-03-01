@@ -8,6 +8,7 @@ import com.toit.exception.items.attachments.UnsupportedImageTypeException;
 import com.toit.exception.items.links.LinksNotFoundException;
 import com.toit.exception.items.texts.TextsNotFoundException;
 import com.toit.exception.schedules.SchedulesNotFoundException;
+import com.toit.exception.schedulesalarm.SchedulesAlarmNotFoundException;
 import com.toit.exception.users.UsersNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +51,12 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(SchedulesNotFoundException.class)
     public ResponseEntity<ErrorResponse> SchedulesNotFoundException(SchedulesNotFoundException ex) {
+        ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(SchedulesAlarmNotFoundException.class)
+    public ResponseEntity<ErrorResponse> SchedulesAlarmNotFoundException(SchedulesAlarmNotFoundException ex) {
         ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
