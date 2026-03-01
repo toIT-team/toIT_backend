@@ -13,7 +13,7 @@ public interface LinksRepository extends JpaRepository<Links, Long> {
      */
     @Query("""
         select i
-        from Texts i
+        from Links i
         where i.users.usersId = :usersId
           and i.storageId = :foldersId
           and i.status = :status
