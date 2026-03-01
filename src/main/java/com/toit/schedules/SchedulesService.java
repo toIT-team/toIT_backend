@@ -14,6 +14,7 @@ import com.toit.schedules.dto.response.*;
 import com.toit.schedules.dto.request.SchedulesCreateRequest;
 import com.toit.schedulesalarm.SchedulesAlarm;
 import com.toit.schedulesalarm.SchedulesAlarmRepository;
+import com.toit.schedulesalarm.SchedulesAlarmService;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
 import java.time.LocalDate;
@@ -37,7 +38,7 @@ public class SchedulesService {
     private final UsersService usersService;
     private final FoldersRepository foldersRepository;
     private final SchedulesAlarmRepository schedulesAlarmRepository;
-
+    private final SchedulesAlarmService schedulesAlarmService;
 
     public Schedules findBySchedules(Long schedulesId){
         return schedulesRepository.findById(schedulesId).
@@ -305,6 +306,7 @@ public class SchedulesService {
         List<ScheduleViewResponse> responses = new ArrayList<>();
 
         for (Schedules schedule : schedules) {
+            SchedulesAlarm bySchedulesAlarm = schedulesAlarmService.findBySchedulesAlarm(schedule.getSchedulesId());
             responses.add(new ScheduleViewResponse(
                     usersId,
                     schedule.getSchedulesId(),
@@ -316,8 +318,9 @@ public class SchedulesService {
                     schedule.getEndDate(),
                     schedule.getStartTime(),
                     schedule.getEndTime(),
-                    schedule.getNotification(),
-                    schedule.getMemo()
+                    schedule.getMemo(),
+                    bySchedulesAlarm.getAlarmState(),
+                    bySchedulesAlarm.getAlarmOffsetMinutes()
             ));
         }
         return responses;
