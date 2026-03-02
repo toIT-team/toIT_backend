@@ -6,15 +6,18 @@ import com.toit.schedules.dto.response.ScheduleViewResponse;
 import com.toit.schedules.dto.response.SchedulesMonthResponse;
 import com.toit.schedules.dto.response.SchedulesSelectedDayResponse;
 import com.toit.schedulesalarm.SchedulesAlarm;
-import com.toit.schedulesalarm.SchedulesAlarmRepository;
 import com.toit.schedulesalarm.SchedulesAlarmService;
+import com.toit.schedulesalarm.dto.response.SchedulesAlarmViewResponse;
+import com.toit.view.pageschedules.dto.response.PageSchedulesAlarmViewResponse;
 import com.toit.view.pageschedules.dto.response.PageSchedulesSearchResponse;
 import com.toit.view.pageschedules.dto.response.PageSchedulesSelectDayViewResponse;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +41,7 @@ public class PageSchedulesUseCaseImpl implements PageSchedulesUseCase {
      * 선택된 날짜의 스케줄들을 반환
      */
     @Override
-    public PageSchedulesSelectDayViewResponse getSelectedDayScheduleView(Long userId, LocalDate selectedDay){
+    public PageSchedulesSelectDayViewResponse getSelectedDaySchedulesView(Long userId, LocalDate selectedDay){
         List<SchedulesSelectedDayResponse> schedules = schedulesService.getSelectedDaySchedules(userId, selectedDay);
 
         return  new PageSchedulesSelectDayViewResponse(userId, schedules) ;
@@ -73,5 +76,28 @@ public class PageSchedulesUseCaseImpl implements PageSchedulesUseCase {
         );
     }
 
+    //푸시알림 리스트 조회
+    @Override
+    public PageSchedulesAlarmViewResponse getSchedulesAlarmsView(Long usersId) {
+
+        // 1. 서비스에서 알림 목록(Page) 조회하기
+        List<SchedulesAlarm> alarmPage = schedulesAlarmService.getAlarmList(usersId);
+
+        // 2. Stream과 new 생성자를 조합해서 DTO로 변환
+        List<SchedulesAlarmViewResponse> schedulesAlarms = alarmPage.stream()
+                .map(alarm -> new SchedulesAlarmViewResponse(
+                        alarm.getSchedulesAlarmId(),
+                        alarm.getSchedules().getTitle(),
+                        alarm.getSchedules().getStartDate(),
+                        alarm.getSchedules().getStartTime()
+                ))
+                .collect(Collectors.toList());
+
+        // 3. 만들어두신 최종 껍데기 DTO에 담아서 리턴!
+        return new PageSchedulesAlarmViewResponse(
+                usersId,
+                schedulesAlarms
+        );
+    }
 
 }
