@@ -2,7 +2,9 @@ package com.toit.view.pageschedules;
 
 
 import com.toit.schedules.dto.response.ScheduleViewResponse;
+import com.toit.swagger.docs.schedules.SchedulesAlarmApiDocs;
 import com.toit.swagger.docs.schedules.SchedulesApiDocs;
+import com.toit.view.pageschedules.dto.response.PageSchedulesAlarmViewResponse;
 import com.toit.view.pageschedules.dto.response.PageSchedulesSearchResponse;
 import com.toit.view.pageschedules.dto.response.PageSchedulesSelectDayViewResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -57,7 +59,7 @@ public class PageSchedulesViewController {
             ){
 
         return ResponseEntity.ok(schedulesUseCase.
-                getSelectedDayScheduleView(
+                getSelectedDaySchedulesView(
                         usersId,
                         selectedDay));
 
@@ -77,6 +79,21 @@ public class PageSchedulesViewController {
                 getScheduleView(
                         usersId,
                         schedulesId));
+
+    }
+
+    /***
+     * 전송된 푸시알림 리스트 조회
+     */
+    @Operation(summary = "SchedulesAlarm 화면 APO - 화면이름 : 알림 ")
+    @SchedulesAlarmApiDocs
+    @GetMapping("/alarm")
+    public ResponseEntity<PageSchedulesAlarmViewResponse> getScheduleAlarms(
+            @RequestParam("usersId") Long usersId
+    ){
+        PageSchedulesAlarmViewResponse response = schedulesUseCase.getSchedulesAlarmsView(usersId);
+
+        return ResponseEntity.ok(response);
 
     }
 }
