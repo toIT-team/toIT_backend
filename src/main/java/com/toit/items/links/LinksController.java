@@ -79,7 +79,7 @@ public class LinksController {
             summary = "링크 미리보기 추출 API",
             description = "linksUrl을 받아 링크 제목, 본문, 썸네일 또는 파비콘을 추출합니다."
     )
-    @PostMapping("/links/preview")
+    @PostMapping("/preview")
     public ResponseEntity<LinksPreviewResponse> extractLinksPreview(
             @RequestBody LinksPreviewRequest request
     ) {
