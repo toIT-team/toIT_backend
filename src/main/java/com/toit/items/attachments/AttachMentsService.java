@@ -8,8 +8,8 @@ import com.toit.common.S3.attachmentvaildator.AttachmentValidator;
 import com.toit.common.S3.config.S3Config;
 import com.toit.common.enums.AttachMentsType;
 import com.toit.common.enums.EntityStatus;
+import com.toit.exception.items.attachments.AttachmentFileNameUpdateNotAllowedException;
 import com.toit.exception.items.attachments.AttachmentsNotFoundException;
-import com.toit.exception.items.links.LinksNotFoundException;
 import com.toit.folders.FoldersService;
 import com.toit.items.attachments.dto.response.AttachMentsDeleteInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsFilesCreateInFoldersResponse;
@@ -17,8 +17,7 @@ import com.toit.items.attachments.dto.response.AttachMentsImagesCreateInFoldersR
 import com.toit.items.attachments.dto.response.AttachMentsImagesGetInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsFilesGetInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsMoveInFoldersResponse;
-import com.toit.items.links.Links;
-import com.toit.items.links.dto.response.LinksMoveInFoldersResponse;
+import com.toit.items.attachments.dto.response.AttachMentsUpdateFileNameResponse;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
 import java.util.ArrayList;
@@ -242,6 +241,23 @@ public class AttachMentsService {
         attachments.moveFolders(moveFoldersId);
         attachMentsRepository.save(attachments);
         return new AttachMentsMoveInFoldersResponse(usersId, foldersId, moveFoldersId, attachmentsId);
+    }
+
+    public AttachMentsUpdateFileNameResponse updateFileName(Long usersId, Long foldersId, Long attachmentsId, String fileName) {
+        usersService.findById(usersId);
+        foldersService.findByFoldersIdAndUsers_UsersId(usersId, foldersId);
+
+        AttachMents attachments = attachMentsRepository
+                .findByAttachmentsIdAndUsers_UsersId(attachmentsId, usersId)
+                .orElseThrow(() -> new AttachmentsNotFoundException(attachmentsId + "는 존재하지 않는 이미지/파일입니다."));
+
+        if (attachments.getAttachmentsType() != AttachMentsType.FILE) {
+            throw new AttachmentFileNameUpdateNotAllowedException("attachmentsType이 FILE인 경우에만 fileName을 수정할 수 있습니다.");
+        }
+
+        attachments.updateFileName(fileName);
+        attachMentsRepository.save(attachments);
+        return new AttachMentsUpdateFileNameResponse(attachments);
     }
 
 

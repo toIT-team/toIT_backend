@@ -77,7 +77,7 @@ public class TextsController {
     }
 
     @Operation(
-            summary = "자료 텍스트 수정 API - 화면이름 : 노트 수정",
+            summary = "자료 텍스트 수정 API - 화면이름 : 노트 미트볼메뉴",
             description = "텍스트 본문을 수정합니다."
     )
     @TextsUpdateApiDocs

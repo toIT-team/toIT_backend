@@ -1,15 +1,17 @@
 package com.toit.items.attachments;
 
+import com.toit.items.attachments.dto.request.AttachMentsUpdateFileNameRequest;
 import com.toit.items.attachments.dto.request.AttachMenetsMoveInFoldersRequest;
 import com.toit.items.attachments.dto.response.AttachMentsDeleteInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsFilesCreateInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsImagesCreateInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsMoveInFoldersResponse;
-import com.toit.items.links.dto.request.LinksMoveInFoldersRequest;
-import com.toit.items.links.dto.response.LinksMoveInFoldersResponse;
+import com.toit.items.attachments.dto.response.AttachMentsUpdateFileNameResponse;
 import com.toit.swagger.docs.items.attachments.AttachMentsDeleteApiDocs;
 import com.toit.swagger.docs.items.attachments.AttachMentsFilesUploadApiDocs;
 import com.toit.swagger.docs.items.attachments.AttachMentsImagesUploadApiDocs;
+import com.toit.swagger.docs.items.attachments.AttachMentsPatchApiDocs;
+import com.toit.swagger.docs.items.attachments.AttachMentsUpdateFileNameApiDocs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -96,6 +98,25 @@ public class AttachMentsController {
             @RequestBody AttachMenetsMoveInFoldersRequest request
     ){
         return ResponseEntity.ok(attachmentsService.moveAttachmentsInFolders(request.getUsersId(), request.getFoldersId(), request.getMoveFoldersId(), request.getAttachmentsId()));
+    }
+
+    @Operation(
+            summary = "자료 파일 이름 수정 API - 화면이름 : 파일 미트볼메뉴",
+            description = "attachmentsType이 FILE인 경우에만 fileName을 수정합니다."
+    )
+    @AttachMentsUpdateFileNameApiDocs
+    @PatchMapping("/attachments/update")
+    public ResponseEntity<AttachMentsUpdateFileNameResponse> updateFileName(
+            @RequestBody AttachMentsUpdateFileNameRequest request
+    ) {
+        return ResponseEntity.ok(
+                attachmentsService.updateFileName(
+                        request.getUsersId(),
+                        request.getFoldersId(),
+                        request.getAttachmentsId(),
+                        request.getFileName()
+                )
+        );
     }
 
 

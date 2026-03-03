@@ -121,4 +121,11 @@ public class AttachMents extends ItemsBase {
     public void moveFolders(Long moveFoldersId){
         this.storageId = moveFoldersId;
     }
+
+    public void updateFileName(String fileName) {
+        if (this.attachmentsType != AttachMentsType.FILE) {
+            throw new IllegalStateException("FILE 타입의 첨부파일만 이름을 수정할 수 있습니다.");
+        }
+        this.fileName = fileName;
+    }
 }

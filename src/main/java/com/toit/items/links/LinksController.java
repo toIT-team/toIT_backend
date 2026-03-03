@@ -77,7 +77,7 @@ public class LinksController {
     }
 
     @Operation(
-            summary = "자료 링크 수정 API - 화면이름 : 링크 수정",
+            summary = "자료 링크 수정 API - 화면이름 : 링크 미트볼메뉴",
             description = "링크 제목과 썸네일을 수정합니다."
     )
     @LinksUpdateApiDocs

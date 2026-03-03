@@ -1,6 +1,7 @@
 package com.toit.exception;
 
 import com.toit.exception.folders.FoldersNotFoundException;
+import com.toit.exception.items.attachments.AttachmentFileNameUpdateNotAllowedException;
 import com.toit.exception.items.attachments.AttachmentReadException;
 import com.toit.exception.items.attachments.AttachmentsNotFoundException;
 import com.toit.exception.items.attachments.UnsupportedFileTypeException;
@@ -79,6 +80,12 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(UnsupportedFileTypeException.class)
     public ResponseEntity<ErrorResponse> UnsupportedFileTypeException(UnsupportedFileTypeException ex) {
+        ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AttachmentFileNameUpdateNotAllowedException.class)
+    public ResponseEntity<ErrorResponse> AttachmentFileNameUpdateNotAllowedException(AttachmentFileNameUpdateNotAllowedException ex) {
         ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
