@@ -3,11 +3,14 @@ package com.toit.items.texts;
 import com.toit.items.texts.dto.request.TextsCreateInFoldersRequest;
 import com.toit.items.texts.dto.request.TextsDeleteInFoldersRequest;
 import com.toit.items.texts.dto.request.TextsMoveInFoldersRequest;
+import com.toit.items.texts.dto.request.TextsUpdateRequest;
 import com.toit.items.texts.dto.response.TextsCreateInFoldersResponse;
 import com.toit.items.texts.dto.response.TextsDeleteInFoldersResponse;
 import com.toit.items.texts.dto.response.TextsMoveInFoldersResponse;
+import com.toit.items.texts.dto.response.TextsUpdateResponse;
 import com.toit.swagger.docs.items.texts.TextsCreateApiDocs;
 import com.toit.swagger.docs.items.texts.TextsDeleteApiDocs;
+import com.toit.swagger.docs.items.texts.TextsUpdateApiDocs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -71,6 +74,25 @@ public class TextsController {
             @RequestBody TextsMoveInFoldersRequest request
     ){
         return ResponseEntity.ok(textsService.moveTextsInFolders(request.getUsersId(), request.getFoldersId(), request.getMoveFoldersId(), request.getTextsId()));
+    }
+
+    @Operation(
+            summary = "자료 텍스트 수정 API - 화면이름 : 노트 수정",
+            description = "텍스트 본문을 수정합니다."
+    )
+    @TextsUpdateApiDocs
+    @PatchMapping("/update")
+    public ResponseEntity<TextsUpdateResponse> updateTexts(
+            @RequestBody TextsUpdateRequest request
+    ) {
+        return ResponseEntity.ok(
+                textsService.updateTexts(
+                        request.getUsersId(),
+                        request.getFoldersId(),
+                        request.getTextsId(),
+                        request.getTextContent()
+                )
+        );
     }
 
 

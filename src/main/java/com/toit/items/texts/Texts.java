@@ -51,4 +51,8 @@ public class Texts extends ItemsBase {
         this.storageId = moveFoldersId;
     }
 
+    public void updateTextContent(String textContent) {
+        this.textContent = textContent;
+    }
+
 }

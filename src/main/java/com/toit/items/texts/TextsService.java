@@ -11,6 +11,7 @@ import com.toit.items.texts.dto.response.TextsDeleteInFoldersResponse;
 import com.toit.items.texts.dto.response.TextsGetInFoldersResponse;
 import com.toit.folders.FoldersService;
 import com.toit.items.texts.dto.response.TextsMoveInFoldersResponse;
+import com.toit.items.texts.dto.response.TextsUpdateResponse;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
 import java.util.ArrayList;
@@ -90,6 +91,15 @@ public class TextsService {
         texts.moveFolders(moveFoldersId);
         textsRepository.save(texts);
         return new TextsMoveInFoldersResponse(texts);
+    }
+
+    public TextsUpdateResponse updateTexts(Long usersId, Long foldersId, Long textsId, String textContent){
+        usersService.findById(usersId);
+        foldersService.findByFoldersIdAndUsers_UsersId(usersId, foldersId);
+        Texts texts = findById(textsId);
+        texts.updateTextContent(textContent);
+        textsRepository.save(texts);
+        return new TextsUpdateResponse(texts);
     }
 
     /**
