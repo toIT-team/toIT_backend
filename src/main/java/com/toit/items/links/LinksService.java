@@ -2,19 +2,14 @@ package com.toit.items.links;
 
 import com.toit.common.enums.EntityStatus;
 import com.toit.exception.items.links.LinksNotFoundException;
-import com.toit.exception.items.texts.TextsNotFoundException;
 import com.toit.items.links.dto.response.LinksCreateInFoldersResponse;
 import com.toit.items.links.dto.response.LinksDeleteInFoldersResponse;
 import com.toit.items.links.dto.response.LinksGetInFoldersResponse;
 import com.toit.items.links.dto.response.LinksMoveInFoldersResponse;
+import com.toit.items.links.dto.response.LinksPreviewResponse;
 import com.toit.items.shared.linkpreview.LinkPreview;
 import com.toit.items.shared.linkpreview.LinkPreviewExtractor;
 import com.toit.folders.FoldersService;
-import com.toit.items.texts.Texts;
-import com.toit.items.texts.dto.response.TextsDeleteInFoldersResponse;
-import com.toit.items.texts.dto.response.TextsMoveInFoldersResponse;
-import com.toit.schedules.Schedules;
-import com.toit.schedules.dto.response.ScheduleViewResponse;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
 import java.util.ArrayList;
@@ -42,19 +37,8 @@ public class LinksService {
      * @param linksUrl
      * @return
      */
-    public LinksCreateInFoldersResponse createLinksInFolders(Long usersId, List<Long> foldersIdList, String linksUrl){
+    public LinksCreateInFoldersResponse createLinksInFolders(Long usersId, List<Long> foldersIdList, String linksUrl, String linksName, String textContent, String linksThumbnail){
         Users users = usersService.findById(usersId);
-
-        LinkPreview preview = linkPreviewExtractor.extract(linksUrl);
-        String linksName = preview.getTitle();
-        String textContent = preview.getDescription();
-        String linksThumbnail = preview.getThumbnailUrl();
-        System.out.println("===== LinkPreview =====");
-        System.out.println("resolvedUrl = " + preview.getResolvedUrl());
-        System.out.println("title       = " + preview.getTitle());
-        System.out.println("description = " + preview.getDescription());
-        System.out.println("thumbnail   = " + preview.getThumbnailUrl());
-        System.out.println("=======================");
 
         for (Long foldersId : foldersIdList) {
             foldersService.findByFoldersIdAndUsers_UsersId(usersId, foldersId); // 권한/존재 검증
@@ -71,7 +55,16 @@ public class LinksService {
         }
 
 
-        return new LinksCreateInFoldersResponse(usersId, foldersIdList, linksUrl, preview.getDescription(), preview.getThumbnailUrl(),  preview.getTitle());
+        return new LinksCreateInFoldersResponse(usersId, foldersIdList, linksUrl, textContent, linksThumbnail, linksName);
+    }
+
+    public LinksPreviewResponse extractLinksPreview(String linksUrl) {
+        LinkPreview preview = linkPreviewExtractor.extract(linksUrl);
+        String linksName = preview.getTitle();
+        String textContent = preview.getDescription();
+        String linksThumbnail = preview.getThumbnailUrl();
+
+        return new LinksPreviewResponse(linksName, textContent, linksThumbnail);
     }
 
     /**
