@@ -1,5 +1,6 @@
 package com.toit.folders;
 
+import com.toit.common.enums.EntityStatus;
 import com.toit.exception.folders.FoldersNotFoundException;
 import com.toit.folders.dto.response.FoldersCreateResponse;
 import com.toit.folders.dto.response.FoldersDeleteResponse;
@@ -8,7 +9,9 @@ import com.toit.folders.dto.response.FoldersUpdateResponse;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
 import com.toit.view.pagefolders.dto.response.PageFoldersMemoResponse;
+import com.toit.view.pagesearch.dto.response.PageSearchResponse;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +33,7 @@ public class FoldersService {
      */
     public List<FoldersItemResponse> getAllFoldersByUser(Long usersId) {
         usersService.findById(usersId);
-        List<FoldersItemResponse> folders = foldersRepository.findByUsers_UsersId(usersId)
+        List<FoldersItemResponse> folders = foldersRepository.findByUsers_UsersIdAndStatus(usersId, EntityStatus.ACTIVE)
                 .stream()
                 .map(FoldersItemResponse::new)
                 .toList();
@@ -120,8 +123,22 @@ public class FoldersService {
         }
     }
 
-    public void updateSoftDelete(Folders folders){
 
+    public List<FoldersItemResponse> searchFolders(Long usersId, String keyword) {
+        String k = (keyword == null) ? "" : keyword.trim();
+        if (k.isEmpty()) {
+            return List.of();
+        }
+        List<Folders> folders =
+                foldersRepository.searchByName(usersId, EntityStatus.ACTIVE, k);
+
+        List<FoldersItemResponse> responses = new ArrayList<>();
+
+        for (Folders folder : folders) {
+            responses.add(new FoldersItemResponse(folder));
+        }
+
+        return responses;
     }
 
 }

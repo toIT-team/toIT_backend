@@ -17,9 +17,18 @@ public class LinksCreateInFoldersRequest {
     /** 링크 URL */
     private String linksUrl;
 
-    public LinksCreateInFoldersRequest(Long usersId, List<Long> foldersIdList, String linksUrl){
+    private String linksName;
+
+    private String textContent;
+
+    private String linksThumbnail;
+
+    public LinksCreateInFoldersRequest(Long usersId, List<Long> foldersIdList, String linksUrl, String linksName, String textContent, String linksThumbnail){
         this.usersId = usersId;
         this.foldersIdList = foldersIdList;
         this.linksUrl = linksUrl;
+        this.linksName = linksName;
+        this.textContent = textContent;
+        this.linksThumbnail = linksThumbnail;
     }
 }
