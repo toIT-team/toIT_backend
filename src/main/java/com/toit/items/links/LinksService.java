@@ -7,6 +7,7 @@ import com.toit.items.links.dto.response.LinksDeleteInFoldersResponse;
 import com.toit.items.links.dto.response.LinksGetInFoldersResponse;
 import com.toit.items.links.dto.response.LinksMoveInFoldersResponse;
 import com.toit.items.links.dto.response.LinksPreviewResponse;
+import com.toit.items.links.dto.response.LinksUpdateResponse;
 import com.toit.items.shared.linkpreview.LinkPreview;
 import com.toit.items.shared.linkpreview.LinkPreviewExtractor;
 import com.toit.folders.FoldersService;
@@ -113,6 +114,15 @@ public class LinksService {
         links.moveFolders(moveFoldersId);
         linksRepository.save(links);
         return new LinksMoveInFoldersResponse(links);
+    }
+
+    public LinksUpdateResponse updateLinks(Long usersId, Long foldersId, Long linksId, String linksName, String textContent) {
+        usersService.findById(usersId);
+        foldersService.findByFoldersIdAndUsers_UsersId(usersId, foldersId);
+        Links links = findById(linksId);
+        links.updateDetails(linksName, textContent);
+        linksRepository.save(links);
+        return new LinksUpdateResponse(links);
     }
 
     /**

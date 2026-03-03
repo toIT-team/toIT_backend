@@ -77,4 +77,9 @@ public class Links extends ItemsBase {
         this.storageId = moveFoldersId;
     }
 
+    public void updateDetails(String linksName, String textContent) {
+        this.linksName = linksName;
+        this.textContent = textContent;
+    }
+
 }
