@@ -36,7 +36,7 @@ public class SchedulesService {
 
     private final SchedulesRepository schedulesRepository;
     private final UsersService usersService;
-    private final FoldersRepository foldersRepository;
+    private final FoldersService foldersService;
     private final SchedulesAlarmRepository schedulesAlarmRepository;
     private final SchedulesAlarmService schedulesAlarmService;
 
@@ -94,7 +94,7 @@ public class SchedulesService {
         // startDate <= todayDate AND endDate >= todayDate 조건으로 조회
         List<Schedules> schedules = schedulesRepository
                 .findSelectedDaySchedules(usersId,
-                        selectedDay);
+                        selectedDay,EntityStatus.ACTIVE);
 
         // 유저 조회
         usersService.findById(usersId);
@@ -117,7 +117,8 @@ public class SchedulesService {
         List<Schedules> schedules = schedulesRepository.findSchedulesBetween(
                 usersId,
                 startDate,
-                endDate
+                endDate,
+                EntityStatus.ACTIVE
         );
 
         // 2. Entity -> DTO 변환 (SchedulesMonthDto가 있다고 가정)
@@ -151,9 +152,9 @@ public class SchedulesService {
 
         Folders folder = null;
         if (request.getFoldersId() != null) {
-            folder = foldersRepository.findById(request.getFoldersId())
-                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 폴더입니다."));
+            folder = foldersService.findById(request.getFoldersId());
         }
+
 
         // 3. 생성자를 호출하여 엔티티 생성
         Schedules schedule = new Schedules(
@@ -219,8 +220,7 @@ public class SchedulesService {
 
         Folders folder = null;
         if (request.getFoldersId() != null) {
-            folder = foldersRepository.findById(request.getFoldersId())
-                    .orElseThrow(() -> new IllegalArgumentException("해당 폴더를 찾을 수 없습니다. ID=" + request.getFoldersId()));
+            folder = foldersService.findById(request.getFoldersId());
         }
 
         // 1. 일정(Schedules) 데이터 수정 (Dirty Checking)
@@ -275,21 +275,20 @@ public class SchedulesService {
 
 
     /***
-     *
-     * @param request
+     * 일정 삭제
      */
     public SchedulesDeleteResponse deleteSchedule(SchedulesDeleteRequest request) {
         usersService.findById(request.getUserId());
 
-        // 1. 스케줄 조회 (없으면 예외 발생)
         Schedules schedule = findBySchedules(request.getSchedulesId());
 
-        usersService.findById(request.getUserId());
+        schedule.changeStatusDelete();
 
-        EntityStatus entityStatus = schedule.changeStatusDelete();
+        schedulesRepository.save(schedule);
 
-        return new SchedulesDeleteResponse(request.getSchedulesId() , request.getUserId(),entityStatus );
+        return new SchedulesDeleteResponse(request.getSchedulesId() , request.getUserId(), schedule.getStatus());
     }
+
 
     /**
      * 검색

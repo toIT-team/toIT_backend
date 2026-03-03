@@ -18,20 +18,24 @@ public interface SchedulesRepository extends JpaRepository<Schedules, Long> {
     /** 오늘 일정 조회 */
     @Query("SELECT s FROM Schedules s " +
             "WHERE s.users.usersId = :userId " +
+            "AND s.status = :status " +
             "AND :targetDate BETWEEN s.startDate AND s.endDate " +
             "ORDER BY s.startTime ASC")
     List<Schedules> findSelectedDaySchedules(@Param("userId") Long userId,
-                                       @Param("targetDate") LocalDate targetDate);
+                                             @Param("targetDate") LocalDate targetDate,
+                                             @Param("status") EntityStatus status);
 
     /** 시작날짜 종료날짜 사이 일정 조회 */
     @Query("SELECT s FROM Schedules s " +
             "WHERE s.users.usersId = :userId " +
             "AND s.endDate >= :startDate " +
             "AND s.startDate <= :endDate " +
+            "AND s.status = :status " +
             "ORDER BY s.startDate ASC, s.startTime ASC")
     List<Schedules> findSchedulesBetween(@Param("userId") Long userId,
                                          @Param("startDate") LocalDate startDate,
-                                         @Param("endDate") LocalDate endDate);
+                                         @Param("endDate") LocalDate endDate,
+                                         @Param("status") EntityStatus status);
 
 
     /***
