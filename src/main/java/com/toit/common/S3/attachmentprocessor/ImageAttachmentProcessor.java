@@ -97,7 +97,7 @@ public class ImageAttachmentProcessor implements AttachmentProcessor {
 
         /** presigned url 생성 (예: 30분) */
         String presignedUrl =
-                s3Storage.presignGetUrl(objectKey, Duration.ofMinutes(30));
+                s3Storage.presignGetUrl(objectKey, Duration.ofDays(7));
 
         return new StorageResult(objectKey, presignedUrl);
     }
