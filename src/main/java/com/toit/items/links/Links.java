@@ -68,4 +68,18 @@ public class Links extends ItemsBase {
         return links;
     }
 
+    public void softDelete() {
+        this.status = EntityStatus.DELETED;
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    public void moveFolders(Long moveFoldersId){
+        this.storageId = moveFoldersId;
+    }
+
+    public void updateDetails(String linksName, String textContent) {
+        this.linksName = linksName;
+        this.textContent = textContent;
+    }
+
 }

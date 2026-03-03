@@ -2,7 +2,12 @@ package com.toit.items.texts.dto.response;
 
 import com.toit.items.texts.Texts;
 import java.time.LocalDateTime;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TextsGetInFoldersResponse {
     private Long textsId;
     /**

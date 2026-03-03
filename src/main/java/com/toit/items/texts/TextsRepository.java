@@ -23,4 +23,21 @@ public interface TextsRepository extends JpaRepository<Texts, Long> {
             @Param("foldersId") Long foldersId,
             @Param("status") EntityStatus status
     );
+
+    /**
+     * 텍스트로 검색
+     */
+    @Query("""
+        select t
+        from Texts t
+        where t.users.usersId = :usersId
+          and t.status = :status
+          and lower(t.textContent) like lower(concat('%', :keyword, '%'))
+        order by t.createdAt desc
+    """)
+    List<Texts> searchByTextContent(
+            @Param("usersId") Long usersId,
+            @Param("status") EntityStatus status,
+            @Param("keyword") String keyword
+    );
 }

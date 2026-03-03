@@ -14,23 +14,21 @@ public class LinksCreateInFoldersResponse {
     /** 보관함 ID - 저장할 보관함 ID, 여러 개의 보관함이 선택될 수 있음*/
     private List<Long> foldersIdList;
 
-    private String filePath;
+    private String linksUrl;
 
-    /** 텍스트 내용 */
+    private String linksName;
+
     private String textContent;
 
-    private String linkThumbnail;
-
-    private String name;
+    private String linksThumbnail;
 
 
-
-    public LinksCreateInFoldersResponse(Long usersId, List<Long> foldersIdList, String filePath, String textContent, String linkThumbnail ,String name){
+    public LinksCreateInFoldersResponse(Long usersId, List<Long> foldersIdList, String linksUrl, String textContent, String linksThumbnail ,String linksName){
         this.usersId = usersId;
         this.foldersIdList = foldersIdList;
-        this.filePath = filePath;
+        this.linksUrl = linksUrl;
         this.textContent = textContent;
-        this.linkThumbnail = linkThumbnail;
-        this.name = name;
+        this.linksThumbnail = linksThumbnail;
+        this.linksName = linksName;
     }
 }

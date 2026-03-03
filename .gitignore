@@ -43,3 +43,4 @@ application-local.yml
 
 ### Firebase Key (보안) ###
 src/main/resources/firebase/firebase-key.json
+src/main/resources/data/seed_postgres.sql

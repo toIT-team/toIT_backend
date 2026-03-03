@@ -49,5 +49,6 @@ import java.lang.annotation.Target;
                 )
         )
 })
-public @interface PageItemsApiDocs {
+public @interface
+PageItemsApiDocs {
 }
