@@ -5,9 +5,7 @@ package com.toit.schedules;
 import com.toit.common.enums.EntityStatus;
 import com.toit.exception.schedules.SchedulesNotFoundException;
 import com.toit.folders.Folders;
-import com.toit.folders.FoldersRepository;
 import com.toit.folders.FoldersService;
-import com.toit.folders.dto.response.FoldersItemResponse;
 import com.toit.schedules.dto.request.SchedulesDeleteRequest;
 import com.toit.schedules.dto.request.SchedulesUpdateRequest;
 import com.toit.schedules.dto.response.*;
@@ -28,7 +26,6 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 
 @Service
 @RequiredArgsConstructor
@@ -213,7 +210,7 @@ public class SchedulesService {
      * 스케줄 수정 로직
      * @param request
      */
-    // 수정이 일어나므로 readOnly = false (기본값)
+
     public SchedulesUpdateResponse updateSchedules(SchedulesUpdateRequest request) {
         usersService.findById(request.getUsersId());
         Schedules schedule = findBySchedules(request.getSchedulesId());
@@ -229,6 +226,7 @@ public class SchedulesService {
                 request.getTimeSetting(), request.getStartDate(), request.getEndDate(),
                 request.getStartTime(), request.getEndTime(), request.getMemo()
         );
+        schedulesRepository.save(schedule);
 
         // 기존에 설정된 알림이 있는지 조회
         Optional<SchedulesAlarm> existingAlarm = schedulesAlarmRepository.findBySchedules_SchedulesId(schedule.getSchedulesId());
