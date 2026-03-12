@@ -48,15 +48,16 @@ public class PageSchedulesUseCaseImpl implements PageSchedulesUseCase {
 
     }
 
+
+    //일정 상세 조회
     @Override
     public ScheduleViewResponse getScheduleView(Long usersId, Long schedulesId){
         ScheduleViewResponse schedule = schedulesService.getSchedule(usersId, schedulesId);
 
-        SchedulesAlarm alarm = schedulesAlarmService.findBySchedulesAlarm(schedulesId);
+        SchedulesAlarm alarm = schedulesAlarmService.getAlarmBySchedulesId(schedulesId);
 
         Boolean alarmState = (alarm != null) ? alarm.getAlarmState() : false;
         Long alarmOffsetMinutes = (alarm != null) ? alarm.getAlarmOffsetMinutes() : null;
-
 
         return new ScheduleViewResponse(
                 schedule.getUserId(),
@@ -72,7 +73,6 @@ public class PageSchedulesUseCaseImpl implements PageSchedulesUseCase {
                 schedule.getMemo(),
                 alarmState,
                 alarmOffsetMinutes
-
         );
     }
 

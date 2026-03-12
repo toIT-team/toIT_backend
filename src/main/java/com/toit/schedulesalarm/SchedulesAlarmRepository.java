@@ -16,7 +16,7 @@ import org.springframework.data.domain.Pageable;
 @Repository
 public interface SchedulesAlarmRepository  extends JpaRepository<SchedulesAlarm, Long> {
 
-    Optional<SchedulesAlarm> findBySchedules_SchedulesId(Long schedulesId);
+    Optional<SchedulesAlarm>  findBySchedules_SchedulesId(Long schedulesId);
 
     //보내야 할 알림 찾아옴
     @Query("SELECT a FROM SchedulesAlarm a " +
