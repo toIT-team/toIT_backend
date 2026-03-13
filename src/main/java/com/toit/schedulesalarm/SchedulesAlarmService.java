@@ -27,6 +27,13 @@ public class SchedulesAlarmService {
 
     }
 
+    public SchedulesAlarm getAlarmBySchedulesId(Long schedulesId) {
+        return schedulesAlarmRepository.findBySchedules_SchedulesId(schedulesId)
+                .orElse(null);
+    }
+
+
+
     /***
      * 푸시 알림 조회
      */
