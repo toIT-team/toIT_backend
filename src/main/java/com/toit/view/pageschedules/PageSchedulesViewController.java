@@ -62,14 +62,13 @@ public class PageSchedulesViewController {
                 getSelectedDaySchedulesView(
                         usersId,
                         selectedDay));
-
     }
 
     @Operation(
             summary = "Schedules 화면 API - 화면이름 : 캘린더 - 일정 상세"
     )
     @SchedulesApiDocs
-    @GetMapping
+    @GetMapping("/detail")
     public ResponseEntity<ScheduleViewResponse> getSchedule(
             @RequestParam("usersId") Long usersId,
             @RequestParam("schedulesId") Long schedulesId
@@ -85,7 +84,7 @@ public class PageSchedulesViewController {
     /***
      * 전송된 푸시알림 리스트 조회
      */
-    @Operation(summary = "SchedulesAlarm 화면 APO - 화면이름 : 알림 ")
+    @Operation(summary = "SchedulesAlarm 화면 API - 화면이름 : 알림 ")
     @SchedulesAlarmApiDocs
     @GetMapping("/alarm")
     public ResponseEntity<PageSchedulesAlarmViewResponse> getScheduleAlarms(

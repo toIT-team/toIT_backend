@@ -31,8 +31,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SchedulesService {
 
-    private final SchedulesRepository schedulesRepository;
-    private final UsersService usersService;
+    private final SchedulesRepository schedulesRepository;private final UsersService usersService;
     private final FoldersService foldersService;
     private final SchedulesAlarmRepository schedulesAlarmRepository;
     private final SchedulesAlarmService schedulesAlarmService;
@@ -245,6 +244,8 @@ public class SchedulesService {
                 SchedulesAlarm alarm = existingAlarm.get();
                 //  기존 알림이 있음 -> 정보 업데이트 및 상태(isSent, isRead) 초기화
                 alarm.updateAlarm(request.getAlarmState(), alarmDateTime, request.getAlarmOffsetMinutes());
+                //알림 변경 내용 저장
+                schedulesAlarmRepository.save(alarm);
             } else {
                 //  기존 알림이 없음 (새로 켬) -> 새로 생성
                 SchedulesAlarm newAlarm = new SchedulesAlarm(schedule, request.getAlarmState(), alarmDateTime, request.getAlarmOffsetMinutes());
