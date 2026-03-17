@@ -59,6 +59,9 @@ public class AttachMentsService {
         /* 확장자 검사 */
         attachmentValidator.validateImageContentType(image.getContentType());
 
+        /* 파일 크기 검사 */
+        attachmentValidator.validateFileSize(image.getSize());
+
         /** IMAGE 타입 Processor 가져오기 */
         AttachmentProcessor processor = processorRouter.getProcessor(AttachMentsType.IMAGE);
 
@@ -116,6 +119,9 @@ public class AttachMentsService {
         /* 확장자 검사 */
         attachmentValidator.validateFilesContentType(file.getContentType());
 
+        /* 파일 크기 검사 */
+        attachmentValidator.validateFileSize(file.getSize());
+
         /** File 타입 Processor 가져오기 */
         AttachmentProcessor processor = processorRouter.getProcessor(AttachMentsType.FILE);
 
@@ -131,7 +137,7 @@ public class AttachMentsService {
 
         for (Long folderId : foldersIdList) {
             AttachMents entity =
-                    AttachMents.createImagesInFolders(
+                    AttachMents.createFilesInFolders(
                             users,
                             folderId,
                             result.getObjectKey(),
@@ -139,9 +145,7 @@ public class AttachMentsService {
                             payload.getAttachmentsExtension(),
                             payload.getAttachmentsSize(),
                             payload.getFileName(),
-                            textContent,
-                            payload.getWidth(),
-                            payload.getHeight()
+                            textContent
                     );
 
             AttachMents saved = attachMentsRepository.save(entity);

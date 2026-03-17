@@ -80,6 +80,34 @@ public class AttachMents extends ItemsBase {
     @JoinColumn(name = "users_id", nullable = false)
     private Users users;
 
+    public static AttachMents createFilesInFolders(
+            Users users,
+            Long foldersId,
+            String objectKey,
+            String presignedUrl,
+            String attachmentsExtension,
+            Double attachmentsSize,
+            String fileName,
+            String textContent
+    ) {
+        AttachMents attachments = new AttachMents();
+        attachments.attachmentsType = AttachMentsType.FILE;
+        attachments.objectKey = objectKey;
+        attachments.presignedUrl = presignedUrl;
+        attachments.attachmentsExtension = attachmentsExtension;
+        attachments.attachmentsSize = attachmentsSize;
+        attachments.fileName = fileName;
+        attachments.storageId = foldersId;
+        attachments.textContent = textContent;
+        attachments.status = EntityStatus.ACTIVE;
+        attachments.createdAt = LocalDateTime.now();
+        attachments.users = users;
+        attachments.imagesWidth = null;
+        attachments.imagesHeight = null;
+        return attachments;
+    }
+
+
     public static AttachMents createImagesInFolders(
             Users users,
             Long foldersId,
