@@ -34,6 +34,8 @@ public interface AttachMentsRepository extends JpaRepository<AttachMents, Long> 
 
     long countByStorageIdAndStatus(Long storageId, EntityStatus status);
 
+    List<AttachMents> findByStatus(EntityStatus status);
+
     /**
      * fileName으로 검색
      */
