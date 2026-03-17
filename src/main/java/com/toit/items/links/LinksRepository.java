@@ -42,4 +42,6 @@ public interface LinksRepository extends JpaRepository<Links, Long> {
             @Param("status") EntityStatus status,
             @Param("keyword") String keyword
     );
+
+    long countByStorageIdAndStatus(Long storageId, EntityStatus status);
 }
