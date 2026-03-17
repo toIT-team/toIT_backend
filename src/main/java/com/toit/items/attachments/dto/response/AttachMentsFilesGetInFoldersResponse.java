@@ -14,6 +14,8 @@ public class AttachMentsFilesGetInFoldersResponse {
 
     private Long usersId;
 
+    private Long foldersId;
+
     /**
      * ENUM형태("FILE")
      */
@@ -52,9 +54,11 @@ public class AttachMentsFilesGetInFoldersResponse {
 
     public AttachMentsFilesGetInFoldersResponse(Long attachmentsId, Long usersId, AttachMentsType attachmentsType,
                                                 String objectKey, String presignedUrl, String attachmentsExtension,
-                                                Double attachmentsSize, String fileName, LocalDateTime createdAt){
+                                                Double attachmentsSize, String fileName, LocalDateTime createdAt,
+                                                Long foldersId){
         this.attachmentsId = attachmentsId;
         this.usersId = usersId;
+        this.foldersId = foldersId;
         this.attachmentsType = attachmentsType;
         this.objectKey = objectKey;
         this.presignedUrl = presignedUrl;
@@ -67,6 +71,7 @@ public class AttachMentsFilesGetInFoldersResponse {
     public AttachMentsFilesGetInFoldersResponse(AttachMents attachments){
         this.attachmentsId = attachments.getAttachmentsId();
         this.usersId = attachments.getUsers().getUsersId();
+        this.foldersId = attachments.getStorageId();
         this.attachmentsType = attachments.getAttachmentsType();
         this.objectKey = attachments.getObjectKey();
         this.presignedUrl = attachments.getPresignedUrl();
