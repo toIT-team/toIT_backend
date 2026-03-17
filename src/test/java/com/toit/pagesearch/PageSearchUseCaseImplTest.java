@@ -111,8 +111,8 @@ class PageSearchUseCaseImplTest {
                 .thenReturn(List.of(org.mockito.Mockito.mock(LinksGetInFoldersResponse.class)));
         when(textsService.searchTexts(usersId, keyword))
                 .thenReturn(List.of(org.mockito.Mockito.mock(TextsGetInFoldersResponse.class)));
-        when(attachMentsService.searchImages(usersId, keyword))
-                .thenReturn(List.of(org.mockito.Mockito.mock(AttachMentsImagesGetInFoldersResponse.class)));
+//        when(attachMentsService.searchImages(usersId, keyword))
+//                .thenReturn(List.of(org.mockito.Mockito.mock(AttachMentsImagesGetInFoldersResponse.class)));
         when(attachMentsService.searchFiles(usersId, keyword))
                 .thenReturn(List.of(org.mockito.Mockito.mock(AttachMentsFilesGetInFoldersResponse.class)));
 
@@ -136,7 +136,7 @@ class PageSearchUseCaseImplTest {
         when(schedulesService.searchSchedules(usersId, keyword)).thenReturn(List.of());
         when(linksService.searchLinks(usersId, keyword)).thenReturn(List.of());
         when(textsService.searchTexts(usersId, keyword)).thenReturn(List.of());
-        when(attachMentsService.searchImages(usersId, keyword)).thenReturn(List.of());
+//        when(attachMentsService.searchImages(usersId, keyword)).thenReturn(List.of());
         when(attachMentsService.searchFiles(usersId, keyword)).thenReturn(List.of());
 
         PageSearchResponse response = pageSearchUseCase.search(usersId, keyword);
