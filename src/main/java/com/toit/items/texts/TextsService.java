@@ -121,6 +121,10 @@ public class TextsService {
         return responses;
     }
 
+    public long countByFoldersId(Long foldersId) {
+        return textsRepository.countByStorageIdAndStatus(foldersId, EntityStatus.ACTIVE);
+    }
+
     /**
      * 텍스트 검색
      * @param textsId

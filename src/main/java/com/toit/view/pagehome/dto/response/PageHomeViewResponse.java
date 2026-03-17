@@ -1,6 +1,5 @@
 package com.toit.view.pagehome.dto.response;
 
-import com.toit.folders.dto.response.FoldersItemResponse;
 import com.toit.foldersviews.dto.response.RecentFoldersResponse;
 import com.toit.schedules.dto.response.SchedulesSelectedDayResponse;
 import java.util.List;
@@ -19,7 +18,7 @@ public class PageHomeViewResponse {
     /**
      * 사용자의 보관함 모음
      */
-    private List<FoldersItemResponse> folders;
+    private List<PageHomeFoldersItemResponse> folders;
 
     /**
      * 사용자의 최근 본 폴더 조회 - 최대 4개
@@ -31,7 +30,7 @@ public class PageHomeViewResponse {
      */
     private List<SchedulesSelectedDayResponse> schedules;
 
-    public PageHomeViewResponse(Long userId, List<FoldersItemResponse> folders, List<RecentFoldersResponse> foldersViews
+    public PageHomeViewResponse(Long userId, List<PageHomeFoldersItemResponse> folders, List<RecentFoldersResponse> foldersViews
             , List<SchedulesSelectedDayResponse> schedules) {
         this.userId = userId;
         this.folders = folders;

@@ -299,6 +299,10 @@ public class AttachMentsService {
 
 
 
+    public long countByFoldersId(Long foldersId) {
+        return attachMentsRepository.countByStorageIdAndStatus(foldersId, EntityStatus.ACTIVE);
+    }
+
     public AttachMents findById(Long attachmentsId){
         Optional<AttachMents> attachments = attachMentsRepository.findById(attachmentsId);
         if (attachments.isPresent()) {

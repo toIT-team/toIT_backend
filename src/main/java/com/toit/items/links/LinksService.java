@@ -144,6 +144,10 @@ public class LinksService {
         return responses;
     }
 
+    public long countByFoldersId(Long foldersId) {
+        return linksRepository.countByStorageIdAndStatus(foldersId, EntityStatus.ACTIVE);
+    }
+
     /**
      * 링크 찾기
      * @param linksId
