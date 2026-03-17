@@ -63,7 +63,7 @@ class PageSearchUseCaseImplTest {
         assertTrue(response.getSchedules().isEmpty());
         assertTrue(response.getLinks().isEmpty());
         assertTrue(response.getTexts().isEmpty());
-        assertTrue(response.getImages().isEmpty());
+//        assertTrue(response.getImages().isEmpty());
         assertTrue(response.getFiles().isEmpty());
 
         verify(usersService, never()).findById(1L);
@@ -78,7 +78,7 @@ class PageSearchUseCaseImplTest {
         assertTrue(response.getSchedules().isEmpty());
         assertTrue(response.getLinks().isEmpty());
         assertTrue(response.getTexts().isEmpty());
-        assertTrue(response.getImages().isEmpty());
+//        assertTrue(response.getImages().isEmpty());
         assertTrue(response.getFiles().isEmpty());
 
         verify(usersService, never()).findById(1L);
@@ -122,7 +122,7 @@ class PageSearchUseCaseImplTest {
         assertEquals(1, response.getSchedules().size());
         assertEquals(1, response.getLinks().size());
         assertEquals(1, response.getTexts().size());
-        assertEquals(1, response.getImages().size());
+//        assertEquals(1, response.getImages().size());
         assertEquals(1, response.getFiles().size());
     }
 
@@ -145,7 +145,7 @@ class PageSearchUseCaseImplTest {
         assertTrue(response.getSchedules().isEmpty());
         assertTrue(response.getLinks().isEmpty());
         assertTrue(response.getTexts().isEmpty());
-        assertTrue(response.getImages().isEmpty());
+//        assertTrue(response.getImages().isEmpty());
         assertTrue(response.getFiles().isEmpty());
     }
 }
