@@ -16,7 +16,7 @@ import java.time.LocalTime;
 public class ScheduleViewResponse {
 
     /** 사용자 ID */
-    private Long userId;
+    private Long usersId;
 
     /** 스케줄 ID */
     private Long schedulesId;
@@ -71,7 +71,7 @@ public class ScheduleViewResponse {
                                 LocalDate endDate, LocalTime startTime,
                                 LocalTime endTime,
                                  String memo,Boolean alarmState,Long alarmOffsetMinutes ) {
-        this.userId = userId;
+        this.usersId = userId;
         this.schedulesId = schedulesId;
         this.title = title;
         this.foldersId = foldersId;

@@ -10,6 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LinksGetInFoldersResponse {
     private Long linksId;
+
+    private Long foldersId;
+
+    private Long usersId;
     /**
      * 링크 제목
      */
@@ -35,8 +39,10 @@ public class LinksGetInFoldersResponse {
      */
     private LocalDateTime createdAt;
 
-    public LinksGetInFoldersResponse(Long linksId, String linksName, String linksUrl, String textContent, String linksThumbnail, LocalDateTime createdAt){
+    public LinksGetInFoldersResponse(Long linksId, Long foldersId, Long usersId, String linksName, String linksUrl, String textContent, String linksThumbnail, LocalDateTime createdAt){
         this.linksId = linksId;
+        this.foldersId = foldersId;
+        this.usersId = usersId;
         this.linksName = linksName;
         this.linksUrl = linksUrl;
         this.textContent = textContent;
@@ -44,8 +50,10 @@ public class LinksGetInFoldersResponse {
         this.createdAt = createdAt;
     }
 
-    public LinksGetInFoldersResponse(Links links){
+    public LinksGetInFoldersResponse(Links links, Long usersId){
         this.linksId = links.getLinksId();
+        this.foldersId = links.getStorageId();
+        this.usersId = usersId;
         this.linksName = links.getLinksName();
         this.linksUrl = links.getLinksUrl();
         this.linksThumbnail = links.getLinksThumbnail();

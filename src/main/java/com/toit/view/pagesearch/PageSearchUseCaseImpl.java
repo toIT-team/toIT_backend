@@ -43,9 +43,9 @@ public class PageSearchUseCaseImpl implements PageSearchUseCase {
         List<ScheduleViewResponse> schedules = schedulesService.searchSchedules(usersId, keyword);
         List<LinksGetInFoldersResponse> links = linksService.searchLinks(usersId, keyword);
         List<TextsGetInFoldersResponse> texts = textsService.searchTexts(usersId, keyword);
-        List<AttachMentsImagesGetInFoldersResponse> images = attachMentsService.searchImages(usersId, keyword);
+//        List<AttachMentsImagesGetInFoldersResponse> images = attachMentsService.searchImages(usersId, keyword);
         List<AttachMentsFilesGetInFoldersResponse> files = attachMentsService.searchFiles(usersId, keyword);
 
-        return new PageSearchResponse(folders, schedules, links, texts, images, files);
+        return new PageSearchResponse(folders, schedules, links, texts, files);
     }
 }

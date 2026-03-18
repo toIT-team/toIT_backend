@@ -86,7 +86,7 @@ public class LinksService {
         List<LinksGetInFoldersResponse> result = new ArrayList<>();
 
         for (Links link : links) {
-            result.add(new LinksGetInFoldersResponse(link));
+            result.add(new LinksGetInFoldersResponse(link, usersId));
         }
         return result;
     }
@@ -139,7 +139,7 @@ public class LinksService {
         List<LinksGetInFoldersResponse> responses = new ArrayList<>();
 
         for (Links link : links) {
-            responses.add(new LinksGetInFoldersResponse(link));
+            responses.add(new LinksGetInFoldersResponse(link, usersId));
         }
         return responses;
     }

@@ -19,18 +19,29 @@ public class PageSearchResponse {
     List<ScheduleViewResponse> schedules;
     List<LinksGetInFoldersResponse> links;
     List<TextsGetInFoldersResponse> texts;
-    List<AttachMentsImagesGetInFoldersResponse> images;
+//    List<AttachMentsImagesGetInFoldersResponse> images;
     List<AttachMentsFilesGetInFoldersResponse> files;
+
+//    public PageSearchResponse(List<FoldersItemResponse> folders, List<ScheduleViewResponse> schedules,
+//                              List<LinksGetInFoldersResponse> links, List<TextsGetInFoldersResponse> texts,
+//                              List<AttachMentsImagesGetInFoldersResponse> images, List<AttachMentsFilesGetInFoldersResponse> files)
+//    {
+//        this.folders = folders;
+//        this.schedules = schedules;
+//        this.links = links;
+//        this.texts = texts;
+////        this.images = images;
+//        this.files = files;
+//    }
 
     public PageSearchResponse(List<FoldersItemResponse> folders, List<ScheduleViewResponse> schedules,
                               List<LinksGetInFoldersResponse> links, List<TextsGetInFoldersResponse> texts,
-                              List<AttachMentsImagesGetInFoldersResponse> images, List<AttachMentsFilesGetInFoldersResponse> files)
+                              List<AttachMentsFilesGetInFoldersResponse> files)
     {
         this.folders = folders;
         this.schedules = schedules;
         this.links = links;
         this.texts = texts;
-        this.images = images;
         this.files = files;
     }
 
@@ -40,8 +51,8 @@ public class PageSearchResponse {
                 List.of(),
                 List.of(),
                 List.of(),
-                List.of(),
                 List.of()
+//                List.of()
         );
     }
 

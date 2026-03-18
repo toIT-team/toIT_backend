@@ -10,6 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TextsGetInFoldersResponse {
     private Long textsId;
+
+    private Long usersId;
+
+    private Long foldersId;
     /**
      * 메모 본문
      */
@@ -20,8 +24,10 @@ public class TextsGetInFoldersResponse {
      */
     private LocalDateTime createdAt;
 
-    public TextsGetInFoldersResponse(Texts texts){
+    public TextsGetInFoldersResponse(Texts texts, Long usersId){
         this.textsId = texts.getTextsId();
+        this.usersId = usersId;
+        this.foldersId = texts.getStorageId();
         this.textContent = texts.getTextContent();
         this.createdAt = texts.getCreatedAt();
     }
