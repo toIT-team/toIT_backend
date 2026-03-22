@@ -2,10 +2,12 @@ package com.toit.texts;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.toit.common.enums.AuthProvider;
 import com.toit.common.enums.EntityStatus;
+import com.toit.folders.Folders;
 import com.toit.folders.FoldersService;
 import com.toit.items.texts.Texts;
 import com.toit.items.texts.TextsRepository;
@@ -52,6 +54,9 @@ class TextsServiceTest {
         Texts texts = Texts.createTextsInFolders(user, 10L, "여행 준비물 목록");
         ReflectionTestUtils.setField(texts, "textsId", 1L);
 
+        Folders folder = mock(Folders.class);
+        when(folder.getName()).thenReturn("테스트 보관함");
+        when(foldersService.findById(10L)).thenReturn(folder);
         when(textsRepository.searchByTextContent(usersId, EntityStatus.ACTIVE, keyword))
                 .thenReturn(List.of(texts));
 
@@ -99,6 +104,9 @@ class TextsServiceTest {
         ReflectionTestUtils.setField(matching1, "textsId", 1L);
         ReflectionTestUtils.setField(matching2, "textsId", 2L);
 
+        Folders folder = mock(Folders.class);
+        when(folder.getName()).thenReturn("테스트 보관함");
+        when(foldersService.findById(10L)).thenReturn(folder);
         when(textsRepository.searchByTextContent(usersId, EntityStatus.ACTIVE, keyword))
                 .thenReturn(List.of(matching1, matching2));
 
