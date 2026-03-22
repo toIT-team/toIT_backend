@@ -116,7 +116,8 @@ public class TextsService {
         List<TextsGetInFoldersResponse> responses = new ArrayList<>();
 
         for (Texts text : texts) {
-            responses.add(new TextsGetInFoldersResponse(text, usersId));
+            String foldersName = foldersService.findById(text.getStorageId()).getName();
+            responses.add(new TextsGetInFoldersResponse(text, usersId, foldersName));
         }
         return responses;
     }
