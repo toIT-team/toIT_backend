@@ -139,7 +139,8 @@ public class LinksService {
         List<LinksGetInFoldersResponse> responses = new ArrayList<>();
 
         for (Links link : links) {
-            responses.add(new LinksGetInFoldersResponse(link, usersId));
+            String foldersName = foldersService.findById(link.getStorageId()).getName();
+            responses.add(new LinksGetInFoldersResponse(link, usersId, foldersName));
         }
         return responses;
     }

@@ -278,7 +278,8 @@ public class AttachMentsService {
 
         List<AttachMentsFilesGetInFoldersResponse> res = new ArrayList<>(files.size());
         for (AttachMents a : files) {
-            res.add(new AttachMentsFilesGetInFoldersResponse(a));
+            String foldersName = foldersService.findById(a.getStorageId()).getName();
+            res.add(new AttachMentsFilesGetInFoldersResponse(a, foldersName));
         }
         return res;
     }

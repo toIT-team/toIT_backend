@@ -1,13 +1,9 @@
 package com.toit.view.pagesearch;
 
-import com.toit.common.enums.EntityStatus;
-import com.toit.folders.Folders;
-import com.toit.folders.FoldersRepository;
 import com.toit.folders.FoldersService;
 import com.toit.folders.dto.response.FoldersItemResponse;
 import com.toit.items.attachments.AttachMentsService;
 import com.toit.items.attachments.dto.response.AttachMentsFilesGetInFoldersResponse;
-import com.toit.items.attachments.dto.response.AttachMentsImagesGetInFoldersResponse;
 import com.toit.items.links.LinksService;
 import com.toit.items.links.dto.response.LinksGetInFoldersResponse;
 import com.toit.items.texts.TextsService;
