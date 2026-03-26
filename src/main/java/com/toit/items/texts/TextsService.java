@@ -65,7 +65,7 @@ public class TextsService {
         List<TextsGetInFoldersResponse> result = new ArrayList<>();
 
         for (Texts item : links) {
-            result.add(new TextsGetInFoldersResponse(item));
+            result.add(new TextsGetInFoldersResponse(item, usersId));
         }
         return result;
     }
@@ -116,9 +116,14 @@ public class TextsService {
         List<TextsGetInFoldersResponse> responses = new ArrayList<>();
 
         for (Texts text : texts) {
-            responses.add(new TextsGetInFoldersResponse(text));
+            String foldersName = foldersService.findById(text.getStorageId()).getName();
+            responses.add(new TextsGetInFoldersResponse(text, usersId, foldersName));
         }
         return responses;
+    }
+
+    public long countByFoldersId(Long foldersId) {
+        return textsRepository.countByStorageIdAndStatus(foldersId, EntityStatus.ACTIVE);
     }
 
     /**

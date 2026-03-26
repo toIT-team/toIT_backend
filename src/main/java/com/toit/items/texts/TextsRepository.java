@@ -40,4 +40,6 @@ public interface TextsRepository extends JpaRepository<Texts, Long> {
             @Param("status") EntityStatus status,
             @Param("keyword") String keyword
     );
+
+    long countByStorageIdAndStatus(Long storageId, EntityStatus status);
 }

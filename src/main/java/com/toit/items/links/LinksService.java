@@ -86,7 +86,7 @@ public class LinksService {
         List<LinksGetInFoldersResponse> result = new ArrayList<>();
 
         for (Links link : links) {
-            result.add(new LinksGetInFoldersResponse(link));
+            result.add(new LinksGetInFoldersResponse(link, usersId));
         }
         return result;
     }
@@ -139,9 +139,14 @@ public class LinksService {
         List<LinksGetInFoldersResponse> responses = new ArrayList<>();
 
         for (Links link : links) {
-            responses.add(new LinksGetInFoldersResponse(link));
+            String foldersName = foldersService.findById(link.getStorageId()).getName();
+            responses.add(new LinksGetInFoldersResponse(link, usersId, foldersName));
         }
         return responses;
+    }
+
+    public long countByFoldersId(Long foldersId) {
+        return linksRepository.countByStorageIdAndStatus(foldersId, EntityStatus.ACTIVE);
     }
 
     /**
