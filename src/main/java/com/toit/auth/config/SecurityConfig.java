@@ -38,12 +38,16 @@ public class SecurityConfig {
 
                 // 2. 경로별 권한 설정
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/api/auth/reissue").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/auth/kakao/login").permitAll()
-                        .requestMatchers("/", "/login/**", "/oauth2/**").permitAll() // 로그인 관련 경로는 모두 허용
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
-                        .anyRequest().authenticated() // 그 외 나머지는 인증 필요
+                        .anyRequest().permitAll()
                 )
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers(HttpMethod.POST, "/api/auth/reissue").permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/api/auth/kakao/login").permitAll()
+//                        .requestMatchers("/", "/login/**", "/oauth2/**").permitAll() // 로그인 관련 경로는 모두 허용
+//                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
+//                        .anyRequest().authenticated() // 그 외 나머지는 인증 필요
+//                )
+
 
                 // 3. OAuth2 로그인 설정
                 .oauth2Login(oauth2 -> oauth2
