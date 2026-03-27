@@ -23,6 +23,7 @@ public class UsersService {
                 request.getEmail(),
                 request.getName(),
                 request.getBio(),
+                request.getImageUrl(),
                 AuthProvider.valueOf(request.getAuthProvider()),
                 request.getProviderUsersId(),
                 LocalDateTime.now()
