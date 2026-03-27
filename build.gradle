@@ -60,6 +60,19 @@ dependencies {
 	 * 	FCM 의존성 추가
  	 */
 	implementation 'com.google.firebase:firebase-admin:9.4.2'
+
+	/***
+	 * OAuth2 로그인 구현을 위한 핵심 의존성 (카카오 인가 서버와의 통신 담당)
+ 	 */
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+	/***
+	 * 	2. JWT 생성을 위한 라이브러리 (JJWT)
+	 * 	최신 버전인 0.12.x를 사용
+	 */
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 }
 
 tasks.named('test') {
