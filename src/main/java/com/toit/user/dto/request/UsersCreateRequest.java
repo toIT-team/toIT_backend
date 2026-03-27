@@ -17,6 +17,11 @@ public class UsersCreateRequest {
     /** 사용자 자기소개 */
     private String bio;
 
+    /***
+     * 사용자 프로필 이미지
+     */
+    private String imageUrl;
+
     /**  "KAKAO", "GOOGLE" */
     private String authProvider;
 
