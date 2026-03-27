@@ -8,7 +8,6 @@ import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 
 @Component
 @RequiredArgsConstructor
@@ -36,10 +35,7 @@ public class S3Config {
     }
 
     public void delete(String objectKey) {
-        s3Template.deleteObject(String.valueOf(DeleteObjectRequest.builder()
-                .bucket(bucket)
-                .key(objectKey)
-                .build()));
+        s3Template.deleteObject(bucket, objectKey);
     }
 
 }
