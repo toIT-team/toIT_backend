@@ -42,7 +42,6 @@ public class AttachMentsController {
     @AttachMentsImagesUploadApiDocs
     @PostMapping("/attachments/images")
     public ResponseEntity<List<AttachMentsImagesCreateInFoldersResponse>> createImagesInFolders(
-            @RequestBody
             @RequestParam("usersId") Long usersId,
             @RequestParam("foldersIdList") List<Long> foldersIdList,
             @RequestParam("textContent") String textContent,
@@ -64,7 +63,6 @@ public class AttachMentsController {
     @AttachMentsFilesUploadApiDocs
     @PostMapping("/attachments/files")
     public ResponseEntity<List<AttachMentsFilesCreateInFoldersResponse>> createFilesInFolders(
-            @RequestBody
             @RequestParam("usersId") Long usersId,
             @RequestParam("foldersIdList") List<Long> foldersIdList,
             @RequestParam("textContent") String textContent,

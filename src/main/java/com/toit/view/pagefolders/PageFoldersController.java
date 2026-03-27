@@ -1,9 +1,12 @@
 package com.toit.view.pagefolders;
 
+import com.toit.folders.dto.response.FoldersItemResponse;
 import com.toit.swagger.docs.view.pagefolders.PageFoldersApiDocs;
+import com.toit.view.pagefolders.dto.response.PageFoldersFoldersItemResponse;
 import com.toit.view.pagefolders.dto.response.PageFoldersMemoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +34,31 @@ public class PageFoldersController {
     ) {
         return ResponseEntity.ok(
                 pageFoldersUseCase.getOneFoldersMemo(usersId, foldersId)
+        );
+    }
+
+    @Operation(
+            summary = "보관함 전체 조회 API - 화면이름 : 보관함 추가"
+    )
+    @GetMapping
+    public ResponseEntity<List<PageFoldersFoldersItemResponse>> getAllFoldersByUser(
+            @RequestParam("usersId") Long usersId
+    ) {
+        return ResponseEntity.ok(
+                pageFoldersUseCase.getAllFoldersByUser(usersId)
+        );
+    }
+
+    @Operation(
+            summary = "보관함 검색 API - 화면이름 : 보관함 추가"
+    )
+    @GetMapping("/search")
+    public ResponseEntity<List<FoldersItemResponse>> searchFolders(
+            @RequestParam("usersId") Long usersId,
+            @RequestParam("keyword") String keyword
+    ) {
+        return ResponseEntity.ok(
+                pageFoldersUseCase.searchFolders(usersId, keyword)
         );
     }
 }
