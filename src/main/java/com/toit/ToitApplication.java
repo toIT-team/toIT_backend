@@ -10,7 +10,6 @@ import java.util.TimeZone;
 
 
 @EnableScheduling //  스케줄러에 필요한 애노테이션
-@EnableJpaAuditing // @CreatedDate 에 필요한 애노테이션
 @SpringBootApplication
 public class ToitApplication {
 
