@@ -3,6 +3,8 @@ package com.toit.auth.service;
 import com.toit.auth.dto.AppleUserInfo;
 import com.toit.auth.login.SocialLoginResult;
 import com.toit.common.enums.AuthProvider;
+import com.toit.folders.Folders;
+import com.toit.folders.FoldersRepository;
 import com.toit.user.Users;
 import com.toit.user.UsersRepository;
 import com.toit.usersinfo.UsersSettings;
@@ -35,6 +37,7 @@ public class AppleAuthMemberService extends OidcUserService {
 
     private final UsersRepository usersRepository;
     private final UsersSettingsRepository usersSettingsRepository;
+    private final FoldersRepository foldersRepository;
 
     @Override
     @Transactional
@@ -85,6 +88,7 @@ public class AppleAuthMemberService extends OidcUserService {
                             LocalDateTime.now()
                     ));
                     usersSettingsRepository.save(new UsersSettings(savedUser));
+                    foldersRepository.save(new Folders("기본 보관함", null, true, "blue500", false, LocalDateTime.now(), savedUser));
                     return savedUser;
                 });
     }

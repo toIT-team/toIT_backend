@@ -4,6 +4,8 @@ import com.toit.auth.dto.AuthUserInfo;
 import com.toit.auth.dto.KakaoUserInfo;
 import com.toit.auth.login.SocialLoginResult;
 import com.toit.common.enums.AuthProvider;
+import com.toit.folders.Folders;
+import com.toit.folders.FoldersRepository;
 import com.toit.user.Users;
 import com.toit.user.UsersRepository;
 import com.toit.usersinfo.UsersSettings;
@@ -30,6 +32,7 @@ public class AuthMemberService extends DefaultOAuth2UserService {
 
     private final UsersRepository usersRepository;
     private final UsersSettingsRepository usersSettingsRepository;
+    private final FoldersRepository foldersRepository;
 
     /**
      * [핵심 메서드] 소셜 서비스(카카오 등)로부터 유저 정보를 가져와서 우리 시스템의 유저로 변환합니다.
@@ -110,6 +113,7 @@ public class AuthMemberService extends DefaultOAuth2UserService {
                             LocalDateTime.now()
                     ));
                     usersSettingsRepository.save(new UsersSettings(savedUser));
+                    foldersRepository.save(new Folders("기본 보관함", null, true, "blue500", false, LocalDateTime.now(), savedUser));
                     return savedUser;
                 });
     }
