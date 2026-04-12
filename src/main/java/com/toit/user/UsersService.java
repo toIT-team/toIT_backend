@@ -25,7 +25,7 @@ public class UsersService {
                 request.getBio(),
                 request.getImageUrl(),
                 AuthProvider.valueOf(request.getAuthProvider()),
-                request.getProviderUsersId(),
+                String.valueOf(request.getProviderUsersId()),
                 LocalDateTime.now()
         );
 

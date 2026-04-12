@@ -15,7 +15,7 @@ public class UsersCreateResponse {
     private String email;
     private String name;
     private AuthProvider authProvider;
-    private Long providerUsersId;
+    private String providerUsersId;
     private LocalDateTime createdAt;
 
     public UsersCreateResponse(Users users) {

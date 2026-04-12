@@ -3,15 +3,18 @@ package com.toit.auth.config;
 import com.toit.auth.handler.AuthSuccessHandler;
 import com.toit.auth.handler.AuthFailureHandler;
 import com.toit.auth.jwt.JwtAuthenticationFilter;
+import com.toit.auth.service.AppleAuthMemberService;
 import com.toit.auth.service.AuthMemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
+import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -21,42 +24,41 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final AuthMemberService authMemberService;
+    private final AppleAuthMemberService appleAuthMemberService;
     private final AuthSuccessHandler authSuccessHandler;
     private final AuthFailureHandler authFailureHandler;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter; // 3. 필터 주입 추가
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient;
+    private final ClientRegistrationRepository clientRegistrationRepository;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // 1. CSRF 및 세션 비활성화 (JWT를 사용할 것이므로)
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
-
-                // 2. 경로별 권한 설정
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll()
                 )
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers(HttpMethod.POST, "/api/auth/reissue").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/api/auth/kakao/login").permitAll()
-//                        .requestMatchers("/", "/login/**", "/oauth2/**").permitAll() // 로그인 관련 경로는 모두 허용
-//                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
-//                        .anyRequest().authenticated() // 그 외 나머지는 인증 필요
-//                )
-
-
-                // 3. OAuth2 로그인 설정
                 .oauth2Login(oauth2 -> oauth2
+                        .authorizationEndpoint(auth -> auth
+                                .authorizationRequestResolver(
+                                        new AppleAuthorizationRequestResolver(clientRegistrationRepository))
+                        )
+                        .tokenEndpoint(token -> token
+                                .accessTokenResponseClient(accessTokenResponseClient)
+                        )
                         .userInfoEndpoint(userInfo -> userInfo
-                                .userService(authMemberService) // 우리가 만든 서비스 등록
+                                .userService(authMemberService) // 카카오
+                                .oidcUserService(appleAuthMemberService) // Apple
                         )
                         .failureHandler(authFailureHandler)
-                        .successHandler(authSuccessHandler) // 우리가 만든 핸들러 등록
-                ).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                        .successHandler(authSuccessHandler)
+                )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

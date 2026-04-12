@@ -71,6 +71,12 @@ public class AuthMemberService extends DefaultOAuth2UserService {
         attributes.put("toitLoginResult", loginResult.name());
 
         // 5. 스프링 시큐리티 세션에 "로그인 성공 유저"임을 증명하는 객체를 반환합니다.
+        /**
+         *  DefaultOAuth2User 멤버변수
+         *  authorities -> ROLE_USER 등 권한
+         *  attributes -> 카카오 원본 데이터 + toitUserId + toitLoginResult
+         *  nameAttributeKey -> attributes 중 식별자 로 쓸 키 (id)
+         */
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(user.getRole().name())),
                 attributes,
@@ -84,7 +90,7 @@ public class AuthMemberService extends DefaultOAuth2UserService {
      */
     private Users saveOrUpdate(AuthUserInfo userInfo) {
         AuthProvider authProvider = AuthProvider.valueOf(userInfo.getProvider().toUpperCase());
-        Long providerUsersId = Long.parseLong(userInfo.getProviderId());
+        String providerUsersId = userInfo.getProviderId();
         String fallbackName = userInfo.getProvider() + "_" + providerUsersId;
         String resolvedName = hasText(userInfo.getName()) ? userInfo.getName() : fallbackName;
 

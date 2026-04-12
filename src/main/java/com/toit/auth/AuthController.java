@@ -27,6 +27,13 @@ public class AuthController {
                 .build();
     }
 
+    @GetMapping("/apple/login")
+    public ResponseEntity<Void> startAppleLogin() {
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .header(HttpHeaders.LOCATION, "/oauth2/authorization/apple")
+                .build();
+    }
+
     /**
      * Access Token 재발급 API
      * 클라이언트가 만료된 Access Token 대신 Refresh Token을 보내면,
