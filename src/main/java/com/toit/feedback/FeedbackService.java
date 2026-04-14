@@ -1,8 +1,10 @@
 package com.toit.feedback;
 
 import com.toit.feedback.dto.request.FeedbackCreateRequest;
+import com.toit.feedback.dto.request.FeedbackReplyRequest;
 import com.toit.feedback.dto.response.FeedbackCreateResponse;
 import com.toit.feedback.dto.response.FeedbackListResponse;
+import com.toit.feedback.dto.response.FeedbackMyResponse;
 import com.toit.user.Users;
 import com.toit.user.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,5 +32,17 @@ public class FeedbackService {
     public Page<FeedbackListResponse> getList(Pageable pageable) {
         return feedbackRepository.findAllByOrderByCreatedAtDesc(pageable)
                 .map(FeedbackListResponse::from);
+    }
+
+    public Page<FeedbackMyResponse> getMyList(Long usersId, Pageable pageable) {
+        return feedbackRepository.findAllByUsers_UsersIdOrderByCreatedAtDesc(usersId, pageable)
+                .map(FeedbackMyResponse::from);
+    }
+
+    public void reply(Long feedbackId, FeedbackReplyRequest request) {
+        Feedback feedback = feedbackRepository.findById(feedbackId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 피드백입니다."));
+        feedback.addReply(request.getReply());
+        feedbackRepository.save(feedback);
     }
 }

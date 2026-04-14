@@ -30,10 +30,21 @@ public class Feedback {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(columnDefinition = "TEXT")
+    private String reply;
+
+    @Column
+    private LocalDateTime repliedAt;
+
     public Feedback(String title, String content, Users users) {
         this.title = title;
         this.content = content;
         this.users = users;
         this.createdAt = LocalDateTime.now();
+    }
+
+    public void addReply(String reply) {
+        this.reply = reply;
+        this.repliedAt = LocalDateTime.now();
     }
 }

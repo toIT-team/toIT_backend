@@ -4,6 +4,7 @@ import com.toit.admin.dto.request.AdminLoginRequest;
 import com.toit.admin.dto.request.AdminRegisterRequest;
 import com.toit.admin.dto.response.AdminLoginResponse;
 import com.toit.feedback.FeedbackService;
+import com.toit.feedback.dto.request.FeedbackReplyRequest;
 import com.toit.feedback.dto.response.FeedbackListResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -44,5 +45,15 @@ public class AdminController {
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return ResponseEntity.ok(feedbackService.getList(pageable));
+    }
+
+    @Operation(summary = "피드백/문의 답변 등록", description = "관리자가 피드백 또는 문의에 답변을 등록합니다.")
+    @PostMapping("/feedbacks/{feedbackId}/reply")
+    public ResponseEntity<Void> reply(
+            @PathVariable Long feedbackId,
+            @RequestBody FeedbackReplyRequest request
+    ) {
+        feedbackService.reply(feedbackId, request);
+        return ResponseEntity.noContent().build();
     }
 }
