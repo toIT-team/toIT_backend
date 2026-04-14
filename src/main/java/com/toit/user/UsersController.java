@@ -2,15 +2,13 @@ package com.toit.user;
 
 import com.toit.common.SecurityUtil;
 import com.toit.user.dto.request.UsersCreateRequest;
+import com.toit.user.dto.request.UsersUpdateNameRequest;
 import com.toit.user.dto.response.UsersCreateResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/users")
@@ -29,6 +27,17 @@ public class UsersController {
             @RequestBody UsersCreateRequest request
     ) {
         return ResponseEntity.ok(usersService.createUser(request));
+    }
+
+    @Operation(
+            summary = "이름 수정 API",
+            description = "사용자의 이름을 수정합니다."
+    )
+    @PatchMapping("/name")
+    public ResponseEntity<Void> updateName(@RequestBody UsersUpdateNameRequest request) {
+        Long usersId = SecurityUtil.getCurrentUserId();
+        usersService.updateName(usersId, request);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(

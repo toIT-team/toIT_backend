@@ -132,6 +132,10 @@ public class Users {
         return status == EntityStatus.DELETED;
     }
 
+    public void updateName(String name) {
+        this.name = name;
+    }
+
     public void softDelete() {
         this.status = EntityStatus.DELETED;
         this.deletedAt = LocalDateTime.now();

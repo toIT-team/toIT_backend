@@ -89,17 +89,37 @@ public class SecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of(
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
+        // 모바일 앱 및 OAuth 경로 - 모든 origin 허용
+        CorsConfiguration mobileConfig = new CorsConfiguration();
+        mobileConfig.setAllowedOriginPatterns(List.of("*"));
+        mobileConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        mobileConfig.setAllowedHeaders(List.of("*"));
+        mobileConfig.setAllowCredentials(true);
+        source.registerCorsConfiguration("/api/auth/**", mobileConfig);
+        source.registerCorsConfiguration("/oauth2/**", mobileConfig);
+        source.registerCorsConfiguration("/login/oauth2/**", mobileConfig);
+
+        // 관리자 페이지
+        CorsConfiguration adminConfig = new CorsConfiguration();
+        adminConfig.setAllowedOrigins(List.of(
                 "https://admin.toit.cloud",
                 "http://localhost:3000"
         ));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true);
+        adminConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        adminConfig.setAllowedHeaders(List.of("*"));
+        adminConfig.setAllowCredentials(true);
+        source.registerCorsConfiguration("/api/admin/**", adminConfig);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
+        // 나머지 API - 모바일 앱에서 호출하므로 모든 origin 허용
+        CorsConfiguration apiConfig = new CorsConfiguration();
+        apiConfig.setAllowedOriginPatterns(List.of("*"));
+        apiConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        apiConfig.setAllowedHeaders(List.of("*"));
+        apiConfig.setAllowCredentials(true);
+        source.registerCorsConfiguration("/api/**", apiConfig);
+
         return source;
     }
 }
