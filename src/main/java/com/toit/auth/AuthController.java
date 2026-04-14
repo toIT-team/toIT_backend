@@ -3,15 +3,12 @@ package com.toit.auth;
 
 import com.toit.auth.dto.request.RefreshTokenRequest;
 import com.toit.auth.dto.response.RefreshTokenResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -41,12 +38,14 @@ public class AuthController {
      */
     @PostMapping("/reissue")
     public ResponseEntity<RefreshTokenResponse> reissueAccessToken(@RequestBody RefreshTokenRequest request) {
-
-        // 1. 서비스 계층에 토큰 검증 및 재발급 로직 위임
         String newAccessToken = authService.reissueAccessToken(request.getRefreshToken());
-
-        // 2. 발급된 새 Access Token을 응답 DTO에 담아 200 OK 상태로 반환
         RefreshTokenResponse response = new RefreshTokenResponse(newAccessToken);
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "탈퇴 계정 복구", description = "복구 토큰으로 탈퇴한 계정을 복구하고 로그인 토큰을 발급합니다.")
+    @PostMapping("/restore")
+    public ResponseEntity<AuthService.LoginTokens> restoreAccount(@RequestParam String restoreToken) {
+        return ResponseEntity.ok(authService.restoreAccount(restoreToken));
     }
 }

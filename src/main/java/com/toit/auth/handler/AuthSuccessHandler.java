@@ -3,6 +3,7 @@ package com.toit.auth.handler;
 
 
 import com.toit.auth.AuthService;
+import com.toit.auth.jwt.JwtProvider;
 import com.toit.auth.login.SocialLoginResult;
 import com.toit.user.Users;
 import com.toit.user.UsersRepository;
@@ -26,6 +27,7 @@ public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final AuthService authService;
     private final UsersRepository usersRepository;
+    private final JwtProvider jwtProvider;
 
     @Value("${toit.auth.app-callback-uri:toit://auth/callback}")
     private String appCallbackUri;
@@ -48,6 +50,9 @@ public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                     .queryParam("accessToken", loginTokens.accessToken())
                     .queryParam("refreshToken", loginTokens.refreshToken())
                     .queryParam("nickname", user.getName());
+        } else if (loginResult == SocialLoginResult.DELETED_USER) {
+            String restoreToken = jwtProvider.createRestoreToken(userId);
+            targetUrlBuilder.queryParam("restoreToken", restoreToken);
         }
 
         clearAuthenticationAttributes(request);

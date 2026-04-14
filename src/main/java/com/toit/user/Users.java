@@ -136,6 +136,11 @@ public class Users {
         this.name = name;
     }
 
+    public void restore() {
+        this.status = EntityStatus.ACTIVE;
+        this.deletedAt = null;
+    }
+
     public void softDelete() {
         this.status = EntityStatus.DELETED;
         this.deletedAt = LocalDateTime.now();

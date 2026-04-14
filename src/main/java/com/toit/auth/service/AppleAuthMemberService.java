@@ -74,7 +74,8 @@ public class AppleAuthMemberService extends OidcUserService {
 
         return usersRepository.findByAuthProviderAndProviderUsersId(AuthProvider.APPLE, providerId)
                 .map(entity -> {
-                    entity.updateSocialProfile(userInfo.getEmail(), resolvedName, null);
+                    // Apple은 최초 로그인 때만 이름을 전달하므로 실제 이름이 있을 때만 업데이트
+                    entity.updateSocialProfile(userInfo.getEmail(), userInfo.getName(), null);
                     return entity;
                 })
                 .orElseGet(() -> {
@@ -94,7 +95,7 @@ public class AppleAuthMemberService extends OidcUserService {
     }
 
     private SocialLoginResult resolveLoginResult(Users user) {
-        if (user.isDeleted()) return SocialLoginResult.BLOCKED;
+        if (user.isDeleted()) return SocialLoginResult.DELETED_USER;
         if (user.requiresAdditionalInfo()) return SocialLoginResult.NEEDS_ADDITIONAL_INFO;
         return SocialLoginResult.SUCCESS;
     }

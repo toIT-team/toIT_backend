@@ -99,7 +99,8 @@ public class AuthMemberService extends DefaultOAuth2UserService {
 
         return usersRepository.findByAuthProviderAndProviderUsersId(authProvider, providerUsersId)
                 .map(entity -> {
-                    entity.updateSocialProfile(userInfo.getEmail(), resolvedName, userInfo.getImageUrl());
+                    // 이미 가입된 계정은 이름을 덮어씌우지 않음
+                    entity.updateSocialProfile(userInfo.getEmail(), null, userInfo.getImageUrl());
                     return entity;
                 })
                 .orElseGet(() -> {
@@ -120,7 +121,7 @@ public class AuthMemberService extends DefaultOAuth2UserService {
 
     private SocialLoginResult resolveLoginResult(Users user) {
         if (user.isDeleted()) {
-            return SocialLoginResult.BLOCKED;
+            return SocialLoginResult.DELETED_USER;
         }
         if (user.requiresAdditionalInfo()) {
             return SocialLoginResult.NEEDS_ADDITIONAL_INFO;
