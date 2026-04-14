@@ -1,10 +1,12 @@
 package com.toit.user;
 
+import com.toit.common.SecurityUtil;
 import com.toit.user.dto.request.UsersCreateRequest;
 import com.toit.user.dto.response.UsersCreateResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,5 +29,16 @@ public class UsersController {
             @RequestBody UsersCreateRequest request
     ) {
         return ResponseEntity.ok(usersService.createUser(request));
+    }
+
+    @Operation(
+            summary = "회원 탈퇴 API",
+            description = "회원 탈퇴 시 계정이 비활성화됩니다. (Soft Delete)"
+    )
+    @DeleteMapping("/withdraw")
+    public ResponseEntity<Void> withdraw() {
+        Long usersId = SecurityUtil.getCurrentUserId();
+        usersService.withdraw(usersId);
+        return ResponseEntity.noContent().build();
     }
 }

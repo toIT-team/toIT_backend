@@ -9,6 +9,7 @@ import com.toit.view.pageschedules.dto.response.PageSchedulesSearchResponse;
 import com.toit.view.pageschedules.dto.response.PageSchedulesSelectDayViewResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import com.toit.common.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,10 +33,10 @@ public class PageSchedulesViewController {
     @SchedulesApiDocs
     @GetMapping("/search")
     public ResponseEntity<PageSchedulesSearchResponse> getSearchSchedules(
-            @RequestParam("usersId") Long usersId,
             @RequestParam("startDate") LocalDate startDate,
             @RequestParam("endDate") LocalDate endDate
     ) {
+        Long usersId = SecurityUtil.getCurrentUserId();
         return ResponseEntity.ok(schedulesUseCase.
                 getSearchSchedulesView(
                         usersId,
@@ -53,11 +54,9 @@ public class PageSchedulesViewController {
     @SchedulesApiDocs
     @GetMapping("/selected")
     public ResponseEntity<PageSchedulesSelectDayViewResponse> getSelectedDaySchedules(
-            @RequestParam("usersId") Long usersId,
             @RequestParam("selectedDay") LocalDate selectedDay
-
-            ){
-
+    ){
+        Long usersId = SecurityUtil.getCurrentUserId();
         return ResponseEntity.ok(schedulesUseCase.
                 getSelectedDaySchedulesView(
                         usersId,
@@ -70,10 +69,9 @@ public class PageSchedulesViewController {
     @SchedulesApiDocs
     @GetMapping("/detail")
     public ResponseEntity<ScheduleViewResponse> getSchedule(
-            @RequestParam("usersId") Long usersId,
             @RequestParam("schedulesId") Long schedulesId
-            ){
-
+    ){
+        Long usersId = SecurityUtil.getCurrentUserId();
         return ResponseEntity.ok(schedulesUseCase.
                 getScheduleView(
                         usersId,
@@ -87,12 +85,9 @@ public class PageSchedulesViewController {
     @Operation(summary = "SchedulesAlarm 화면 API - 화면이름 : 알림 ")
     @SchedulesAlarmApiDocs
     @GetMapping("/alarm")
-    public ResponseEntity<PageSchedulesAlarmViewResponse> getScheduleAlarms(
-            @RequestParam("usersId") Long usersId
-    ){
+    public ResponseEntity<PageSchedulesAlarmViewResponse> getScheduleAlarms(){
+        Long usersId = SecurityUtil.getCurrentUserId();
         PageSchedulesAlarmViewResponse response = schedulesUseCase.getSchedulesAlarmsView(usersId);
-
         return ResponseEntity.ok(response);
-
     }
 }

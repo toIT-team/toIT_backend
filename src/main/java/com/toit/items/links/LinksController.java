@@ -16,6 +16,7 @@ import com.toit.swagger.docs.items.links.LinksPreviewApiDocs;
 import com.toit.swagger.docs.items.links.LinksUpdateApiDocs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import com.toit.common.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -45,7 +46,8 @@ public class LinksController {
     public ResponseEntity<LinksCreateInFoldersResponse> createLinksInFolders(
             @RequestBody LinksCreateInFoldersRequest request
     ){
-        return ResponseEntity.ok(linksService.createLinksInFolders(request.getUsersId(), request.getFoldersIdList(), request.getLinksUrl(), request.getLinksName(),
+        Long usersId = SecurityUtil.getCurrentUserId();
+        return ResponseEntity.ok(linksService.createLinksInFolders(usersId, request.getFoldersIdList(), request.getLinksUrl(), request.getLinksName(),
                                                                     request.getTextContent(), request.getLinksThumbnail()));
     }
 
@@ -58,7 +60,8 @@ public class LinksController {
     public ResponseEntity<LinksDeleteInFoldersResponse> deleteLinksInFolders(
             @RequestBody LinksDeleteInFoldersRequest request
     ){
-        return ResponseEntity.ok(linksService.deleteLinksInFolders(request.getUsersId(), request.getFoldersId(), request.getLinksId()));
+        Long usersId = SecurityUtil.getCurrentUserId();
+        return ResponseEntity.ok(linksService.deleteLinksInFolders(usersId, request.getFoldersId(), request.getLinksId()));
     }
 
     /**
@@ -73,7 +76,8 @@ public class LinksController {
     public ResponseEntity<LinksMoveInFoldersResponse> moveLinksInFolders(
             @RequestBody LinksMoveInFoldersRequest request
             ){
-        return ResponseEntity.ok(linksService.moveLinksInFolders(request.getUsersId(), request.getFoldersId(), request.getMoveFoldersId(), request.getLinksId()));
+        Long usersId = SecurityUtil.getCurrentUserId();
+        return ResponseEntity.ok(linksService.moveLinksInFolders(usersId, request.getFoldersId(), request.getMoveFoldersId(), request.getLinksId()));
     }
 
     @Operation(
@@ -85,9 +89,10 @@ public class LinksController {
     public ResponseEntity<LinksUpdateResponse> updateLinks(
             @RequestBody LinksUpdateRequest request
     ) {
+        Long usersId = SecurityUtil.getCurrentUserId();
         return ResponseEntity.ok(
                 linksService.updateLinks(
-                        request.getUsersId(),
+                        usersId,
                         request.getFoldersId(),
                         request.getLinksId(),
                         request.getLinksName(),

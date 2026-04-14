@@ -40,4 +40,10 @@ public class UsersService {
         return usersRepository.findById(usersId)
                 .orElseThrow(() -> new UsersNotFoundException(usersId + "은 존재하지 않는 사용자입니다."));
     }
+
+    public void withdraw(Long usersId) {
+        Users user = findById(usersId);
+        user.softDelete();
+        usersRepository.save(user);
+    }
 }

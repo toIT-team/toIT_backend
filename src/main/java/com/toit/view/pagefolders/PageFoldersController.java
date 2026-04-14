@@ -7,6 +7,7 @@ import com.toit.view.pagefolders.dto.response.PageFoldersMemoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import com.toit.common.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,9 +30,9 @@ public class PageFoldersController {
     @PageFoldersApiDocs
     @GetMapping("/memo")
     public ResponseEntity<PageFoldersMemoResponse> getOneFoldersMemo(
-            @RequestParam("usersId") Long usersId,
             @RequestParam("foldersId") Long foldersId
     ) {
+        Long usersId = SecurityUtil.getCurrentUserId();
         return ResponseEntity.ok(
                 pageFoldersUseCase.getOneFoldersMemo(usersId, foldersId)
         );
@@ -41,9 +42,8 @@ public class PageFoldersController {
             summary = "보관함 전체 조회 API - 화면이름 : 보관함 추가"
     )
     @GetMapping
-    public ResponseEntity<List<PageFoldersFoldersItemResponse>> getAllFoldersByUser(
-            @RequestParam("usersId") Long usersId
-    ) {
+    public ResponseEntity<List<PageFoldersFoldersItemResponse>> getAllFoldersByUser() {
+        Long usersId = SecurityUtil.getCurrentUserId();
         return ResponseEntity.ok(
                 pageFoldersUseCase.getAllFoldersByUser(usersId)
         );
@@ -54,9 +54,9 @@ public class PageFoldersController {
     )
     @GetMapping("/search")
     public ResponseEntity<List<FoldersItemResponse>> searchFolders(
-            @RequestParam("usersId") Long usersId,
             @RequestParam("keyword") String keyword
     ) {
+        Long usersId = SecurityUtil.getCurrentUserId();
         return ResponseEntity.ok(
                 pageFoldersUseCase.searchFolders(usersId, keyword)
         );

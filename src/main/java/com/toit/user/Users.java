@@ -131,4 +131,9 @@ public class Users {
     public boolean isDeleted() {
         return status == EntityStatus.DELETED;
     }
+
+    public void softDelete() {
+        this.status = EntityStatus.DELETED;
+        this.deletedAt = LocalDateTime.now();
+    }
 }
