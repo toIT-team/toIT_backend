@@ -36,6 +36,33 @@ public interface AttachMentsRepository extends JpaRepository<AttachMents, Long> 
 
     List<AttachMents> findByStatus(EntityStatus status);
 
+    @Query("""
+        select
+            coalesce(sum(case when a.attachmentsType = 'IMAGE' then a.attachmentsSize else 0 end), 0),
+            coalesce(sum(case when a.attachmentsType = 'FILE' then a.attachmentsSize else 0 end), 0)
+        from AttachMents a
+        where a.users.usersId = :usersId
+          and a.status = :status
+    """)
+    Object[] sumAttachmentsSizeByUsersId(
+            @Param("usersId") Long usersId,
+            @Param("status") EntityStatus status
+    );
+
+    @Query("""
+        select
+            a.users.usersId,
+            a.users.name,
+            a.users.email,
+            coalesce(sum(case when a.attachmentsType = 'IMAGE' then a.attachmentsSize else 0 end), 0),
+            coalesce(sum(case when a.attachmentsType = 'FILE' then a.attachmentsSize else 0 end), 0)
+        from AttachMents a
+        where a.status = :status
+        group by a.users.usersId, a.users.name, a.users.email
+        order by sum(a.attachmentsSize) desc
+    """)
+    List<Object[]> sumAttachmentsSizeGroupByUser(@Param("status") EntityStatus status);
+
     /**
      * fileName으로 검색
      */

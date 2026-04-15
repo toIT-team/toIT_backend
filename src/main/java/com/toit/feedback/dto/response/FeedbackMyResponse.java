@@ -10,16 +10,18 @@ public record FeedbackMyResponse(
         String content,
         LocalDateTime createdAt,
         String reply,
-        LocalDateTime repliedAt
+        LocalDateTime repliedAt,
+        String adminName
 ) {
-    public static FeedbackMyResponse from(Feedback feedback) {
+    public static FeedbackMyResponse from(Feedback feedback, String adminName) {
         return new FeedbackMyResponse(
                 feedback.getFeedbackId(),
                 feedback.getTitle(),
                 feedback.getContent(),
                 feedback.getCreatedAt(),
                 feedback.getReply(),
-                feedback.getRepliedAt()
+                feedback.getRepliedAt(),
+                adminName
         );
     }
 }
