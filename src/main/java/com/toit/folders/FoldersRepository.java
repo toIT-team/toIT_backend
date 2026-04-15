@@ -17,6 +17,8 @@ public interface FoldersRepository extends  JpaRepository<Folders, Long>{
 
     List<Folders> findByUsers_UsersIdAndStatus(Long usersId, EntityStatus status);
 
+    long countByUsers_UsersIdAndStatus(Long usersId, EntityStatus status);
+
     @Query("""
         select f
         from Folders f

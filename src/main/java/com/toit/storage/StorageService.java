@@ -16,7 +16,8 @@ public class StorageService {
     private final AttachMentsRepository attachMentsRepository;
 
     public StorageUsageResponse getMyUsage(Long usersId) {
-        Object[] row = attachMentsRepository.sumAttachmentsSizeByUsersId(usersId, EntityStatus.ACTIVE);
+        List<Object[]> result = attachMentsRepository.sumAttachmentsSizeByUsersId(usersId, EntityStatus.ACTIVE);
+        Object[] row = result.isEmpty() ? new Object[]{0, 0} : result.get(0);
         return StorageUsageResponse.of(row);
     }
 
