@@ -26,12 +26,16 @@ public class Admin {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    private String name;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public Admin(String email, String password) {
+    public Admin(String email, String password,String name) {
         this.email = email;
         this.password = password;
+        this.name= name;
         this.createdAt = LocalDateTime.now();
     }
 }

@@ -3,9 +3,16 @@ package com.toit.admin;
 import com.toit.admin.dto.request.AdminLoginRequest;
 import com.toit.admin.dto.request.AdminRegisterRequest;
 import com.toit.admin.dto.response.AdminLoginResponse;
+import com.toit.common.SecurityUtil;
 import com.toit.feedback.FeedbackService;
 import com.toit.feedback.dto.request.FeedbackReplyRequest;
 import com.toit.feedback.dto.response.FeedbackListResponse;
+import com.toit.noitce.NoticeService;
+import com.toit.noitce.dto.request.NoticeCreateRequest;
+import com.toit.noitce.dto.request.NoticeDeleteRequest;
+import com.toit.noitce.dto.request.NoticeUpdateRequest;
+import com.toit.noitce.dto.response.NoticeDeleteResponse;
+import com.toit.noitce.dto.response.NoticeUpdateResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +23,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 @Tag(name = "Admin", description = "관리자 전용 API")
 @RestController
@@ -25,6 +33,7 @@ public class AdminController {
 
     private final AdminService adminService;
     private final FeedbackService feedbackService;
+    private final NoticeService noticeService;
 
     @Operation(summary = "관리자 로그인", description = "이메일과 비밀번호로 관리자 JWT를 발급합니다.")
     @PostMapping("/login")
@@ -56,4 +65,37 @@ public class AdminController {
         feedbackService.reply(feedbackId, request);
         return ResponseEntity.noContent().build();
     }
+
+    /***
+     * 공지사항 관련
+     */
+
+    @Operation(summary = "관리자 공지사항 작성", description = "관리자가 공지사항을 생성합니다.")
+    @PostMapping("/notices")
+    public ResponseEntity<Void> createNotice(
+            @Valid @RequestBody NoticeCreateRequest request
+    ){
+        Long adminId = SecurityUtil.getCurrentUserId();
+        noticeService.createNotice(adminId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @Operation(summary = "관리자 공지사항 수정", description = "관리자가 공지사항을 합니다.")
+    @PutMapping("/notices")
+    public NoticeUpdateResponse updateNotice(
+            @Valid @RequestBody NoticeUpdateRequest request
+    ){
+        Long adminId = SecurityUtil.getCurrentUserId();
+        return noticeService.updateNotice(adminId, request);
+    }
+
+    @Operation(summary = "관리자 공지사항 삭제", description = "관리자가 공지사항을 삭제 합니다.")
+    @DeleteMapping("/notices")
+    public NoticeDeleteResponse deleteNotice(
+            @Valid @RequestBody NoticeDeleteRequest request
+    ){
+        Long adminId = SecurityUtil.getCurrentUserId();
+        return noticeService.deleteNotice(adminId, request);
+    }
+
 }
