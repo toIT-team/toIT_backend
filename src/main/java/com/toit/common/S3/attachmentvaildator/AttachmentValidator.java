@@ -13,9 +13,13 @@ public class AttachmentValidator {
 
     private static final List<String> ALLOWED_TYPES_FILES = List.of(
             "application/pdf",
-            "application/zip",
-            "application/msword",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            "application/msword",                                                                        // .doc
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",                  // .docx
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",                        // .xlsx
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation",                // .pptx
+            "text/plain",                                                                                // .txt
+            "application/x-hwp",                                                                         // .hwp
+            "application/haansofthwp"                                                                    // .hwp (일부 OS 다른 MIME)
     );
 
     /**

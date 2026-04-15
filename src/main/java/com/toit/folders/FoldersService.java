@@ -9,12 +9,14 @@ import com.toit.folders.dto.response.FoldersUpdateResponse;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
 import com.toit.view.pagefolders.dto.response.PageFoldersMemoResponse;
-import com.toit.view.pagesearch.dto.response.PageSearchResponse;
+import com.toit.folders.dto.response.RecentFoldersResponse;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -60,7 +62,7 @@ public class FoldersService {
      * @param color
      * @return FoldersCreateResponse
      */
-    public FoldersCreateResponse createFolders(Long usersId, String name, String memo, String color) {
+    public FoldersCreateResponse createFolders(Long usersId, String name, String memo, String color, Integer iconIdx) {
         // Users 조회 -> Users 예외 처리
         Users users = usersService.findById(usersId);
 
@@ -76,7 +78,8 @@ public class FoldersService {
                 color,
                 false,
                 LocalDateTime.now(),
-                users
+                users,
+                iconIdx
         );
         return new FoldersCreateResponse(foldersRepository.save(folders));
     }
@@ -128,6 +131,26 @@ public class FoldersService {
         }
     }
 
+
+    /**
+     * /page/items 진입 시 Folders.lastViewedAt 업데이트
+     */
+    public void updateLastViewedAt(Long usersId, Long foldersId) {
+        Folders folders = findByFoldersIdAndUsers_UsersId(usersId, foldersId);
+        folders.updateLastViewedAt();
+        foldersRepository.save(folders);
+    }
+
+    /**
+     * 최근 본 보관함 최대 4개 (lastViewedAt 내림차순)
+     */
+    public List<RecentFoldersResponse> getRecentFolders(Long usersId) {
+        return foldersRepository
+                .findRecentViewedFolders(usersId, EntityStatus.ACTIVE, PageRequest.of(0, 4))
+                .stream()
+                .map(RecentFoldersResponse::new)
+                .toList();
+    }
 
     public List<FoldersItemResponse> searchFolders(Long usersId, String keyword) {
         String k = (keyword == null) ? "" : keyword.trim();

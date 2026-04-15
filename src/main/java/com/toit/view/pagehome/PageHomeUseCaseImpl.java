@@ -2,8 +2,7 @@ package com.toit.view.pagehome;
 
 import com.toit.folders.FoldersService;
 import com.toit.folders.dto.response.FoldersItemResponse;
-import com.toit.foldersviews.FoldersViewsService;
-import com.toit.foldersviews.dto.response.RecentFoldersResponse;
+import com.toit.folders.dto.response.RecentFoldersResponse;
 import com.toit.items.attachments.AttachMentsService;
 import com.toit.items.links.LinksService;
 import com.toit.items.texts.TextsService;
@@ -24,7 +23,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PageHomeUseCaseImpl implements PageHomeUseCase {
 
-    private final FoldersViewsService foldersViewsService;
     private final FoldersService foldersService;
     private final SchedulesService schedulesService;
     private final TextsService textsService;
@@ -64,8 +62,8 @@ public class PageHomeUseCaseImpl implements PageHomeUseCase {
 
     @Override
     public PageHomeViewResponse getHomeView(Long usersId, LocalDate todayDate) {
-        // 최근 본 보관함 조회 - 시간 내림차순으로 정렬 후 최대 4개
-        List<RecentFoldersResponse> foldersViews = foldersViewsService.getRecentFolders(usersId);
+        // 최근 본 보관함 조회 - lastViewedAt 내림차순 최대 4개
+        List<RecentFoldersResponse> foldersViews = foldersService.getRecentFolders(usersId);
 
         // 보관함 전체 조회 + 각 보관함 자료 개수 합산
         List<FoldersItemResponse> folders = foldersService.getAllFoldersByUser(usersId);

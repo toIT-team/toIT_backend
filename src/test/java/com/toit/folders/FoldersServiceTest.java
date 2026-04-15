@@ -93,7 +93,7 @@ class FoldersServiceTest {
                 .thenThrow(new UsersNotFoundException(invalidUsersId + "은 존재하지 않는 사용자입니다."));
 
         assertThrows(UsersNotFoundException.class,
-                () -> foldersService.createFolders(invalidUsersId, "여행", "메모", "pink100"));
+                () -> foldersService.createFolders(invalidUsersId, "여행", "메모", "pink100", 0));
 
         verify(foldersRepository, never()).save(any(Folders.class));
     }
