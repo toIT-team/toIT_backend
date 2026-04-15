@@ -1,6 +1,6 @@
-package com.toit.foldersviews.dto.response;
+package com.toit.folders.dto.response;
 
-import com.toit.foldersviews.FoldersViews;
+import com.toit.folders.Folders;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -14,9 +14,9 @@ public class RecentFoldersResponse {
     private String name;
     private LocalDateTime lastViewedAt;
 
-    public RecentFoldersResponse(FoldersViews views) {
-        this.folderId = views.getFolder().getFoldersId();
-        this.name = views.getFolder().getName();
-        this.lastViewedAt = views.getLastViewedAt();
+    public RecentFoldersResponse(Folders folders) {
+        this.folderId = folders.getFoldersId();
+        this.name = folders.getName();
+        this.lastViewedAt = folders.getLastViewedAt();
     }
 }

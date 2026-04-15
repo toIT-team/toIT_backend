@@ -45,7 +45,7 @@ public class FoldersController {
     ){
         Long usersId = SecurityUtil.getCurrentUserId();
         return ResponseEntity.ok(foldersService
-                .createFolders(usersId, request.getName(), request.getMemo(), request.getColor()));
+                .createFolders(usersId, request.getName(), request.getMemo(), request.getColor(), request.getIconIdx()));
     }
 
     /**

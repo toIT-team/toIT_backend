@@ -41,7 +41,7 @@ class FoldersSearchServiceTest {
 //    }
 
     private Folders createFolder(Users user, Long foldersId, String name) {
-        Folders folder = new Folders(name, "메모", false, "pink100", false, LocalDateTime.now(), user);
+        Folders folder = new Folders(name, "메모", false, "pink100", false, LocalDateTime.now(), user, 0);
         ReflectionTestUtils.setField(folder, "foldersId", foldersId);
         return folder;
     }

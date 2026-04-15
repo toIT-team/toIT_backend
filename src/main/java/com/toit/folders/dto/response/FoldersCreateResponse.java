@@ -43,6 +43,9 @@ public class FoldersCreateResponse {
     /** 즐겨찾기 여부 */
     private Boolean isFavorite;
 
+    /** 아이콘 인덱스 */
+    private Integer iconIdx;
+
     public FoldersCreateResponse(Folders folders){
         this.usersId = folders.getUsers().getUsersId();
         this.foldersId = folders.getFoldersId();
@@ -53,5 +56,6 @@ public class FoldersCreateResponse {
         this.status = folders.getStatus();
         this.createdAt = folders.getCreatedAt();
         this.isFavorite = folders.getIsFavorite();
+        this.iconIdx = folders.getIconIdx();
     }
 }
