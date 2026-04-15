@@ -36,6 +36,9 @@ public class Feedback {
     @Column
     private LocalDateTime repliedAt;
 
+    @Column
+    private Long adminId;
+
     public Feedback(String title, String content, Users users) {
         this.title = title;
         this.content = content;
@@ -43,8 +46,9 @@ public class Feedback {
         this.createdAt = LocalDateTime.now();
     }
 
-    public void addReply(String reply) {
+    public void addReply(String reply, Long adminId) {
         this.reply = reply;
         this.repliedAt = LocalDateTime.now();
+        this.adminId = adminId;
     }
 }

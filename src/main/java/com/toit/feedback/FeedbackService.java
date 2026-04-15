@@ -39,10 +39,10 @@ public class FeedbackService {
                 .map(FeedbackMyResponse::from);
     }
 
-    public void reply(Long feedbackId, FeedbackReplyRequest request) {
+    public void reply(Long feedbackId, Long adminId, FeedbackReplyRequest request) {
         Feedback feedback = feedbackRepository.findById(feedbackId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 피드백입니다."));
-        feedback.addReply(request.getReply());
+        feedback.addReply(request.getReply(), adminId);
         feedbackRepository.save(feedback);
     }
 }

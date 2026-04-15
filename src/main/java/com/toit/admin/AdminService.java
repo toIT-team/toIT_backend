@@ -48,7 +48,8 @@ public class AdminService {
         }
         adminRepository.save(new Admin(
                 request.getEmail(),
-                passwordEncoder.encode(request.getPassword())
+                passwordEncoder.encode(request.getPassword()),
+                request.getName()
         ));
     }
 }
