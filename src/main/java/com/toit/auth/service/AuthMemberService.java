@@ -114,7 +114,7 @@ public class AuthMemberService extends DefaultOAuth2UserService {
                             LocalDateTime.now()
                     ));
                     usersSettingsRepository.save(new UsersSettings(savedUser));
-                    foldersRepository.save(new Folders("기본 보관함", null, true, "blue500", false, LocalDateTime.now(), savedUser));
+                    foldersRepository.save(new Folders("기본 보관함", null, true, "blue500", false, LocalDateTime.now(), savedUser, 0));
                     return savedUser;
                 });
     }

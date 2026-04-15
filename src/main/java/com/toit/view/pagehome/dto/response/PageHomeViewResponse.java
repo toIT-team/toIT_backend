@@ -1,6 +1,6 @@
 package com.toit.view.pagehome.dto.response;
 
-import com.toit.foldersviews.dto.response.RecentFoldersResponse;
+import com.toit.folders.dto.response.RecentFoldersResponse;
 import com.toit.schedules.dto.response.SchedulesSelectedDayResponse;
 import java.util.List;
 import lombok.AccessLevel;

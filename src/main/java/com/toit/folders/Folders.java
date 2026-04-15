@@ -93,12 +93,19 @@ public class Folders {
     @Column(nullable = false)
     private Integer iconIdx = 0;
 
+    /**
+     * 마지막으로 보관함을 열람한 시각
+     * 보관함 내부(/page/items) 진입 시 업데이트
+     */
+    @Column(nullable = true)
+    private LocalDateTime lastViewedAt;
+
     @ManyToOne
     @JoinColumn(name = "users_id", nullable = false)
     private Users users;
 
 
-    public Folders(String name, String memo, Boolean isDefault, String color, Boolean isFavorite, LocalDateTime createdAt, Users users) {
+    public Folders(String name, String memo, Boolean isDefault, String color, Boolean isFavorite, LocalDateTime createdAt, Users users, Integer iconIdx) {
         this.name = name;
         this.memo = memo;
         this.isDefault = isDefault;
@@ -107,7 +114,7 @@ public class Folders {
         this.status = EntityStatus.ACTIVE;
         this.users = users;
         this.createdAt = createdAt;
-        this.iconIdx = 0;
+        this.iconIdx = iconIdx != null ? iconIdx : 0;
     }
 
     public void update(String name, String memo, String color, Integer iconIdx) {
@@ -120,6 +127,10 @@ public class Folders {
     /**
      * Folders 소프트 Delete 실행 시
      */
+    public void updateLastViewedAt() {
+        this.lastViewedAt = LocalDateTime.now();
+    }
+
     public void softDelete() {
         this.status = EntityStatus.DELETED;
         this.deletedAt = LocalDateTime.now();
