@@ -31,7 +31,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SchedulesService {
 
-    private final SchedulesRepository schedulesRepository;private final UsersService usersService;
+    private final SchedulesRepository schedulesRepository;
+    private final UsersService usersService;
     private final FoldersService foldersService;
     private final SchedulesAlarmRepository schedulesAlarmRepository;
     private final SchedulesAlarmService schedulesAlarmService;
