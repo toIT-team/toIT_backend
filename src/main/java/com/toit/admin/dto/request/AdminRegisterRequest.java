@@ -10,5 +10,6 @@ public class AdminRegisterRequest {
 
     private String email;
     private String password;
+    private String name;
     private String secretKey;
 }

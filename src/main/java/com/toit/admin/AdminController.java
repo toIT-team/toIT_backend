@@ -62,7 +62,8 @@ public class AdminController {
             @PathVariable Long feedbackId,
             @RequestBody FeedbackReplyRequest request
     ) {
-        feedbackService.reply(feedbackId, request);
+        Long adminId = SecurityUtil.getCurrentUserId();
+        feedbackService.reply(feedbackId, adminId, request);
         return ResponseEntity.noContent().build();
     }
 
