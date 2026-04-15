@@ -33,19 +33,33 @@ public class PageHomeUseCaseImpl implements PageHomeUseCase {
 
     /**
      * 정렬 우선순위:
-     * 0 - startTime이 현재 시간보다 미래 (upcoming)
-     * 1 - startTime <= now <= endTime (ongoing)
-     * 2 - endTime이 null
-     * 3 - endTime이 현재 시간보다 과거 (completed)
+     * 0 - 아직 시작 안 한 일정 (upcoming)
+     * 1 - 진행 중인 일정 (in progress)
+     * 2 - startTime, endTime 둘 다 null (또는 한쪽만 null)
+     * 3 - 종료된 일정 (completed, 일반 일정에만 해당)
+     *
+     * overnight 일정(endTime < startTime) 처리:
+     * - now >= startTime 또는 now <= endTime → 진행 중 (1)
+     * - now > endTime && now < startTime → 아직 시작 안 함 (0)
      */
     private int scheduleSortOrder(SchedulesSelectedDayResponse s, LocalTime now) {
         LocalTime start = s.getStartTime();
         LocalTime end = s.getEndTime();
 
-        if (end != null && end.isBefore(now)) return 3;         // 종료된 일정
-        if (end == null) return 2;                               // endTime 없는 일정
-        if (start != null && !start.isAfter(now)) return 1;     // 진행 중
-        return 0;                                                // 아직 시작 안 한 일정
+        if (start == null || end == null) return 2;  // 둘 다 null 또는 한쪽만 null
+
+        boolean isOvernight = end.isBefore(start);   // ex) start=23:00, end=01:00
+
+        if (isOvernight) {
+            // 진행 중: now >= start 또는 now <= end
+            if (!now.isBefore(start) || !now.isAfter(end)) return 1;
+            // 그 외(now > end && now < start): 아직 시작 안 함
+            return 0;
+        } else {
+            if (end.isBefore(now)) return 3;    // 종료된 일정
+            if (start.isAfter(now)) return 0;   // 아직 시작 안 한 일정
+            return 1;                           // 진행 중
+        }
     }
 
     @Override

@@ -312,7 +312,8 @@ public class AttachMentsService {
 
 
     private void validateStorageLimit(Long usersId, long newFileSize) {
-        Object[] row = attachMentsRepository.sumAttachmentsSizeByUsersId(usersId, EntityStatus.ACTIVE);
+        List<Object[]> result = attachMentsRepository.sumAttachmentsSizeByUsersId(usersId, EntityStatus.ACTIVE);
+        Object[] row = result.isEmpty() ? new Object[]{0, 0} : result.get(0);
         double usedBytes = ((Number) row[0]).doubleValue() + ((Number) row[1]).doubleValue();
         if (usedBytes + newFileSize > StorageUsageResponse.LIMIT_BYTES) {
             throw new IllegalStateException("스토리지 용량이 초과되었습니다. (최대 10GB)");

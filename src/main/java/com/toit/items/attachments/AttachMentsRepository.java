@@ -44,7 +44,7 @@ public interface AttachMentsRepository extends JpaRepository<AttachMents, Long> 
         where a.users.usersId = :usersId
           and a.status = :status
     """)
-    Object[] sumAttachmentsSizeByUsersId(
+    List<Object[]> sumAttachmentsSizeByUsersId(
             @Param("usersId") Long usersId,
             @Param("status") EntityStatus status
     );
