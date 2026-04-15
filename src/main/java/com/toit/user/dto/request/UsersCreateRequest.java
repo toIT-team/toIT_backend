@@ -4,8 +4,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UsersCreateRequest {
 
     /** 사용자 이메일 */

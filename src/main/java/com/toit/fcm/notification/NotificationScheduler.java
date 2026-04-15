@@ -7,6 +7,8 @@ import com.toit.schedules.Schedules;
 import com.toit.schedules.SchedulesRepository;
 import com.toit.schedulesalarm.SchedulesAlarm;
 import com.toit.schedulesalarm.SchedulesAlarmRepository;
+import com.toit.usersinfo.UsersSettings;
+import com.toit.usersinfo.UsersSettingsRepository;
 import com.toit.user.Users;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,7 @@ public class NotificationScheduler {
     private final SchedulesRepository schedulesRepository;
     private final FcmTokenRepository fcmTokenRepository;
     private final SchedulesAlarmRepository schedulesAlarmRepository;
+    private final UsersSettingsRepository usersSettingsRepository;
 
     @Scheduled(cron = "0 * * * * *")
     public void checkAndSendAlerts() {
@@ -44,6 +47,13 @@ public class NotificationScheduler {
         for (SchedulesAlarm alarm : alarms) {
             Schedules schedule = alarm.getSchedules();
             Users user = schedule.getUsers();
+
+            UsersSettings usersSettings = usersSettingsRepository.findByUsers_UsersId(user.getUsersId());
+            if (usersSettings == null || !Boolean.TRUE.equals(usersSettings.getAppAlarmEnabled())) {
+                log.info("사용자(ID={})의 앱 알림이 비활성화되어 있어 FCM 발송을 건너뜁니다.", user.getUsersId());
+                alarm.markAsSent();
+                continue;
+            }
 
             // 2. 유저의 FCM 토큰들 조회
             List<FcmToken> tokens = fcmTokenRepository.findAllByUsers(user);
@@ -64,7 +74,7 @@ public class NotificationScheduler {
             // 4. 각 기기(토큰)별로 발송
             for (FcmToken fcmToken : tokens) {
 
-                sendFcmMessage(fcmToken, title, body);
+                sendFcmMessage(fcmToken, schedule.getSchedulesId(), title, body);
             }
             alarm.markAsSent();
         }
@@ -73,7 +83,7 @@ public class NotificationScheduler {
     /**
      * 실제 FCM 전송 및 죽은 토큰 삭제 로직
      */
-    private void sendFcmMessage(FcmToken fcmTokenEntity, String title, String body) {
+    private void sendFcmMessage(FcmToken fcmTokenEntity, Long schedulesId, String title, String body) {
         try {
             // 1. [추가] 안드로이드 설정: 중요도를 'HIGH'로 설정
             AndroidConfig androidConfig = AndroidConfig.builder()
@@ -90,6 +100,8 @@ public class NotificationScheduler {
                             .setTitle(title)
                             .setBody(body)
                             .build())
+                    .putData("link", "toit://schedule?id=" + schedulesId)
+                    .putData("type", "schedule_detail")
                     .setAndroidConfig(androidConfig)
                     .build();
 

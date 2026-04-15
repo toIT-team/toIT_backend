@@ -11,6 +11,7 @@ import com.toit.exception.items.texts.TextsNotFoundException;
 import com.toit.exception.schedules.SchedulesNotFoundException;
 import com.toit.exception.schedulesalarm.SchedulesAlarmNotFoundException;
 import com.toit.exception.users.UsersNotFoundException;
+import com.toit.exception.userssettings.UsersSettingsNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -29,6 +30,15 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(UsersNotFoundException.class)
     public ResponseEntity<ErrorResponse> UsersNotFoundException(UsersNotFoundException ex) {
+        ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * UsersSettings -> 404, 사용자 설정 정보를 찾을 수 없음
+     */
+    @ExceptionHandler(UsersSettingsNotFoundException.class)
+    public ResponseEntity<ErrorResponse> UsersSettingsNotFoundException(UsersSettingsNotFoundException ex) {
         ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
