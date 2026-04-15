@@ -173,9 +173,9 @@ public class SchedulesService {
 
             LocalDateTime alarmDateTime;
 
-            if (request.getTimeSetting() && request.getEndTime() != null) {
-                // 1. 일정 시간 설정이 켜져 있는 경우: (종료 시간 - N분 전)
-                LocalDateTime baseDateTime = LocalDateTime.of(request.getEndDate(), request.getEndTime());
+            if (request.getTimeSetting() && request.getStartTime() != null) {
+                // 1. 일정 시간 설정이 켜져 있는 경우: (시작 시간 - N분 전)
+                LocalDateTime baseDateTime = LocalDateTime.of(request.getStartDate(), request.getStartTime());
 
                 // NullPointerException 방지를 위해 offset이 null이면 0으로 처리 (혹은 기획에 맞게 예외처리)
                 long offset = (request.getAlarmOffsetMinutes() != null) ? request.getAlarmOffsetMinutes() : 0L;
@@ -234,9 +234,9 @@ public class SchedulesService {
         if (Boolean.TRUE.equals(request.getAlarmState())) {
             // 알림을 켜는(또는 유지하는) 경우: 알림 시간 재계산
             LocalDateTime alarmDateTime;
-            if (request.getTimeSetting() && request.getEndTime() != null) {
+            if (request.getTimeSetting() && request.getStartTime() != null) {
                 long offset = (request.getAlarmOffsetMinutes() != null) ? request.getAlarmOffsetMinutes() : 0L;
-                alarmDateTime = LocalDateTime.of(request.getEndDate(), request.getEndTime()).minusMinutes(offset);
+                alarmDateTime = LocalDateTime.of(request.getStartDate(), request.getStartTime()).minusMinutes(offset);
             } else {
                 alarmDateTime = LocalDateTime.of(request.getStartDate(), LocalTime.of(9, 0));
             }
