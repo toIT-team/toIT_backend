@@ -17,6 +17,9 @@ public class FoldersCreateRequest {
      */
     private String memo;
 
-    /** 보관홤 컬러 */
+    /** 보관함 컬러 */
     private String color;
+
+    /** 아이콘 인덱스 (기본값 0) */
+    private Integer iconIdx;
 }

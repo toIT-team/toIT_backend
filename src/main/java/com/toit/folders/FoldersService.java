@@ -60,7 +60,7 @@ public class FoldersService {
      * @param color
      * @return FoldersCreateResponse
      */
-    public FoldersCreateResponse createFolders(Long usersId, String name, String memo, String color) {
+    public FoldersCreateResponse createFolders(Long usersId, String name, String memo, String color, Integer iconIdx) {
         // Users 조회 -> Users 예외 처리
         Users users = usersService.findById(usersId);
 
@@ -76,7 +76,8 @@ public class FoldersService {
                 color,
                 false,
                 LocalDateTime.now(),
-                users
+                users,
+                iconIdx
         );
         return new FoldersCreateResponse(foldersRepository.save(folders));
     }

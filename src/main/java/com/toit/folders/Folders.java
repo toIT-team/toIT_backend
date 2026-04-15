@@ -98,7 +98,7 @@ public class Folders {
     private Users users;
 
 
-    public Folders(String name, String memo, Boolean isDefault, String color, Boolean isFavorite, LocalDateTime createdAt, Users users) {
+    public Folders(String name, String memo, Boolean isDefault, String color, Boolean isFavorite, LocalDateTime createdAt, Users users, Integer iconIdx) {
         this.name = name;
         this.memo = memo;
         this.isDefault = isDefault;
@@ -107,7 +107,7 @@ public class Folders {
         this.status = EntityStatus.ACTIVE;
         this.users = users;
         this.createdAt = createdAt;
-        this.iconIdx = 0;
+        this.iconIdx = iconIdx != null ? iconIdx : 0;
     }
 
     public void update(String name, String memo, String color, Integer iconIdx) {
