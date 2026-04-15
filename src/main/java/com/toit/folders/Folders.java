@@ -93,6 +93,13 @@ public class Folders {
     @Column(nullable = false)
     private Integer iconIdx = 0;
 
+    /**
+     * 마지막으로 보관함을 열람한 시각
+     * 보관함 내부(/page/items) 진입 시 업데이트
+     */
+    @Column(nullable = true)
+    private LocalDateTime lastViewedAt;
+
     @ManyToOne
     @JoinColumn(name = "users_id", nullable = false)
     private Users users;
@@ -120,6 +127,10 @@ public class Folders {
     /**
      * Folders 소프트 Delete 실행 시
      */
+    public void updateLastViewedAt() {
+        this.lastViewedAt = LocalDateTime.now();
+    }
+
     public void softDelete() {
         this.status = EntityStatus.DELETED;
         this.deletedAt = LocalDateTime.now();
