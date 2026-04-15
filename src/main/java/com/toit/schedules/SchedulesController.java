@@ -2,6 +2,7 @@ package com.toit.schedules;
 
 
 
+import com.toit.common.SecurityUtil;
 import com.toit.schedules.dto.request.SchedulesCreateRequest;
 import com.toit.schedules.dto.request.SchedulesDeleteRequest;
 import com.toit.schedules.dto.request.SchedulesUpdateRequest;
@@ -34,7 +35,8 @@ public class SchedulesController {
     public ResponseEntity<SchedulesCreateResponse> createSchedule(
             @RequestBody SchedulesCreateRequest request
     ) {
-        return ResponseEntity.ok(schedulesService.createSchedule(request));
+        Long usersId = SecurityUtil.getCurrentUserId();
+        return ResponseEntity.ok(schedulesService.createSchedule(usersId, request));
     }
 
     /***
@@ -49,7 +51,8 @@ public class SchedulesController {
     public ResponseEntity<SchedulesUpdateResponse> updateSchedule(
             @RequestBody SchedulesUpdateRequest request
     ) {
-        return ResponseEntity.ok(schedulesService.updateSchedules(request));
+        Long usersId = SecurityUtil.getCurrentUserId();
+        return ResponseEntity.ok(schedulesService.updateSchedules(usersId, request));
     }
 
     /***
@@ -64,6 +67,7 @@ public class SchedulesController {
     public ResponseEntity<SchedulesDeleteResponse> deleteSchedule(
             @RequestBody SchedulesDeleteRequest request
     ){
-        return ResponseEntity.ok(schedulesService.deleteSchedule(request));
+        Long usersId = SecurityUtil.getCurrentUserId();
+        return ResponseEntity.ok(schedulesService.deleteSchedule(usersId, request));
     }
 }

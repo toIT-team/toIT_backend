@@ -10,10 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SchedulesDeleteRequest {
 
-    /** * 수정할 스케줄의 ID*/
-    private Long userId;
-
-    /** * 수정할 스케줄의 ID*/
+    /** * 삭제할 스케줄의 ID*/
     private Long schedulesId;
 
 }

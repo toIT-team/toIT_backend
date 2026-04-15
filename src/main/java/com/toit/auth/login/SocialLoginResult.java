@@ -6,6 +6,7 @@ public enum SocialLoginResult {
     CANCELLED("cancelled"),
     NEEDS_SIGNUP("needs_signup"),
     NEEDS_ADDITIONAL_INFO("needs_additional_info"),
+    DELETED_USER("deleted_user"),
     BLOCKED("blocked"),
     FAILED("failed");
 

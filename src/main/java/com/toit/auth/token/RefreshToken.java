@@ -6,17 +6,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import java.time.LocalDateTime;
+import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 @Table(name = "refresh_tokens")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class) // 생성/수정 시간 자동 기록
 public class RefreshToken {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,18 +32,17 @@ public class RefreshToken {
     @Column(nullable = false, length = 512)
     private String refreshToken;
 
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @LastModifiedDate
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDateTime updatedAt;
 
     @Builder
     public RefreshToken(Users users, String refreshToken) {
         this.users = users;
         this.refreshToken = refreshToken;
+        this.createdAt = LocalDateTime.now();
     }
 
     // 업데이트 메서드도 변경된 필드명을 쓰도록 수정

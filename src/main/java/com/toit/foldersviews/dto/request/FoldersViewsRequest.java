@@ -9,17 +9,11 @@ import lombok.NoArgsConstructor;
 public class FoldersViewsRequest {
 
     /**
-     * 사용자 ID
-     * */
-    private Long usersId;
-
-    /**
      * 보관함 ID
      */
     private Long foldersId;
 
-    public FoldersViewsRequest(Long usersId, Long foldersId){
-        this.usersId = usersId;
+    public FoldersViewsRequest(Long foldersId){
         this.foldersId = foldersId;
     }
 }

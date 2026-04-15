@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AttachMenetsMoveInFoldersRequest {
-    private Long usersId;
 
     private Long foldersId;
 
@@ -15,8 +14,7 @@ public class AttachMenetsMoveInFoldersRequest {
 
     private Long attachmentsId;
 
-    public AttachMenetsMoveInFoldersRequest(Long usersId, Long moveFoldersId, Long foldersId, Long attachmentsId){
-        this.usersId = usersId;
+    public AttachMenetsMoveInFoldersRequest(Long moveFoldersId, Long foldersId, Long attachmentsId){
         this.moveFoldersId = moveFoldersId;
         this.foldersId = foldersId;
         this.attachmentsId = attachmentsId;

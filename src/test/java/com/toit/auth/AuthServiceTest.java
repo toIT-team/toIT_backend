@@ -40,7 +40,7 @@ class AuthServiceTest {
                 null,
                 null,
                 AuthProvider.KAKAO,
-                1000L,
+                "1000",
                 LocalDateTime.now()
         );
 
@@ -63,7 +63,7 @@ class AuthServiceTest {
                 null,
                 null,
                 AuthProvider.KAKAO,
-                1000L,
+                "1000",
                 LocalDateTime.now()
         );
         RefreshToken refreshToken = RefreshToken.builder()
@@ -90,7 +90,7 @@ class AuthServiceTest {
                 null,
                 null,
                 AuthProvider.KAKAO,
-                1000L,
+                "1000",
                 LocalDateTime.now()
         );
         RefreshToken refreshToken = RefreshToken.builder()

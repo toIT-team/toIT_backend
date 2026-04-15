@@ -4,6 +4,7 @@ import com.toit.foldersviews.dto.request.FoldersViewsRequest;
 import com.toit.foldersviews.dto.response.FoldersViewsResponse;
 import com.toit.swagger.docs.foldersviews.FoldersViewsApiDocs;
 import io.swagger.v3.oas.annotations.Operation;
+import com.toit.common.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +31,7 @@ public class FoldersViewsController {
     public ResponseEntity<FoldersViewsResponse> recordFoldersViews(
             @RequestBody FoldersViewsRequest request
     ){
-        return ResponseEntity.ok(foldersViewsService.recordFoldersViews(request.getUsersId(), request.getFoldersId()));
+        Long usersId = SecurityUtil.getCurrentUserId();
+        return ResponseEntity.ok(foldersViewsService.recordFoldersViews(usersId, request.getFoldersId()));
     }
 }

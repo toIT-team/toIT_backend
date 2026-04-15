@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
+import com.toit.common.SecurityUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,9 +27,9 @@ public class PageHomeViewController {
     @PageHomeViewApiDocs
     @GetMapping
     public ResponseEntity<PageHomeViewResponse> getHome(
-            @RequestParam("usersId") Long usersId,
             @RequestParam("todayDate") LocalDate todayDate
     ){
+        Long usersId = SecurityUtil.getCurrentUserId();
         return ResponseEntity.ok(pageHomeUseCase.getHomeView(usersId, todayDate));
     }
 }

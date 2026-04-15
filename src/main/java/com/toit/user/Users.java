@@ -73,7 +73,7 @@ public class Users {
      * 사용자 OAuth 식별자 - OAuth 2.0으로 가져온 값
      */
     @Column(name = "provider_users_id", nullable = false)
-    private Long providerUsersId;
+    private String providerUsersId;
 
     /**
      * 사용자 서비스 상태
@@ -97,7 +97,7 @@ public class Users {
     private LocalDateTime deletedAt;
 
 
-    public Users(String email, String name, String bio, String imageUrl, AuthProvider authProvider, Long providerUsersId, LocalDateTime createdAt) {
+    public Users(String email, String name, String bio, String imageUrl, AuthProvider authProvider, String providerUsersId, LocalDateTime createdAt) {
         this.email = email;
         this.name = name;
         this.bio = bio;
@@ -130,5 +130,19 @@ public class Users {
 
     public boolean isDeleted() {
         return status == EntityStatus.DELETED;
+    }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void restore() {
+        this.status = EntityStatus.ACTIVE;
+        this.deletedAt = null;
+    }
+
+    public void softDelete() {
+        this.status = EntityStatus.DELETED;
+        this.deletedAt = LocalDateTime.now();
     }
 }

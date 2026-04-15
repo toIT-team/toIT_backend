@@ -5,6 +5,7 @@ import com.toit.view.pagesearch.dto.response.PageSearchResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import com.toit.common.SecurityUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,9 +25,9 @@ public class PageSearchViewController {
     @GetMapping
     @PageSearchApiDocs
     public ResponseEntity<PageSearchResponse> search(
-            @RequestParam("usersId") Long usersId,
             @RequestParam("keyword") String keyword
     ) {
+        Long usersId = SecurityUtil.getCurrentUserId();
         return ResponseEntity.ok(pageSearchUseCase.search(usersId, keyword));
     }
 }

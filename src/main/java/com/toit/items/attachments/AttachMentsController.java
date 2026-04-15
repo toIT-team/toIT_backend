@@ -15,6 +15,7 @@ import com.toit.swagger.docs.items.attachments.AttachMentsUpdateFileNameApiDocs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import com.toit.common.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,12 +43,11 @@ public class AttachMentsController {
     @AttachMentsImagesUploadApiDocs
     @PostMapping("/attachments/images")
     public ResponseEntity<List<AttachMentsImagesCreateInFoldersResponse>> createImagesInFolders(
-            @RequestParam("usersId") Long usersId,
             @RequestParam("foldersIdList") List<Long> foldersIdList,
             @RequestParam("textContent") String textContent,
             @RequestPart("image") MultipartFile image
     ) {
-
+        Long usersId = SecurityUtil.getCurrentUserId();
         return ResponseEntity.ok(
                 attachmentsService.createImagesInFolders(usersId, foldersIdList, textContent, image)
         );
@@ -63,12 +63,11 @@ public class AttachMentsController {
     @AttachMentsFilesUploadApiDocs
     @PostMapping("/attachments/files")
     public ResponseEntity<List<AttachMentsFilesCreateInFoldersResponse>> createFilesInFolders(
-            @RequestParam("usersId") Long usersId,
             @RequestParam("foldersIdList") List<Long> foldersIdList,
             @RequestParam("textContent") String textContent,
             @RequestPart("file") MultipartFile file
     ) {
-
+        Long usersId = SecurityUtil.getCurrentUserId();
         return ResponseEntity.ok(
                 attachmentsService.createFilesInFolders(usersId, foldersIdList, textContent, file)
         );
@@ -81,9 +80,9 @@ public class AttachMentsController {
     @AttachMentsDeleteApiDocs
     @DeleteMapping("/attachments")
     public ResponseEntity<AttachMentsDeleteInFoldersResponse> deleteAttachments(
-            @RequestParam("usersId") Long usersId,
             @RequestParam("attachmentsId") Long attachmentsId
     ) {
+        Long usersId = SecurityUtil.getCurrentUserId();
         return ResponseEntity.ok(attachmentsService.deleteAttachments(usersId, attachmentsId));
     }
 
@@ -95,7 +94,8 @@ public class AttachMentsController {
     public ResponseEntity<AttachMentsMoveInFoldersResponse> moveAttachmentsInFolders(
             @RequestBody AttachMenetsMoveInFoldersRequest request
     ){
-        return ResponseEntity.ok(attachmentsService.moveAttachmentsInFolders(request.getUsersId(), request.getFoldersId(), request.getMoveFoldersId(), request.getAttachmentsId()));
+        Long usersId = SecurityUtil.getCurrentUserId();
+        return ResponseEntity.ok(attachmentsService.moveAttachmentsInFolders(usersId, request.getFoldersId(), request.getMoveFoldersId(), request.getAttachmentsId()));
     }
 
     @Operation(
@@ -107,9 +107,10 @@ public class AttachMentsController {
     public ResponseEntity<AttachMentsUpdateFileNameResponse> updateFileName(
             @RequestBody AttachMentsUpdateFileNameRequest request
     ) {
+        Long usersId = SecurityUtil.getCurrentUserId();
         return ResponseEntity.ok(
                 attachmentsService.updateFileName(
-                        request.getUsersId(),
+                        usersId,
                         request.getFoldersId(),
                         request.getAttachmentsId(),
                         request.getFileName()
