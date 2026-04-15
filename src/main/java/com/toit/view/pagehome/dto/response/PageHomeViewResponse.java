@@ -10,29 +10,13 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PageHomeViewResponse {
-    /**
-     * 사용자의 보관함 조회
-     */
-    private Long userId;
 
-    /**
-     * 사용자의 보관함 모음
-     */
     private List<PageHomeFoldersItemResponse> folders;
-
-    /**
-     * 사용자의 최근 본 폴더 조회 - 최대 4개
-     */
     private List<RecentFoldersResponse> foldersViews;
-
-    /**
-     * 오늘 일정 조회
-     */
     private List<SchedulesSelectedDayResponse> schedules;
 
-    public PageHomeViewResponse(Long userId, List<PageHomeFoldersItemResponse> folders, List<RecentFoldersResponse> foldersViews
-            , List<SchedulesSelectedDayResponse> schedules) {
-        this.userId = userId;
+    public PageHomeViewResponse(List<PageHomeFoldersItemResponse> folders, List<RecentFoldersResponse> foldersViews,
+                                List<SchedulesSelectedDayResponse> schedules) {
         this.folders = folders;
         this.foldersViews = foldersViews;
         this.schedules = schedules;

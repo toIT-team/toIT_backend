@@ -1,5 +1,6 @@
 package com.toit.feedback;
 
+import com.toit.admin.AdminRepository;
 import com.toit.feedback.dto.request.FeedbackCreateRequest;
 import com.toit.feedback.dto.request.FeedbackReplyRequest;
 import com.toit.feedback.dto.response.FeedbackCreateResponse;
@@ -18,6 +19,7 @@ public class FeedbackService {
 
     private final FeedbackRepository feedbackRepository;
     private final UsersRepository usersRepository;
+    private final AdminRepository adminRepository;
 
     public FeedbackCreateResponse create(Long usersId, FeedbackCreateRequest request) {
         Users user = usersRepository.findById(usersId)
@@ -31,12 +33,19 @@ public class FeedbackService {
 
     public Page<FeedbackListResponse> getList(Pageable pageable) {
         return feedbackRepository.findAllByOrderByCreatedAtDesc(pageable)
-                .map(FeedbackListResponse::from);
+                .map(feedback -> FeedbackListResponse.from(feedback, resolveAdminName(feedback.getAdminId())));
     }
 
     public Page<FeedbackMyResponse> getMyList(Long usersId, Pageable pageable) {
         return feedbackRepository.findAllByUsers_UsersIdOrderByCreatedAtDesc(usersId, pageable)
-                .map(FeedbackMyResponse::from);
+                .map(feedback -> FeedbackMyResponse.from(feedback, resolveAdminName(feedback.getAdminId())));
+    }
+
+    private String resolveAdminName(Long adminId) {
+        if (adminId == null) return null;
+        return adminRepository.findById(adminId)
+                .map(admin -> admin.getName())
+                .orElse(null);
     }
 
     public void reply(Long feedbackId, Long adminId, FeedbackReplyRequest request) {
