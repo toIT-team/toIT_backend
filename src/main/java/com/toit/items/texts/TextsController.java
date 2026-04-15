@@ -13,6 +13,7 @@ import com.toit.swagger.docs.items.texts.TextsDeleteApiDocs;
 import com.toit.swagger.docs.items.texts.TextsUpdateApiDocs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import com.toit.common.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,7 +43,8 @@ public class TextsController {
     public ResponseEntity<TextsCreateInFoldersResponse> createTextsInFolders(
             @RequestBody TextsCreateInFoldersRequest request
     ){
-        return ResponseEntity.ok(textsService.createTextsInFolders(request.getUsersId(), request.getFoldersIdList(), request.getTextContent()));
+        Long usersId = SecurityUtil.getCurrentUserId();
+        return ResponseEntity.ok(textsService.createTextsInFolders(usersId, request.getFoldersIdList(), request.getTextContent()));
     }
 
 
@@ -58,7 +60,8 @@ public class TextsController {
     public ResponseEntity<TextsDeleteInFoldersResponse>deleteTextsInFolders(
             @RequestBody TextsDeleteInFoldersRequest request
             ){
-        return ResponseEntity.ok(textsService.deleteTextsInFolders(request.getUsersId(), request.getFoldersId(), request.getTextsId()));
+        Long usersId = SecurityUtil.getCurrentUserId();
+        return ResponseEntity.ok(textsService.deleteTextsInFolders(usersId, request.getFoldersId(), request.getTextsId()));
     }
 
     /**
@@ -73,7 +76,8 @@ public class TextsController {
     public ResponseEntity<TextsMoveInFoldersResponse> moveTextsInFolders(
             @RequestBody TextsMoveInFoldersRequest request
     ){
-        return ResponseEntity.ok(textsService.moveTextsInFolders(request.getUsersId(), request.getFoldersId(), request.getMoveFoldersId(), request.getTextsId()));
+        Long usersId = SecurityUtil.getCurrentUserId();
+        return ResponseEntity.ok(textsService.moveTextsInFolders(usersId, request.getFoldersId(), request.getMoveFoldersId(), request.getTextsId()));
     }
 
     @Operation(
@@ -85,9 +89,10 @@ public class TextsController {
     public ResponseEntity<TextsUpdateResponse> updateTexts(
             @RequestBody TextsUpdateRequest request
     ) {
+        Long usersId = SecurityUtil.getCurrentUserId();
         return ResponseEntity.ok(
                 textsService.updateTexts(
-                        request.getUsersId(),
+                        usersId,
                         request.getFoldersId(),
                         request.getTextsId(),
                         request.getTextContent()

@@ -7,13 +7,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TextsUpdateRequest {
-    private Long usersId;
     private Long foldersId;
     private Long textsId;
     private String textContent;
 
-    public TextsUpdateRequest(Long usersId, Long foldersId, Long textsId, String textContent) {
-        this.usersId = usersId;
+    public TextsUpdateRequest(Long foldersId, Long textsId, String textContent) {
         this.foldersId = foldersId;
         this.textsId = textsId;
         this.textContent = textContent;

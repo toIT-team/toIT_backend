@@ -8,9 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FoldersCreateRequest {
 
-    /** 사용자 ID */
-    private Long usersId;
-
     /** 보관함 이름 */
     private String name;
 

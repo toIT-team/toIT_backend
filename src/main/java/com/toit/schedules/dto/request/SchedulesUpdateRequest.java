@@ -15,9 +15,6 @@ import java.time.LocalTime;
 public class SchedulesUpdateRequest {
 
     /** * 수정할 스케줄의 ID*/
-    private Long usersId;
-
-    /** * 수정할 스케줄의 ID*/
     private Long schedulesId;
 
     /** 제목 */
@@ -62,11 +59,10 @@ public class SchedulesUpdateRequest {
 
 
 
-    public SchedulesUpdateRequest(Long usersId, Long schedulesId, String title, String appColor,
+    public SchedulesUpdateRequest(Long schedulesId, String title, String appColor,
                                   Long foldersId, Boolean timeSetting, LocalDate startDate,
                                   LocalDate endDate, LocalTime startTime, LocalTime endTime,
                                   String memo,Boolean alarmState , Long alarmOffsetMinutes) {
-        this.usersId = usersId;
         this.schedulesId = schedulesId;
         this.title = title;
         this.appColor = appColor;

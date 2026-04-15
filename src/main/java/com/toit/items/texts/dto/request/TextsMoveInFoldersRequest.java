@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TextsMoveInFoldersRequest {
-    /** 사용자 ID */
-    private Long usersId;
 
     private Long foldersId;
 
@@ -18,8 +16,7 @@ public class TextsMoveInFoldersRequest {
     /** 텍스트 Id */
     private Long textsId;
 
-    public TextsMoveInFoldersRequest(Long usersId, Long foldersId, Long moveFoldersId, Long textsId){
-        this.usersId = usersId;
+    public TextsMoveInFoldersRequest(Long foldersId, Long moveFoldersId, Long textsId){
         this.foldersId = foldersId;
         this.moveFoldersId = moveFoldersId;
         this.textsId = textsId;

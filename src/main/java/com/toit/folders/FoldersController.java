@@ -11,6 +11,7 @@ import com.toit.swagger.docs.folders.FoldersApiDocs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import com.toit.common.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,8 +43,9 @@ public class FoldersController {
     public ResponseEntity<FoldersCreateResponse> createFolders(
             @RequestBody FoldersCreateRequest request
     ){
+        Long usersId = SecurityUtil.getCurrentUserId();
         return ResponseEntity.ok(foldersService
-                .createFolders(request.getUsersId(), request.getName(), request.getMemo(), request.getColor()));
+                .createFolders(usersId, request.getName(), request.getMemo(), request.getColor()));
     }
 
     /**
@@ -58,7 +60,8 @@ public class FoldersController {
     public ResponseEntity<FoldersUpdateResponse> updateFolders(
             @RequestBody FoldersUpdateRequest request
             ){
-        return ResponseEntity.ok(foldersService.updateFolders(request.getUsersId(), request.getFoldersId(),
+        Long usersId = SecurityUtil.getCurrentUserId();
+        return ResponseEntity.ok(foldersService.updateFolders(usersId, request.getFoldersId(),
                 request.getName(), request.getMemo(), request.getColor(), request.getIconIdx()));
     }
 
@@ -71,6 +74,7 @@ public class FoldersController {
     public ResponseEntity<FoldersDeleteResponse> deleteFolders(
             @RequestBody FoldersDeleteRequest request
     ){
-        return ResponseEntity.ok(foldersService.deleteFolders(request.getUsersId(), request.getFoldersId()));
+        Long usersId = SecurityUtil.getCurrentUserId();
+        return ResponseEntity.ok(foldersService.deleteFolders(usersId, request.getFoldersId()));
     }
 }

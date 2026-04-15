@@ -5,6 +5,7 @@ import com.toit.view.pageitems.dto.response.PageFoldersInItemsAllResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import com.toit.common.SecurityUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,9 +25,9 @@ public class PageItemsController {
     @PageItemsApiDocs
     @GetMapping
     public ResponseEntity<PageFoldersInItemsAllResponse> getOneFoldersMemo(
-            @RequestParam("usersId") Long usersId,
             @RequestParam("foldersId") Long foldersId
     ) {
+        Long usersId = SecurityUtil.getCurrentUserId();
         return ResponseEntity.ok(
                 pageItemsUseCase.getOnFoldersInItemsAll(usersId, foldersId)
         );

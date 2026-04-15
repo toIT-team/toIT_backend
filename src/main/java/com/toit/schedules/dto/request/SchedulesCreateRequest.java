@@ -15,9 +15,6 @@ import java.time.LocalTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SchedulesCreateRequest {
 
-    /** 사용자 ID */
-    private Long usersId;
-
     /** 스케줄 제목 */
     private String title;
 

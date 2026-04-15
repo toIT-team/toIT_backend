@@ -6,6 +6,7 @@ import com.toit.fcm.response.FcmCreateResponse;
 import com.toit.swagger.docs.fcm.FcmApiDocs;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import com.toit.common.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +30,7 @@ public class FcmTokenController {
     public ResponseEntity<FcmCreateResponse> createFcmToken(
             @RequestBody @Valid FcmCreateRequest request
     ){
-        return ResponseEntity.ok(fcmTokenService.createFcmToken(request));
+        Long usersId = SecurityUtil.getCurrentUserId();
+        return ResponseEntity.ok(fcmTokenService.createFcmToken(usersId, request));
     }
 }

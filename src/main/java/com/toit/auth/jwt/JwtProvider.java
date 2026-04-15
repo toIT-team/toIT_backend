@@ -69,6 +69,36 @@ public class JwtProvider {
                 .compact();
     }
 
+    /**
+     * 계정 복구용 단기 토큰 생성 (10분 유효)
+     */
+    public String createRestoreToken(Long usersId) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + 10 * 60 * 1000L);
+
+        return Jwts.builder()
+                .subject(String.valueOf(usersId))
+                .claim("purpose", "restore")
+                .issuedAt(now)
+                .expiration(expiryDate)
+                .signWith(secretKey)
+                .compact();
+    }
+
+    public boolean isRestoreToken(String token) {
+        try {
+            String purpose = Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .get("purpose", String.class);
+            return "restore".equals(purpose);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     // JwtProvider.java에 추가
     public boolean validateToken(String token) {
         try {

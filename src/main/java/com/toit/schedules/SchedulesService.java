@@ -142,9 +142,9 @@ public class SchedulesService {
      * 스케줄 생성
      * @return
      */
-    public SchedulesCreateResponse createSchedule(SchedulesCreateRequest request) {
+    public SchedulesCreateResponse createSchedule(Long usersId, SchedulesCreateRequest request) {
 
-        Users user = usersService.findById(request.getUsersId());
+        Users user = usersService.findById(usersId);
 
         Folders folder = null;
         if (request.getFoldersId() != null) {
@@ -210,8 +210,8 @@ public class SchedulesService {
      * @param request
      */
 
-    public SchedulesUpdateResponse updateSchedules(SchedulesUpdateRequest request) {
-        usersService.findById(request.getUsersId());
+    public SchedulesUpdateResponse updateSchedules(Long usersId, SchedulesUpdateRequest request) {
+        usersService.findById(usersId);
         Schedules schedule = findBySchedules(request.getSchedulesId());
 
         Folders folder = null;
@@ -276,8 +276,8 @@ public class SchedulesService {
     /***
      * 일정 삭제
      */
-    public SchedulesDeleteResponse deleteSchedule(SchedulesDeleteRequest request) {
-        usersService.findById(request.getUserId());
+    public SchedulesDeleteResponse deleteSchedule(Long usersId, SchedulesDeleteRequest request) {
+        usersService.findById(usersId);
 
         Schedules schedule = findBySchedules(request.getSchedulesId());
 
@@ -285,7 +285,7 @@ public class SchedulesService {
 
         schedulesRepository.save(schedule);
 
-        return new SchedulesDeleteResponse(request.getSchedulesId() , request.getUserId(), schedule.getStatus());
+        return new SchedulesDeleteResponse(request.getSchedulesId(), usersId, schedule.getStatus());
     }
 
 

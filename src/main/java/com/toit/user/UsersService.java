@@ -3,6 +3,7 @@ package com.toit.user;
 import com.toit.common.enums.AuthProvider;
 import com.toit.exception.users.UsersNotFoundException;
 import com.toit.user.dto.request.UsersCreateRequest;
+import com.toit.user.dto.request.UsersUpdateNameRequest;
 import com.toit.user.dto.response.UsersCreateResponse;
 import java.time.LocalDateTime;
 
@@ -25,7 +26,7 @@ public class UsersService {
                 request.getBio(),
                 request.getImageUrl(),
                 AuthProvider.valueOf(request.getAuthProvider()),
-                request.getProviderUsersId(),
+                String.valueOf(request.getProviderUsersId()),
                 LocalDateTime.now()
         );
 
@@ -39,5 +40,17 @@ public class UsersService {
     public Users findById(Long usersId){
         return usersRepository.findById(usersId)
                 .orElseThrow(() -> new UsersNotFoundException(usersId + "은 존재하지 않는 사용자입니다."));
+    }
+
+    public void updateName(Long usersId, UsersUpdateNameRequest request) {
+        Users user = findById(usersId);
+        user.updateName(request.getName());
+        usersRepository.save(user);
+    }
+
+    public void withdraw(Long usersId) {
+        Users user = findById(usersId);
+        user.softDelete();
+        usersRepository.save(user);
     }
 }

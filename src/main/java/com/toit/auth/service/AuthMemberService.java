@@ -4,6 +4,8 @@ import com.toit.auth.dto.AuthUserInfo;
 import com.toit.auth.dto.KakaoUserInfo;
 import com.toit.auth.login.SocialLoginResult;
 import com.toit.common.enums.AuthProvider;
+import com.toit.folders.Folders;
+import com.toit.folders.FoldersRepository;
 import com.toit.user.Users;
 import com.toit.user.UsersRepository;
 import com.toit.usersinfo.UsersSettings;
@@ -30,6 +32,7 @@ public class AuthMemberService extends DefaultOAuth2UserService {
 
     private final UsersRepository usersRepository;
     private final UsersSettingsRepository usersSettingsRepository;
+    private final FoldersRepository foldersRepository;
 
     /**
      * [핵심 메서드] 소셜 서비스(카카오 등)로부터 유저 정보를 가져와서 우리 시스템의 유저로 변환합니다.
@@ -71,6 +74,12 @@ public class AuthMemberService extends DefaultOAuth2UserService {
         attributes.put("toitLoginResult", loginResult.name());
 
         // 5. 스프링 시큐리티 세션에 "로그인 성공 유저"임을 증명하는 객체를 반환합니다.
+        /**
+         *  DefaultOAuth2User 멤버변수
+         *  authorities -> ROLE_USER 등 권한
+         *  attributes -> 카카오 원본 데이터 + toitUserId + toitLoginResult
+         *  nameAttributeKey -> attributes 중 식별자 로 쓸 키 (id)
+         */
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(user.getRole().name())),
                 attributes,
@@ -84,13 +93,14 @@ public class AuthMemberService extends DefaultOAuth2UserService {
      */
     private Users saveOrUpdate(AuthUserInfo userInfo) {
         AuthProvider authProvider = AuthProvider.valueOf(userInfo.getProvider().toUpperCase());
-        Long providerUsersId = Long.parseLong(userInfo.getProviderId());
+        String providerUsersId = userInfo.getProviderId();
         String fallbackName = userInfo.getProvider() + "_" + providerUsersId;
         String resolvedName = hasText(userInfo.getName()) ? userInfo.getName() : fallbackName;
 
         return usersRepository.findByAuthProviderAndProviderUsersId(authProvider, providerUsersId)
                 .map(entity -> {
-                    entity.updateSocialProfile(userInfo.getEmail(), resolvedName, userInfo.getImageUrl());
+                    // 이미 가입된 계정은 이름을 덮어씌우지 않음
+                    entity.updateSocialProfile(userInfo.getEmail(), null, userInfo.getImageUrl());
                     return entity;
                 })
                 .orElseGet(() -> {
@@ -104,13 +114,14 @@ public class AuthMemberService extends DefaultOAuth2UserService {
                             LocalDateTime.now()
                     ));
                     usersSettingsRepository.save(new UsersSettings(savedUser));
+                    foldersRepository.save(new Folders("기본 보관함", null, true, "blue500", false, LocalDateTime.now(), savedUser));
                     return savedUser;
                 });
     }
 
     private SocialLoginResult resolveLoginResult(Users user) {
         if (user.isDeleted()) {
-            return SocialLoginResult.BLOCKED;
+            return SocialLoginResult.DELETED_USER;
         }
         if (user.requiresAdditionalInfo()) {
             return SocialLoginResult.NEEDS_ADDITIONAL_INFO;
