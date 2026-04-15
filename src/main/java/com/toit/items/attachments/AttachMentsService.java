@@ -4,6 +4,7 @@ import com.toit.common.S3.attachmentprocessor.StorageResult;
 import com.toit.common.S3.attachmentprocessor.AttachmentPayload;
 import com.toit.common.S3.attachmentprocessor.AttachmentProcessor;
 import com.toit.common.S3.attachmentprocessor.AttachmentProcessorRouter;
+import com.toit.storage.dto.StorageUsageResponse;
 import com.toit.common.S3.attachmentvaildator.AttachmentValidator;
 import com.toit.common.S3.config.S3Config;
 import com.toit.common.enums.AttachMentsType;
@@ -61,6 +62,9 @@ public class AttachMentsService {
 
         /* 파일 크기 검사 */
         attachmentValidator.validateFileSize(image.getSize());
+
+        /* 스토리지 용량 검사 */
+        validateStorageLimit(usersId, image.getSize());
 
         /** IMAGE 타입 Processor 가져오기 */
         AttachmentProcessor processor = processorRouter.getProcessor(AttachMentsType.IMAGE);
@@ -121,6 +125,9 @@ public class AttachMentsService {
 
         /* 파일 크기 검사 */
         attachmentValidator.validateFileSize(file.getSize());
+
+        /* 스토리지 용량 검사 */
+        validateStorageLimit(usersId, file.getSize());
 
         /** File 타입 Processor 가져오기 */
         AttachmentProcessor processor = processorRouter.getProcessor(AttachMentsType.FILE);
@@ -303,6 +310,14 @@ public class AttachMentsService {
     }
 
 
+
+    private void validateStorageLimit(Long usersId, long newFileSize) {
+        Object[] row = attachMentsRepository.sumAttachmentsSizeByUsersId(usersId, EntityStatus.ACTIVE);
+        double usedBytes = ((Number) row[0]).doubleValue() + ((Number) row[1]).doubleValue();
+        if (usedBytes + newFileSize > StorageUsageResponse.LIMIT_BYTES) {
+            throw new IllegalStateException("스토리지 용량이 초과되었습니다. (최대 10GB)");
+        }
+    }
 
     public long countByFoldersId(Long foldersId) {
         return attachMentsRepository.countByStorageIdAndStatus(foldersId, EntityStatus.ACTIVE);

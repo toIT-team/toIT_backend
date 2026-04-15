@@ -12,9 +12,10 @@ public record FeedbackListResponse(
         String userName,
         LocalDateTime createdAt,
         String reply,
-        LocalDateTime repliedAt
+        LocalDateTime repliedAt,
+        String adminName
 ) {
-    public static FeedbackListResponse from(Feedback feedback) {
+    public static FeedbackListResponse from(Feedback feedback, String adminName) {
         return new FeedbackListResponse(
                 feedback.getFeedbackId(),
                 feedback.getTitle(),
@@ -23,7 +24,8 @@ public record FeedbackListResponse(
                 feedback.getUsers().getName(),
                 feedback.getCreatedAt(),
                 feedback.getReply(),
-                feedback.getRepliedAt()
+                feedback.getRepliedAt(),
+                adminName
         );
     }
 }

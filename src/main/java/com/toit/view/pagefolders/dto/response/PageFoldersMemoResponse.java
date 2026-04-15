@@ -10,15 +10,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PageFoldersMemoResponse {
     private Long foldersId;
-    private Long usersId;
     private String name;
     private String memo;
     private Boolean isDefault;
     private String color;
     private LocalDateTime createdAt;
+
     public PageFoldersMemoResponse(Folders folders) {
         this.foldersId = folders.getFoldersId();
-        this.usersId = folders.getUsers().getUsersId();
         this.name = folders.getName();
         this.memo = folders.getMemo();
         this.isDefault = folders.getIsDefault();

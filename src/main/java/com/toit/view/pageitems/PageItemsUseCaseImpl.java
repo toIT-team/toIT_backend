@@ -27,6 +27,6 @@ public class PageItemsUseCaseImpl implements PageItemsUseCase{
         List<AttachMentsFilesGetInFoldersResponse> files = attachMentsService.getFilesInFolders(usersId, foldersId);
         List<AttachMentsImagesGetInFoldersResponse> images = attachMentsService.getImagesInFolders(usersId, foldersId);
 
-        return new PageFoldersInItemsAllResponse(usersId, foldersId, links, texts, files, images);
+        return new PageFoldersInItemsAllResponse(foldersId, links, texts, files, images);
     }
 }

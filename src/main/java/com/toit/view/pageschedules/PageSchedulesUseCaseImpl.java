@@ -34,7 +34,7 @@ public class PageSchedulesUseCaseImpl implements PageSchedulesUseCase {
 
         List<SchedulesMonthResponse> schedules = schedulesService.getSearchSchedules(usersId, startDate, endDate);
 
-        return new PageSchedulesSearchResponse(usersId, schedules);
+        return new PageSchedulesSearchResponse(schedules);
     }
 
     /***
@@ -44,7 +44,7 @@ public class PageSchedulesUseCaseImpl implements PageSchedulesUseCase {
     public PageSchedulesSelectDayViewResponse getSelectedDaySchedulesView(Long userId, LocalDate selectedDay){
         List<SchedulesSelectedDayResponse> schedules = schedulesService.getSelectedDaySchedules(userId, selectedDay);
 
-        return  new PageSchedulesSelectDayViewResponse(userId, schedules) ;
+        return new PageSchedulesSelectDayViewResponse(schedules);
 
     }
 
@@ -94,10 +94,7 @@ public class PageSchedulesUseCaseImpl implements PageSchedulesUseCase {
                 .collect(Collectors.toList());
 
         // 3. 만들어두신 최종 껍데기 DTO에 담아서 리턴!
-        return new PageSchedulesAlarmViewResponse(
-                usersId,
-                schedulesAlarms
-        );
+        return new PageSchedulesAlarmViewResponse(schedulesAlarms);
     }
 
 }

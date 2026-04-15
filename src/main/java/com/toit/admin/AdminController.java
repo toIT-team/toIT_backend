@@ -8,6 +8,9 @@ import com.toit.feedback.FeedbackService;
 import com.toit.feedback.dto.request.FeedbackReplyRequest;
 import com.toit.feedback.dto.response.FeedbackListResponse;
 import com.toit.noitce.NoticeService;
+import com.toit.storage.StorageService;
+import com.toit.storage.dto.AdminStorageUsageResponse;
+import java.util.List;
 import com.toit.noitce.dto.request.NoticeCreateRequest;
 import com.toit.noitce.dto.request.NoticeDeleteRequest;
 import com.toit.noitce.dto.request.NoticeUpdateRequest;
@@ -35,6 +38,7 @@ public class AdminController {
     private final AdminService adminService;
     private final FeedbackService feedbackService;
     private final NoticeService noticeService;
+    private final StorageService storageService;
 
     @Operation(summary = "관리자 로그인", description = "이메일과 비밀번호로 관리자 JWT를 발급합니다.")
     @PostMapping("/login")
@@ -78,6 +82,12 @@ public class AdminController {
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return ResponseEntity.ok(noticeService.getNotices(pageable));
+    }
+
+    @Operation(summary = "전체 사용자 스토리지 사용량 조회", description = "사용자별 S3 스토리지 사용량을 조회합니다.")
+    @GetMapping("/storage")
+    public ResponseEntity<List<AdminStorageUsageResponse>> getAllStorage() {
+        return ResponseEntity.ok(storageService.getAllUsage());
     }
 
     @Operation(summary = "관리자 공지사항 작성", description = "관리자가 공지사항을 생성합니다.")
