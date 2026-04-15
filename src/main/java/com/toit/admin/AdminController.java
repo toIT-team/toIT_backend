@@ -12,6 +12,7 @@ import com.toit.noitce.dto.request.NoticeCreateRequest;
 import com.toit.noitce.dto.request.NoticeDeleteRequest;
 import com.toit.noitce.dto.request.NoticeUpdateRequest;
 import com.toit.noitce.dto.response.NoticeDeleteResponse;
+import com.toit.noitce.dto.response.NoticeReadResponse;
 import com.toit.noitce.dto.response.NoticeUpdateResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -71,6 +72,14 @@ public class AdminController {
      * 공지사항 관련
      */
 
+    @Operation(summary = "관리자 공지사항 목록 조회", description = "관리자가 공지사항 목록을 조회합니다.")
+    @GetMapping("/notices")
+    public ResponseEntity<Page<NoticeReadResponse>> getNotices(
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        return ResponseEntity.ok(noticeService.getNotices(pageable));
+    }
+
     @Operation(summary = "관리자 공지사항 작성", description = "관리자가 공지사항을 생성합니다.")
     @PostMapping("/notices")
     public ResponseEntity<Void> createNotice(
@@ -98,5 +107,7 @@ public class AdminController {
         Long adminId = SecurityUtil.getCurrentUserId();
         return noticeService.deleteNotice(adminId, request);
     }
+
+
 
 }
