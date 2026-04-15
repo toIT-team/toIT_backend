@@ -33,7 +33,6 @@ public class SchedulesAlarmService {
     }
 
 
-
     /***
      * 푸시 알림 조회
      */
@@ -42,15 +41,5 @@ public class SchedulesAlarmService {
 
         return schedulesAlarmRepository.findSentAlarmsByUsersId(usersId);
     }
-
-
-
-
-
-
-
-
-
-
 
 }

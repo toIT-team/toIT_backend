@@ -4,6 +4,9 @@ import com.toit.common.SecurityUtil;
 import com.toit.user.dto.request.UsersCreateRequest;
 import com.toit.user.dto.request.UsersUpdateNameRequest;
 import com.toit.user.dto.response.UsersCreateResponse;
+import com.toit.usersinfo.UsersSettingsService;
+import com.toit.usersinfo.dto.request.UsersSettingsUpdateRequest;
+import com.toit.usersinfo.dto.response.UsersSettingsUpdateResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class UsersController {
 
     private final UsersService usersService;
+    private final UsersSettingsService usersSettingsService;
 
     /** 사용자 생성 - 카카오 로그인 전 임시 */
     @Operation(
@@ -50,4 +54,17 @@ public class UsersController {
         usersService.withdraw(usersId);
         return ResponseEntity.noContent().build();
     }
+
+    //유저 알림설정 변경 (on,off)
+    @PatchMapping("/alarmSetting")
+    public UsersSettingsUpdateResponse updateName(@RequestBody UsersSettingsUpdateRequest request) {
+        Long usersId = SecurityUtil.getCurrentUserId();
+        usersSettingsService.updateAlarm(usersId,request);
+
+        return usersSettingsService.updateAlarm(usersId,request);
+    }
+
+
+
+
 }
