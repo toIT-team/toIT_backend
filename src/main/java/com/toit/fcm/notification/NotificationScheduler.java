@@ -39,7 +39,7 @@ public class NotificationScheduler {
 
         // 보내야 할 알림만 가져옴
         List<SchedulesAlarm> alarms = schedulesAlarmRepository.findTargetAlarms(now, nextMinute);
-
+        //
         if (alarms.isEmpty()) return; // 보낼 게 없으면 종료
 
         log.info("알림 발송 작업 시작: 총 {}건 예정", alarms.size());
