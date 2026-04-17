@@ -1,6 +1,8 @@
 package com.toit.feedback;
 
 import com.toit.admin.AdminRepository;
+import com.toit.fcm.notification.FcmNotificationService;
+import com.toit.fcm.request.FcmNotificationRequest;
 import com.toit.feedback.dto.request.FeedbackCreateRequest;
 import com.toit.feedback.dto.request.FeedbackReplyRequest;
 import com.toit.feedback.dto.response.FeedbackCreateResponse;
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +23,7 @@ public class FeedbackService {
     private final FeedbackRepository feedbackRepository;
     private final UsersRepository usersRepository;
     private final AdminRepository adminRepository;
+    private final FcmNotificationService fcmNotificationService;
 
     public FeedbackCreateResponse create(Long usersId, FeedbackCreateRequest request) {
         Users user = usersRepository.findById(usersId)
@@ -27,7 +31,6 @@ public class FeedbackService {
 
         Feedback feedback = new Feedback(request.title(), request.content(), user);
         feedbackRepository.save(feedback);
-
         return new FeedbackCreateResponse(feedback.getFeedbackId());
     }
 
@@ -51,7 +54,19 @@ public class FeedbackService {
     public void reply(Long feedbackId, Long adminId, FeedbackReplyRequest request) {
         Feedback feedback = feedbackRepository.findById(feedbackId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 피드백입니다."));
+
         feedback.addReply(request.getReply(), adminId);
         feedbackRepository.save(feedback);
+
+        fcmNotificationService.sendToUser(
+                feedback.getUsers(),
+                new FcmNotificationRequest(
+                        "문의 답변이 등록되었습니다.",
+                        request.getReply(),
+                        "feedback_reply",
+                        "toit://feedback?id=" + feedback.getFeedbackId()
+                )
+        );
     }
+
 }
