@@ -1,14 +1,10 @@
 package com.toit.fcm.notification;
 
-import com.google.firebase.messaging.*;
-import com.toit.fcm.FcmToken;
-import com.toit.fcm.FcmTokenRepository;
 import com.toit.schedules.Schedules;
 import com.toit.schedules.SchedulesRepository;
 import com.toit.schedulesalarm.SchedulesAlarm;
 import com.toit.schedulesalarm.SchedulesAlarmRepository;
-import com.toit.usersinfo.UsersSettings;
-import com.toit.usersinfo.UsersSettingsRepository;
+import com.toit.fcm.request.FcmNotificationRequest;
 import com.toit.user.Users;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,9 +22,8 @@ import java.util.List;
 public class NotificationScheduler {
 
     private final SchedulesRepository schedulesRepository;
-    private final FcmTokenRepository fcmTokenRepository;
     private final SchedulesAlarmRepository schedulesAlarmRepository;
-    private final UsersSettingsRepository usersSettingsRepository;
+    private final FcmNotificationService fcmNotificationService;
 
     @Scheduled(cron = "0 * * * * *")
     public void checkAndSendAlerts() {
@@ -48,23 +43,6 @@ public class NotificationScheduler {
             Schedules schedule = alarm.getSchedules();
             Users user = schedule.getUsers();
 
-            UsersSettings usersSettings = usersSettingsRepository.findByUsers_UsersId(user.getUsersId());
-            if (usersSettings == null || !Boolean.TRUE.equals(usersSettings.getAppAlarmEnabled())) {
-                log.info("사용자(ID={})의 앱 알림이 비활성화되어 있어 FCM 발송을 건너뜁니다.", user.getUsersId());
-                alarm.markAsSent();
-                continue;
-            }
-
-            // 2. 유저의 FCM 토큰들 조회
-            List<FcmToken> tokens = fcmTokenRepository.findAllByUsers(user);
-
-            if (tokens.isEmpty()) {
-                log.warn("사용자(ID={})의 FCM 토큰이 없습니다. 알림 건너뜀.", user.getUsersId());
-                // 주의: 토큰이 없더라도 나중에 중복으로 찾지 않게 isSent 처리는 해주는 게 좋습니다.
-                alarm.markAsSent();
-                continue;
-            }
-
             // 3. 알림 내용 구성
             String title = schedule.getTitle();
             String rawMemo = schedule.getMemo();
@@ -72,53 +50,16 @@ public class NotificationScheduler {
                     (rawMemo.length() > 100 ? rawMemo.substring(0, 100) + "..." : rawMemo);
 
             // 4. 각 기기(토큰)별로 발송
-            for (FcmToken fcmToken : tokens) {
-
-                sendFcmMessage(fcmToken, schedule.getSchedulesId(), title, body);
-            }
+            fcmNotificationService.sendToUser(
+                    user,
+                    new FcmNotificationRequest(
+                            title,
+                            body,
+                            "schedule_detail",
+                            "toit://schedule?id=" + schedule.getSchedulesId()
+                    )
+            );
             alarm.markAsSent();
-        }
-    }
-
-    /**
-     * 실제 FCM 전송 및 죽은 토큰 삭제 로직
-     */
-    private void sendFcmMessage(FcmToken fcmTokenEntity, Long schedulesId, String title, String body) {
-        try {
-            // 1. [추가] 안드로이드 설정: 중요도를 'HIGH'로 설정
-            AndroidConfig androidConfig = AndroidConfig.builder()
-                    .setPriority(AndroidConfig.Priority.HIGH) // 중요도: 높음
-                    .setNotification(AndroidNotification.builder()
-                            .setSound("default") // 소리도 나게 설정 (선택사항)
-                            .build())
-                    .build();
-
-
-            Message message = Message.builder()
-                    .setToken(fcmTokenEntity.getFcmToken()) // Entity 필드명 확인 (token인지 fcmToken인지)
-                    .setNotification(Notification.builder()
-                            .setTitle(title)
-                            .setBody(body)
-                            .build())
-                    .putData("link", "toit://schedule?id=" + schedulesId)
-                    .putData("type", "schedule_detail")
-                    .setAndroidConfig(androidConfig)
-                    .build();
-
-            FirebaseMessaging.getInstance().send(message);
-            log.info("전송 성공: UserID={}, Token=...{}", fcmTokenEntity.getUsers().getUsersId(), fcmTokenEntity.getFcmToken().substring(0, 10));
-
-        } catch (FirebaseMessagingException e) {
-            MessagingErrorCode errorCode = e.getMessagingErrorCode();
-
-            if (errorCode == MessagingErrorCode.UNREGISTERED || errorCode == MessagingErrorCode.INVALID_ARGUMENT) {
-                log.warn("유효하지 않은 토큰 감지 및 삭제: {}", fcmTokenEntity.getFcmToken());
-                fcmTokenRepository.delete(fcmTokenEntity); // DB에서 즉시 삭제해버린다.
-            } else {
-                log.error(" 전송 실패 (서버 에러): {}", e.getMessage());
-            }
-        } catch (Exception e) {
-            log.error("알 수 없는 에러: {}", e.getMessage());
         }
     }
 }
