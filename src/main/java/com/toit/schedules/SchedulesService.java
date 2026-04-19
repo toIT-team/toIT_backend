@@ -3,6 +3,7 @@ package com.toit.schedules;
 
 
 import com.toit.common.enums.EntityStatus;
+import com.toit.exception.schedules.ScheduleTimeRangeException;
 import com.toit.exception.schedules.SchedulesNotFoundException;
 import com.toit.folders.Folders;
 import com.toit.folders.FoldersService;
@@ -37,6 +38,9 @@ public class SchedulesService {
     private final SchedulesAlarmRepository schedulesAlarmRepository;
     private final SchedulesAlarmService schedulesAlarmService;
 
+    /**
+     * 일정 ID로 일정을 조회하고, 없으면 예외를 발생시킨다.
+     */
     public Schedules findBySchedules(Long schedulesId){
         return schedulesRepository.findById(schedulesId).
                 orElseThrow(()-> new SchedulesNotFoundException(
@@ -44,7 +48,9 @@ public class SchedulesService {
 
     }
 
-    //일정 상세조회
+    /**
+     * 일정 상세를 조회
+     */
     public ScheduleViewResponse getSchedule(Long usersId,Long schedulesId){
 
         usersService.findById(usersId);
@@ -55,6 +61,8 @@ public class SchedulesService {
 
         SchedulesAlarm alarm = schedulesAlarmRepository.findBySchedules_SchedulesId(schedulesId)
                 .orElse(null);
+
+        markAlarmAsReadIfNeeded(alarm);
 
         Boolean alarmState = (alarm != null) ? alarm.getAlarmState() : false;
         Long alarmOffsetMinutes = (alarm != null) ? alarm.getAlarmOffsetMinutes() : null;
@@ -74,6 +82,20 @@ public class SchedulesService {
                 alarmState,
                 alarmOffsetMinutes
         );
+    }
+
+    /**
+     * 이미 발송된 일정 알림이 아직 미읽음 상태일 때만 읽음 처리한다.
+     */
+    private void markAlarmAsReadIfNeeded(SchedulesAlarm alarm) {
+        if (alarm == null) {
+            return;
+        }
+        if (!Boolean.TRUE.equals(alarm.getIsSent()) || Boolean.TRUE.equals(alarm.getIsRead())) {
+            return;
+        }
+        alarm.markAsRead();
+        schedulesAlarmRepository.save(alarm);
     }
 
 
@@ -146,6 +168,13 @@ public class SchedulesService {
     public SchedulesCreateResponse createSchedule(Long usersId, SchedulesCreateRequest request) {
 
         Users user = usersService.findById(usersId);
+        validateScheduleTimeRange(
+                request.getTimeSetting(),
+                request.getStartDate(),
+                request.getStartTime(),
+                request.getEndDate(),
+                request.getEndTime()
+        );
 
         Folders folder = null;
         if (request.getFoldersId() != null) {
@@ -213,6 +242,13 @@ public class SchedulesService {
 
     public SchedulesUpdateResponse updateSchedules(Long usersId, SchedulesUpdateRequest request) {
         usersService.findById(usersId);
+        validateScheduleTimeRange(
+                request.getTimeSetting(),
+                request.getStartDate(),
+                request.getStartTime(),
+                request.getEndDate(),
+                request.getEndTime()
+        );
         Schedules schedule = findBySchedules(request.getSchedulesId());
 
         Folders folder = null;
@@ -273,6 +309,35 @@ public class SchedulesService {
         );
     }
 
+    /**
+     * 종료 날짜가 시작 날짜보다 빠른 경우를 막고,
+     * 같은 날에 시간 설정이 켜진 일정만 종료 시각이 시작 시각보다 빠른 경우를 막는다.
+     */
+    private void validateScheduleTimeRange(Boolean timeSetting,
+                                           LocalDate startDate,
+                                           LocalTime startTime,
+                                           LocalDate endDate,
+                                           LocalTime endTime) {
+        if (startDate == null || endDate == null) {
+            return;
+        }
+
+        if (endDate.isBefore(startDate)) {
+            throw new ScheduleTimeRangeException("종료 날짜는 시작 날짜보다 빠를 수 없습니다.");
+        }
+
+        if (!Boolean.TRUE.equals(timeSetting)) {
+            return;
+        }
+        if (startTime == null || endTime == null) {
+            return;
+        }
+
+        if (startDate.isEqual(endDate) && endTime.isBefore(startTime)) {
+            throw new ScheduleTimeRangeException("종료 시간은 시작 시간보다 빠를 수 없습니다.");
+        }
+    }
+
 
     /***
      * 일정 삭제
@@ -291,9 +356,8 @@ public class SchedulesService {
 
 
     /**
-     * 검색
+     * 제목 키워드로 사용자의 일정을 검색한다.
      */
-
     public List<ScheduleViewResponse> searchSchedules(Long usersId, String keyword){
         String k = (keyword == null) ? "" : keyword.trim();
         if (k.isEmpty()) {

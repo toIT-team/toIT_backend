@@ -8,6 +8,7 @@ import com.toit.exception.items.attachments.UnsupportedFileTypeException;
 import com.toit.exception.items.attachments.UnsupportedImageTypeException;
 import com.toit.exception.items.links.LinksNotFoundException;
 import com.toit.exception.items.texts.TextsNotFoundException;
+import com.toit.exception.schedules.ScheduleTimeRangeException;
 import com.toit.exception.schedules.SchedulesNotFoundException;
 import com.toit.exception.schedulesalarm.SchedulesAlarmNotFoundException;
 import com.toit.exception.users.UsersNotFoundException;
@@ -64,6 +65,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> SchedulesNotFoundException(SchedulesNotFoundException ex) {
         ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * 일정 생성/수정 시 종료 시간이 시작 시간보다 빠른 경우 400 응답을 반환한다.
+     */
+    @ExceptionHandler(ScheduleTimeRangeException.class)
+    public ResponseEntity<ErrorResponse> ScheduleTimeRangeException(ScheduleTimeRangeException ex) {
+        ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(SchedulesAlarmNotFoundException.class)
