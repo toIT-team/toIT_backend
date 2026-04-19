@@ -136,4 +136,8 @@ public class Folders {
         this.deletedAt = LocalDateTime.now();
     }
 
+    public void toggleFavorite() {
+        this.isFavorite = !this.isFavorite;
+    }
+
 }
