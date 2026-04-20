@@ -4,6 +4,7 @@ import com.toit.common.enums.EntityStatus;
 import com.toit.exception.folders.FoldersNotFoundException;
 import com.toit.folders.dto.response.FoldersCreateResponse;
 import com.toit.folders.dto.response.FoldersDeleteResponse;
+import com.toit.folders.dto.response.FoldersFavoriteResponse;
 import com.toit.folders.dto.response.FoldersItemResponse;
 import com.toit.folders.dto.response.FoldersUpdateResponse;
 import com.toit.user.Users;
@@ -131,6 +132,21 @@ public class FoldersService {
         }
     }
 
+
+    /**
+     * <h2>즐겨찾기 토글</h2>
+     * <p>요청된 isFavorite 값이 true이면 false로, false이면 true로 전환합니다.</p>
+     */
+    public FoldersFavoriteResponse toggleFavorite(Long usersId, Long foldersId, Boolean isFavorite) {
+        usersService.findById(usersId);
+        Folders folders = findByFoldersIdAndUsers_UsersId(usersId, foldersId);
+        if (!folders.getIsFavorite().equals(isFavorite)) {
+            throw new IllegalArgumentException("요청한 isFavorite 값이 현재 상태와 다릅니다.");
+        }
+        folders.toggleFavorite();
+        foldersRepository.save(folders);
+        return new FoldersFavoriteResponse(folders);
+    }
 
     /**
      * /page/items 진입 시 Folders.lastViewedAt 업데이트
