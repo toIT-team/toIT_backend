@@ -3,6 +3,7 @@ package com.toit.auth;
 import com.toit.auth.jwt.JwtProvider;
 import com.toit.auth.token.RefreshToken;
 import com.toit.auth.token.RefreshTokenRepository;
+import com.toit.exception.auth.InvalidTokenException;
 import com.toit.user.Users;
 import com.toit.user.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -54,12 +55,12 @@ public class AuthService {
 
         // 1. 넘어온 Refresh Token 자체가 유효한지 검사 (만료, 위조 여부 확인)
         if (!jwtProvider.validateToken(refreshToken)) {
-            throw new RuntimeException("유효하지 않거나 만료된 Refresh Token 입니다. 다시 로그인해주세요.");
+            throw new InvalidTokenException("유효하지 않거나 만료된 Refresh Token 입니다. 다시 로그인해주세요.");
         }
 
         // 2. DB에 해당 Refresh Token이 존재하는지 확인 (강제 로그아웃 또는 다른 기기 로그인으로 인해 삭제되었는지 검증)
         RefreshToken tokenEntity = refreshTokenRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new RuntimeException("DB에 존재하지 않는 토큰입니다. 다시 로그인해주세요."));
+                .orElseThrow(() -> new InvalidTokenException("DB에 존재하지 않는 토큰입니다. 다시 로그인해주세요."));
 
         // 3. 토큰의 주인(Users) 정보를 가져옵니다.
         Users user = tokenEntity.getUsers();
