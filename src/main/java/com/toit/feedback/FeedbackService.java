@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class FeedbackService {
 
+
     private final FeedbackRepository feedbackRepository;
     private final UsersRepository usersRepository;
     private final AdminRepository adminRepository;
@@ -51,6 +52,7 @@ public class FeedbackService {
                 .orElse(null);
     }
 
+    //피드백 문의 답변시
     public void reply(Long feedbackId, Long adminId, FeedbackReplyRequest request) {
         Feedback feedback = feedbackRepository.findById(feedbackId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 피드백입니다."));
@@ -64,7 +66,7 @@ public class FeedbackService {
                         "문의 답변이 등록되었습니다.",
                         request.getReply(),
                         "feedback_reply",
-                        "toit://feedback?id=" + feedback.getFeedbackId()
+                        "toit://feedback?tab=history"
                 )
         );
     }
