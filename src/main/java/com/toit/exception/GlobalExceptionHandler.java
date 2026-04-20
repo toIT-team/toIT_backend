@@ -1,5 +1,6 @@
 package com.toit.exception;
 
+import com.toit.exception.auth.InvalidTokenException;
 import com.toit.exception.folders.FoldersNotFoundException;
 import com.toit.exception.items.attachments.AttachmentFileNameUpdateNotAllowedException;
 import com.toit.exception.items.attachments.AttachmentReadException;
@@ -21,6 +22,16 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    /**
+     * <h1>Auth</h1>
+     */
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ErrorResponse> InvalidTokenException(InvalidTokenException ex) {
+        ErrorResponse response = new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
 
     /**
      * <h1>Users</h1>
