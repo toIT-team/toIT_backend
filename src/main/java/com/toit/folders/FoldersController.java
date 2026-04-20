@@ -2,9 +2,11 @@ package com.toit.folders;
 
 import com.toit.folders.dto.request.FoldersCreateRequest;
 import com.toit.folders.dto.request.FoldersDeleteRequest;
+import com.toit.folders.dto.request.FoldersFavoriteRequest;
 import com.toit.folders.dto.request.FoldersUpdateRequest;
 import com.toit.folders.dto.response.FoldersCreateResponse;
 import com.toit.folders.dto.response.FoldersDeleteResponse;
+import com.toit.folders.dto.response.FoldersFavoriteResponse;
 import com.toit.folders.dto.response.FoldersItemResponse;
 import com.toit.folders.dto.response.FoldersUpdateResponse;
 import com.toit.swagger.docs.folders.FoldersApiDocs;
@@ -63,6 +65,19 @@ public class FoldersController {
         Long usersId = SecurityUtil.getCurrentUserId();
         return ResponseEntity.ok(foldersService.updateFolders(usersId, request.getFoldersId(),
                 request.getName(), request.getMemo(), request.getColor(), request.getIconIdx()));
+    }
+
+    @Operation(
+            summary = "즐겨찾기 토글 - 화면이름 : 보관함-더보기-즐겨찾기",
+            description = "isFavorite이 true이면 false로, false이면 true로 전환합니다."
+    )
+    @FoldersApiDocs
+    @PatchMapping("/favorite")
+    public ResponseEntity<FoldersFavoriteResponse> toggleFavorite(
+            @RequestBody FoldersFavoriteRequest request
+    ) {
+        Long usersId = SecurityUtil.getCurrentUserId();
+        return ResponseEntity.ok(foldersService.toggleFavorite(usersId, request.getFoldersId(), request.getIsFavorite()));
     }
 
     @Operation(
