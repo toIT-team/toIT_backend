@@ -8,23 +8,25 @@ import com.toit.feedback.dto.request.FeedbackReplyRequest;
 import com.toit.feedback.dto.response.FeedbackCreateResponse;
 import com.toit.feedback.dto.response.FeedbackListResponse;
 import com.toit.feedback.dto.response.FeedbackMyResponse;
+import com.toit.notification.NotificationType;
+import com.toit.notification.UserNotification;
+import com.toit.notification.UserNotificationService;
 import com.toit.user.Users;
 import com.toit.user.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class FeedbackService {
 
-
     private final FeedbackRepository feedbackRepository;
     private final UsersRepository usersRepository;
     private final AdminRepository adminRepository;
     private final FcmNotificationService fcmNotificationService;
+    private final UserNotificationService userNotificationService;
 
     public FeedbackCreateResponse create(Long usersId, FeedbackCreateRequest request) {
         Users user = usersRepository.findById(usersId)
@@ -52,7 +54,7 @@ public class FeedbackService {
                 .orElse(null);
     }
 
-    //피드백 문의 답변시
+    // 피드백/문의 답변 등록
     public void reply(Long feedbackId, Long adminId, FeedbackReplyRequest request) {
         Feedback feedback = feedbackRepository.findById(feedbackId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 피드백입니다."));
@@ -60,15 +62,26 @@ public class FeedbackService {
         feedback.addReply(request.getReply(), adminId);
         feedbackRepository.save(feedback);
 
-        fcmNotificationService.sendToUser(
+        UserNotification notification = userNotificationService.create(
+                feedback.getUsers(),
+                NotificationType.FEEDBACK_REPLY,
+                feedback.getTitle(),
+                "toit://feedback?tab=history",
+                feedback.getFeedbackId()
+        );
+
+        boolean isSent = fcmNotificationService.sendToUser(
                 feedback.getUsers(),
                 new FcmNotificationRequest(
-                        "문의 답변이 등록되었습니다.",
+                        feedback.getTitle(),
                         request.getReply(),
                         "feedback_reply",
                         "toit://feedback?tab=history"
                 )
         );
-    }
 
+        if (isSent) {
+            userNotificationService.markAsSent(notification);
+        }
+    }
 }
