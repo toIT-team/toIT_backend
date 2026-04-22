@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AttachMentsImagesCreateInFoldersResponse{
     private Long attachmentsId;
-    private Long usersId;
 
     /**
      * ENUM형태("IMAGE")
@@ -24,14 +23,14 @@ public class AttachMentsImagesCreateInFoldersResponse{
     private Long imagesWidth;
     private Long imagesHeight;
     private String attachmentsExtension;
+    private String textContent;
     private LocalDateTime createdAt;
 
-    public AttachMentsImagesCreateInFoldersResponse(Long attachmentsId, Long usersId, AttachMentsType attachmentsType,
+    public AttachMentsImagesCreateInFoldersResponse(Long attachmentsId, AttachMentsType attachmentsType,
                                                  String objectKey, String presignedUrl, String attachmentsExtension,
                                                  Double attachmentsSize,  String fileName, Long imagesWidth,
                                                     Long imagesHeight, LocalDateTime createdAt){
         this.attachmentsId = attachmentsId;
-        this.usersId = usersId;
         this.attachmentsType = attachmentsType;
         this.objectKey = objectKey;
         this.presignedUrl = presignedUrl;
@@ -45,7 +44,6 @@ public class AttachMentsImagesCreateInFoldersResponse{
 
     public AttachMentsImagesCreateInFoldersResponse(AttachMents attachments) {
         this.attachmentsId = attachments.getAttachmentsId();
-        this.usersId = attachments.getUsers().getUsersId();
         this.attachmentsType = attachments.getAttachmentsType();
         this.objectKey = attachments.getObjectKey();
         this.presignedUrl = attachments.getPresignedUrl();
@@ -54,6 +52,7 @@ public class AttachMentsImagesCreateInFoldersResponse{
         this.fileName = attachments.getFileName();
         this.imagesWidth = attachments.getImagesWidth();
         this.imagesHeight = attachments.getImagesHeight();
+        this.textContent = attachments.getTextContent();
         this.createdAt = attachments.getCreatedAt();
     }
 }

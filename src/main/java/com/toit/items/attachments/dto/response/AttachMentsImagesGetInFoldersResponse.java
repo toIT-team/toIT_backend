@@ -12,8 +12,6 @@ import lombok.NoArgsConstructor;
 public class AttachMentsImagesGetInFoldersResponse {
     private Long attachmentsId;
 
-    private Long usersId;
-
     /**
      * ENUM형태("IMAGE")
      */
@@ -52,17 +50,18 @@ public class AttachMentsImagesGetInFoldersResponse {
      */
     private Long imagesHeight;
 
+    private String textContent;
+
     /**
      * 자료 생성시간
      */
     private LocalDateTime createdAt;
 
-    public AttachMentsImagesGetInFoldersResponse(Long attachmentsId, Long usersId, AttachMentsType attachmentsType,
+    public AttachMentsImagesGetInFoldersResponse(Long attachmentsId, AttachMentsType attachmentsType,
                                                 String objectKey, String presignedUrl, String attachmentsExtension,
                                                 Double attachmentsSize,  String fileName, Long imagesWidth, Long imagesHeight,
                                                  LocalDateTime createdAt){
         this.attachmentsId = attachmentsId;
-        this.usersId = usersId;
         this.attachmentsType = attachmentsType;
         this.objectKey = objectKey;
         this.presignedUrl = presignedUrl;
@@ -76,7 +75,6 @@ public class AttachMentsImagesGetInFoldersResponse {
 
     public AttachMentsImagesGetInFoldersResponse(AttachMents attachments){
         this.attachmentsId = attachments.getAttachmentsId();
-        this.usersId = attachments.getUsers().getUsersId();
         this.attachmentsType = attachments.getAttachmentsType();
         this.objectKey = attachments.getObjectKey();
         this.presignedUrl = attachments.getPresignedUrl();
@@ -85,6 +83,7 @@ public class AttachMentsImagesGetInFoldersResponse {
         this.fileName = attachments.getFileName();
         this.imagesWidth = attachments.getImagesWidth();
         this.imagesHeight = attachments.getImagesHeight();
+        this.textContent = attachments.getTextContent();
         this.createdAt = attachments.getCreatedAt();
     }
 }

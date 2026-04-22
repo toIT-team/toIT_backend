@@ -15,9 +15,6 @@ import java.time.LocalTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ScheduleViewResponse {
 
-    /** 사용자 ID */
-    private Long usersId;
-
     /** 스케줄 ID */
     private Long schedulesId;
 
@@ -64,14 +61,13 @@ public class ScheduleViewResponse {
     /** 스케줄의 메모  */
     private String memo;
 
-    public ScheduleViewResponse(Long userId, Long schedulesId,
+    public ScheduleViewResponse(Long schedulesId,
                                 String title, Long foldersId,
                                 String foldersTitle,
                                 Boolean timeSetting, LocalDate startDate,
                                 LocalDate endDate, LocalTime startTime,
                                 LocalTime endTime,
-                                 String memo,Boolean alarmState,Long alarmOffsetMinutes ) {
-        this.usersId = userId;
+                                String memo, Boolean alarmState, Long alarmOffsetMinutes) {
         this.schedulesId = schedulesId;
         this.title = title;
         this.foldersId = foldersId;

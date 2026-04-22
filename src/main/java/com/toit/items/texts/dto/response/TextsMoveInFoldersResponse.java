@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TextsMoveInFoldersResponse {
-    private Long usersId;
-
     private Long textsId;
 
     private Long foldersId;
@@ -25,7 +23,6 @@ public class TextsMoveInFoldersResponse {
     private LocalDateTime createdAt;
 
     public TextsMoveInFoldersResponse(Texts texts){
-        this.usersId = texts.getUsers().getUsersId();
         this.foldersId = texts.getStorageId();
         this.textsId = texts.getTextsId();
         this.textContent = texts.getTextContent();

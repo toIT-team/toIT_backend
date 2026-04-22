@@ -12,7 +12,7 @@ public record StorageUsageResponse(
         Double remainingBytes,
         Double remainingMB
 ) {
-    public static final double LIMIT_BYTES = 10L * 1024 * 1024 * 1024; // 10GB
+    public static final double LIMIT_BYTES = 5L * 1024 * 1024 * 1024; // 5GB
 
     public static StorageUsageResponse of(Object[] row) {
         double imageBytes = ((Number) row[0]).doubleValue();

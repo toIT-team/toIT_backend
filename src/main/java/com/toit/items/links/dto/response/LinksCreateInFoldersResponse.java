@@ -8,9 +8,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LinksCreateInFoldersResponse {
-    /** 사용자 ID */
-    private Long usersId;
-
     /** 보관함 ID - 저장할 보관함 ID, 여러 개의 보관함이 선택될 수 있음*/
     private List<Long> foldersIdList;
 
@@ -22,9 +19,7 @@ public class LinksCreateInFoldersResponse {
 
     private String linksThumbnail;
 
-
-    public LinksCreateInFoldersResponse(Long usersId, List<Long> foldersIdList, String linksUrl, String textContent, String linksThumbnail ,String linksName){
-        this.usersId = usersId;
+    public LinksCreateInFoldersResponse(List<Long> foldersIdList, String linksUrl, String textContent, String linksThumbnail, String linksName){
         this.foldersIdList = foldersIdList;
         this.linksUrl = linksUrl;
         this.textContent = textContent;

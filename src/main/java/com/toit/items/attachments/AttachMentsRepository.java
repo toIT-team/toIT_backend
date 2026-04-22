@@ -36,6 +36,8 @@ public interface AttachMentsRepository extends JpaRepository<AttachMents, Long> 
 
     List<AttachMents> findByStatus(EntityStatus status);
 
+    List<AttachMents> findByStorageIdAndStatus(Long storageId, EntityStatus status);
+
     @Query("""
         select
             coalesce(sum(case when a.attachmentsType = 'IMAGE' then a.attachmentsSize else 0 end), 0),

@@ -7,6 +7,15 @@ import com.toit.folders.dto.response.FoldersDeleteResponse;
 import com.toit.folders.dto.response.FoldersFavoriteResponse;
 import com.toit.folders.dto.response.FoldersItemResponse;
 import com.toit.folders.dto.response.FoldersUpdateResponse;
+import com.toit.common.S3.config.S3Config;
+import com.toit.items.attachments.AttachMents;
+import com.toit.items.attachments.AttachMentsRepository;
+import com.toit.items.links.Links;
+import com.toit.items.links.LinksRepository;
+import com.toit.items.texts.Texts;
+import com.toit.items.texts.TextsRepository;
+import com.toit.schedules.Schedules;
+import com.toit.schedules.SchedulesRepository;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
 import com.toit.view.pagefolders.dto.response.PageFoldersMemoResponse;
@@ -19,13 +28,18 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class FoldersService {
     private final FoldersRepository foldersRepository;
-
     private final UsersService usersService;
+    private final TextsRepository textsRepository;
+    private final LinksRepository linksRepository;
+    private final AttachMentsRepository attachMentsRepository;
+    private final SchedulesRepository schedulesRepository;
+    private final S3Config s3Storage;
 
     /**
      * <h2>Folders 보관함 전체 조회</h2>
@@ -94,7 +108,7 @@ public class FoldersService {
         Folders folders = findByFoldersIdAndUsers_UsersId(usersId, foldersId);
         folders.update(name, memo, color, iconIdx);
         foldersRepository.save(folders);
-        return new FoldersUpdateResponse(folders, usersId);
+        return new FoldersUpdateResponse(folders);
     }
 
     /**
@@ -104,10 +118,34 @@ public class FoldersService {
      */
     public FoldersDeleteResponse deleteFolders(Long usersId, Long foldersId){
         usersService.findById(usersId);
-        Folders byFoldersIdAndUsersUsersId = findByFoldersIdAndUsers_UsersId(usersId, foldersId);
-        byFoldersIdAndUsersUsersId.softDelete();
-        Folders folders = foldersRepository.save(byFoldersIdAndUsersUsersId);
-        return new FoldersDeleteResponse(folders);
+        Folders folder = findByFoldersIdAndUsers_UsersId(usersId, foldersId);
+
+        List<Schedules> schedules = schedulesRepository.findByFolders_FoldersIdAndStatus(foldersId, EntityStatus.ACTIVE);
+        schedules.forEach(Schedules::detachFolder);
+        schedulesRepository.saveAll(schedules);
+
+        List<Texts> texts = textsRepository.findByStorageIdAndStatus(foldersId, EntityStatus.ACTIVE);
+        texts.forEach(Texts::softDelete);
+        textsRepository.saveAll(texts);
+
+        List<Links> links = linksRepository.findByStorageIdAndStatus(foldersId, EntityStatus.ACTIVE);
+        links.forEach(Links::softDelete);
+        linksRepository.saveAll(links);
+
+        List<AttachMents> attachMents = attachMentsRepository.findByStorageIdAndStatus(foldersId, EntityStatus.ACTIVE);
+        for (AttachMents attachment : attachMents) {
+            String objectKey = attachment.getObjectKey();
+            attachment.softDelete();
+            attachMentsRepository.flush();
+            long activeCount = attachMentsRepository.countByObjectKeyAndStatus(objectKey, EntityStatus.ACTIVE);
+            if (activeCount == 0) {
+                s3Storage.delete(objectKey);
+            }
+        }
+        attachMentsRepository.saveAll(attachMents);
+
+        folder.softDelete();
+        return new FoldersDeleteResponse(foldersRepository.save(folder));
     }
 
     /**
@@ -140,7 +178,7 @@ public class FoldersService {
     public FoldersFavoriteResponse toggleFavorite(Long usersId, Long foldersId, Boolean isFavorite) {
         usersService.findById(usersId);
         Folders folders = findByFoldersIdAndUsers_UsersId(usersId, foldersId);
-        if (!folders.getIsFavorite().equals(isFavorite)) {
+        if (folders.getIsFavorite().equals(isFavorite)) {
             throw new IllegalArgumentException("요청한 isFavorite 값이 현재 상태와 다릅니다.");
         }
         folders.toggleFavorite();
