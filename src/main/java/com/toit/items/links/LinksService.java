@@ -56,7 +56,7 @@ public class LinksService {
         }
 
 
-        return new LinksCreateInFoldersResponse(usersId, foldersIdList, linksUrl, textContent, linksThumbnail, linksName);
+        return new LinksCreateInFoldersResponse(foldersIdList, linksUrl, textContent, linksThumbnail, linksName);
     }
 
     public LinksPreviewResponse extractLinksPreview(String linksUrl) {
@@ -86,7 +86,7 @@ public class LinksService {
         List<LinksGetInFoldersResponse> result = new ArrayList<>();
 
         for (Links link : links) {
-            result.add(new LinksGetInFoldersResponse(link, usersId));
+            result.add(new LinksGetInFoldersResponse(link));
         }
         return result;
     }
@@ -140,7 +140,7 @@ public class LinksService {
 
         for (Links link : links) {
             String foldersName = foldersService.findById(link.getStorageId()).getName();
-            responses.add(new LinksGetInFoldersResponse(link, usersId, foldersName));
+            responses.add(new LinksGetInFoldersResponse(link, foldersName));
         }
         return responses;
     }

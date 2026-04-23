@@ -10,9 +10,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FoldersCreateResponse {
-    /** 사용자 ID */
-    private Long usersId;
-
     /**폴더 ID */
     private Long foldersId;
 
@@ -47,7 +44,6 @@ public class FoldersCreateResponse {
     private Integer iconIdx;
 
     public FoldersCreateResponse(Folders folders){
-        this.usersId = folders.getUsers().getUsersId();
         this.foldersId = folders.getFoldersId();
         this.name = folders.getName();
         this.memo = folders.getMemo();

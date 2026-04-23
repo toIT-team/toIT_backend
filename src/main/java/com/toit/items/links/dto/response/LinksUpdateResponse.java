@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LinksUpdateResponse {
-    private Long usersId;
     private Long foldersId;
     private Long linksId;
     private String linksName;
@@ -17,7 +16,6 @@ public class LinksUpdateResponse {
     private String textContent;
 
     public LinksUpdateResponse(Links links) {
-        this.usersId = links.getUsers().getUsersId();
         this.foldersId = links.getStorageId();
         this.linksId = links.getLinksId();
         this.linksName = links.getLinksName();

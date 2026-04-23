@@ -14,8 +14,6 @@ import lombok.NoArgsConstructor;
 public class AttachMentsFilesGetInFoldersResponse {
     private Long attachmentsId;
 
-    private Long usersId;
-
     private Long foldersId;
 
     /**
@@ -59,17 +57,18 @@ public class AttachMentsFilesGetInFoldersResponse {
      */
     private String foldersName;
 
+    private String textContent;
+
     /**
      * 생성시간 기준 서울 시간 요일 (예: 월요일)
      */
     private String dayOfWeek;
 
-    public AttachMentsFilesGetInFoldersResponse(Long attachmentsId, Long usersId, AttachMentsType attachmentsType,
+    public AttachMentsFilesGetInFoldersResponse(Long attachmentsId, AttachMentsType attachmentsType,
                                                 String objectKey, String presignedUrl, String attachmentsExtension,
                                                 Double attachmentsSize, String fileName, LocalDateTime createdAt,
                                                 Long foldersId){
         this.attachmentsId = attachmentsId;
-        this.usersId = usersId;
         this.foldersId = foldersId;
         this.attachmentsType = attachmentsType;
         this.objectKey = objectKey;
@@ -83,7 +82,6 @@ public class AttachMentsFilesGetInFoldersResponse {
 
     public AttachMentsFilesGetInFoldersResponse(AttachMents attachments){
         this.attachmentsId = attachments.getAttachmentsId();
-        this.usersId = attachments.getUsers().getUsersId();
         this.foldersId = attachments.getStorageId();
         this.attachmentsType = attachments.getAttachmentsType();
         this.objectKey = attachments.getObjectKey();
@@ -91,13 +89,13 @@ public class AttachMentsFilesGetInFoldersResponse {
         this.attachmentsExtension = attachments.getAttachmentsExtension();
         this.attachmentsSize = attachments.getAttachmentsSize();
         this.fileName = attachments.getFileName();
+        this.textContent = attachments.getTextContent();
         this.createdAt = attachments.getCreatedAt();
         this.dayOfWeek = toDayOfWeekKorean(attachments.getCreatedAt());
     }
 
     public AttachMentsFilesGetInFoldersResponse(AttachMents attachments, String foldersName){
         this.attachmentsId = attachments.getAttachmentsId();
-        this.usersId = attachments.getUsers().getUsersId();
         this.foldersId = attachments.getStorageId();
         this.attachmentsType = attachments.getAttachmentsType();
         this.objectKey = attachments.getObjectKey();
@@ -106,6 +104,7 @@ public class AttachMentsFilesGetInFoldersResponse {
         this.attachmentsSize = attachments.getAttachmentsSize();
         this.fileName = attachments.getFileName();
         this.createdAt = attachments.getCreatedAt();
+        this.textContent = attachments.getTextContent();
         this.foldersName = foldersName;
         this.dayOfWeek = toDayOfWeekKorean(attachments.getCreatedAt());
     }

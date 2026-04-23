@@ -44,4 +44,6 @@ public interface LinksRepository extends JpaRepository<Links, Long> {
     );
 
     long countByStorageIdAndStatus(Long storageId, EntityStatus status);
+
+    List<Links> findByStorageIdAndStatus(Long storageId, EntityStatus status);
 }

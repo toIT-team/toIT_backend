@@ -160,4 +160,8 @@ public class AttachMents extends ItemsBase {
         }
         this.fileName = fileName;
     }
+
+    public void updateTextContent(String textContent) {
+        this.textContent = textContent;
+    }
 }

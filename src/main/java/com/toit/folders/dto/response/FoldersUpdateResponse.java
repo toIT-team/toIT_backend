@@ -9,15 +9,13 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FoldersUpdateResponse {
-    private Long usersId;
     private Long foldersId;
     private String name;
     private String memo;
     private String color;
     private Integer iconIdx;
 
-    public FoldersUpdateResponse(Folders folders, Long usersId) {
-        this.usersId = usersId;
+    public FoldersUpdateResponse(Folders folders) {
         this.foldersId = folders.getFoldersId();
         this.name = folders.getName();
         this.memo = folders.getMemo();

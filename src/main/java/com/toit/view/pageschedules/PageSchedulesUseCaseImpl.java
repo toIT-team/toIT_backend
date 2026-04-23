@@ -60,7 +60,6 @@ public class PageSchedulesUseCaseImpl implements PageSchedulesUseCase {
         Long alarmOffsetMinutes = (alarm != null) ? alarm.getAlarmOffsetMinutes() : null;
 
         return new ScheduleViewResponse(
-                schedule.getUsersId(),
                 schedule.getSchedulesId(),
                 schedule.getTitle(),
                 schedule.getFoldersId(),

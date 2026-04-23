@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AttachMentsUpdateFileNameResponse {
     private Long attachmentsId;
-    private Long usersId;
     private Long foldersId;
     private AttachMentsType attachmentsType;
     private String fileName;
@@ -19,11 +18,11 @@ public class AttachMentsUpdateFileNameResponse {
     private String presignedUrl;
     private String attachmentsExtension;
     private Double attachmentsSize;
+    private String textContent;
     private LocalDateTime createdAt;
 
     public AttachMentsUpdateFileNameResponse(AttachMents attachments) {
         this.attachmentsId = attachments.getAttachmentsId();
-        this.usersId = attachments.getUsers().getUsersId();
         this.foldersId = attachments.getStorageId();
         this.attachmentsType = attachments.getAttachmentsType();
         this.fileName = attachments.getFileName();
@@ -31,6 +30,7 @@ public class AttachMentsUpdateFileNameResponse {
         this.presignedUrl = attachments.getPresignedUrl();
         this.attachmentsExtension = attachments.getAttachmentsExtension();
         this.attachmentsSize = attachments.getAttachmentsSize();
+        this.textContent = attachments.getTextContent();
         this.createdAt = attachments.getCreatedAt();
     }
 }

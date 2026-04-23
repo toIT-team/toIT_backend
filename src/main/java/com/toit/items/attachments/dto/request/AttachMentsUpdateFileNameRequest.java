@@ -10,10 +10,12 @@ public class AttachMentsUpdateFileNameRequest {
     private Long foldersId;
     private Long attachmentsId;
     private String fileName;
+    private String textContent;
 
-    public AttachMentsUpdateFileNameRequest(Long foldersId, Long attachmentsId, String fileName) {
+    public AttachMentsUpdateFileNameRequest(Long foldersId, Long attachmentsId, String fileName, String textContent) {
         this.foldersId = foldersId;
         this.attachmentsId = attachmentsId;
         this.fileName = fileName;
+        this.textContent = textContent;
     }
 }

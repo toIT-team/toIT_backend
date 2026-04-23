@@ -10,9 +10,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LinksMoveInFoldersResponse {
-    /** 사용자 ID */
-    private Long usersId;
-
     /** 보관함 ID - 저장할 보관함 ID*/
     private Long foldersId;
 
@@ -28,7 +25,6 @@ public class LinksMoveInFoldersResponse {
     private String textContent;
 
     public LinksMoveInFoldersResponse(Links links){
-        this.usersId = links.getUsers().getUsersId();
         this.foldersId = links.getStorageId();
         this.linksId = links.getLinksId();
         this.linksName = links.getLinksName();

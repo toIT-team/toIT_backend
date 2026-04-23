@@ -9,7 +9,6 @@ import com.toit.common.S3.attachmentvaildator.AttachmentValidator;
 import com.toit.common.S3.config.S3Config;
 import com.toit.common.enums.AttachMentsType;
 import com.toit.common.enums.EntityStatus;
-import com.toit.exception.items.attachments.AttachmentFileNameUpdateNotAllowedException;
 import com.toit.exception.items.attachments.AttachmentsNotFoundException;
 import com.toit.folders.FoldersService;
 import com.toit.items.attachments.dto.response.AttachMentsDeleteInFoldersResponse;
@@ -241,7 +240,7 @@ public class AttachMentsService {
             s3Storage.delete(objectKey);
         }
 
-        return new AttachMentsDeleteInFoldersResponse(usersId, attachmentsId);
+        return new AttachMentsDeleteInFoldersResponse(attachmentsId);
     }
 
     public AttachMentsMoveInFoldersResponse moveAttachmentsInFolders(Long usersId, Long foldersId, Long moveFoldersId, Long attachmentsId){
@@ -251,10 +250,10 @@ public class AttachMentsService {
         AttachMents attachments = findById(attachmentsId);
         attachments.moveFolders(moveFoldersId);
         attachMentsRepository.save(attachments);
-        return new AttachMentsMoveInFoldersResponse(usersId, foldersId, moveFoldersId, attachmentsId);
+        return new AttachMentsMoveInFoldersResponse(moveFoldersId, foldersId, attachmentsId);
     }
 
-    public AttachMentsUpdateFileNameResponse updateFileName(Long usersId, Long foldersId, Long attachmentsId, String fileName) {
+    public AttachMentsUpdateFileNameResponse updateFileName(Long usersId, Long foldersId, Long attachmentsId, String fileName, String textContent) {
         usersService.findById(usersId);
         foldersService.findByFoldersIdAndUsers_UsersId(usersId, foldersId);
 
@@ -262,11 +261,10 @@ public class AttachMentsService {
                 .findByAttachmentsIdAndUsers_UsersId(attachmentsId, usersId)
                 .orElseThrow(() -> new AttachmentsNotFoundException(attachmentsId + "는 존재하지 않는 이미지/파일입니다."));
 
-        if (attachments.getAttachmentsType() != AttachMentsType.FILE) {
-            throw new AttachmentFileNameUpdateNotAllowedException("attachmentsType이 FILE인 경우에만 fileName을 수정할 수 있습니다.");
+        if (attachments.getAttachmentsType() == AttachMentsType.FILE) {
+            attachments.updateFileName(fileName);
         }
-
-        attachments.updateFileName(fileName);
+        attachments.updateTextContent(textContent);
         attachMentsRepository.save(attachments);
         return new AttachMentsUpdateFileNameResponse(attachments);
     }
@@ -316,7 +314,7 @@ public class AttachMentsService {
         Object[] row = result.isEmpty() ? new Object[]{0, 0} : result.get(0);
         double usedBytes = ((Number) row[0]).doubleValue() + ((Number) row[1]).doubleValue();
         if (usedBytes + newFileSize > StorageUsageResponse.LIMIT_BYTES) {
-            throw new IllegalStateException("스토리지 용량이 초과되었습니다. (최대 10GB)");
+            throw new IllegalStateException("스토리지 용량이 초과되었습니다. (최대 5GB)");
         }
     }
 

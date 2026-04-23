@@ -48,6 +48,8 @@ public interface SchedulesRepository extends JpaRepository<Schedules, Long> {
 //            "and s.isSent = false")
 //    List<Schedules> findTargetSchedules(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
+    List<Schedules> findByFolders_FoldersIdAndStatus(Long foldersId, EntityStatus status);
+
     /**
      * 스케줄 제목으로 검색
      */

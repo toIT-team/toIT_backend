@@ -10,9 +10,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LinksDeleteInFoldersResponse {
-    /** 사용자 ID */
-    private Long usersId;
-
     /** 보관함 ID - 저장할 보관함 ID*/
     private Long foldersId;
 
@@ -34,7 +31,6 @@ public class LinksDeleteInFoldersResponse {
     private LocalDateTime deletedAt;
 
     public LinksDeleteInFoldersResponse(Links links){
-        this.usersId = links.getUsers().getUsersId();
         this.foldersId = links.getStorageId();
         this.linksId = links.getLinksId();
         this.linksName = links.getLinksName();

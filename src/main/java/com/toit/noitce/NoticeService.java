@@ -3,20 +3,26 @@ package com.toit.noitce;
 import com.toit.admin.Admin;
 import com.toit.admin.AdminRepository;
 import com.toit.exception.schedules.SchedulesNotFoundException;
+import com.toit.fcm.notification.FcmNotificationService;
+import com.toit.fcm.request.FcmNotificationRequest;
 import com.toit.noitce.dto.request.NoticeCreateRequest;
 import com.toit.noitce.dto.request.NoticeDeleteRequest;
 import com.toit.noitce.dto.request.NoticeUpdateRequest;
-import com.toit.noitce.dto.response.NoticeReadResponse;
 import com.toit.noitce.dto.response.NoticeDeleteResponse;
+import com.toit.noitce.dto.response.NoticeReadResponse;
 import com.toit.noitce.dto.response.NoticeUpdateResponse;
+import com.toit.notification.NotificationType;
+import com.toit.notification.UserNotification;
+import com.toit.notification.UserNotificationService;
+import com.toit.user.Users;
+import com.toit.user.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-
 import java.time.LocalDateTime;
-
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,23 +30,24 @@ public class NoticeService {
 
     private final AdminRepository adminRepository;
     private final NoticeRepository noticeRepository;
+    private final UsersRepository usersRepository;
+    private final UserNotificationService userNotificationService;
+    private final FcmNotificationService fcmNotificationService;
 
-    //공지사항 검증
-    public Notice findByNotices(Long noticesId){
-        return noticeRepository.findById(noticesId).
-                orElseThrow(()-> new SchedulesNotFoundException(
-                        "noticesId 가 " + noticesId +"인 해당 공지사항을 찾을 수 없습니다."));
-
+    // 공지사항 검증
+    public Notice findByNotices(Long noticesId) {
+        return noticeRepository.findById(noticesId)
+                .orElseThrow(() -> new SchedulesNotFoundException(
+                        "noticesId가 " + noticesId + "인 공지사항을 찾을 수 없습니다."));
     }
 
-    //공지사항 목록 조회
+    // 공지사항 목록 조회
     public Page<NoticeReadResponse> getNotices(Pageable pageable) {
         return noticeRepository.findAllByOrderByCreatedAtDesc(pageable)
                 .map(NoticeReadResponse::from);
     }
 
-
-    // (관리자용) 공지사항 생성
+    // 관리자용 공지사항 생성
     public void createNotice(Long adminId, NoticeCreateRequest request) {
         Admin admin = adminRepository.findById(adminId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 관리자입니다."));
@@ -52,13 +59,37 @@ public class NoticeService {
                 LocalDateTime.now()
         );
 
-        noticeRepository.save(notice);
+        Notice savedNotice = noticeRepository.save(notice);
+
+        List<Users> users = usersRepository.findAll();
+        List<UserNotification> notifications = userNotificationService.createAll(
+                users,
+                NotificationType.NOTICE,
+                savedNotice.getTitle(),
+                "toit://notice?id=" + savedNotice.getNoticeId(),
+                savedNotice.getNoticeId()
+        );
+
+        for (UserNotification notification : notifications) {
+            boolean isSent = fcmNotificationService.sendToUserIgnoringAppAlarmEnabled(
+                    notification.getUsers(),
+                    new FcmNotificationRequest(
+                            savedNotice.getTitle(),
+                            savedNotice.getContent(),
+                            "notice",
+                            notification.getDeeplink()
+                    )
+            );
+
+            if (isSent) {
+                userNotificationService.markAsSent(notification);
+            }
+        }
     }
 
-
-    //공지사항 삭제
-    public NoticeDeleteResponse deleteNotice(Long adminId, NoticeDeleteRequest request){
-        Admin admin = adminRepository.findById(adminId)
+    // 공지사항 삭제
+    public NoticeDeleteResponse deleteNotice(Long adminId, NoticeDeleteRequest request) {
+        adminRepository.findById(adminId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 관리자입니다."));
 
         Notice findNotice = findByNotices(request.getNoticeId());
@@ -67,19 +98,21 @@ public class NoticeService {
         return new NoticeDeleteResponse(findNotice.getNoticeId());
     }
 
-    // (관리자용) 공지사항 수정
-    public NoticeUpdateResponse updateNotice(Long adminId, NoticeUpdateRequest request){
-        Admin admin = adminRepository.findById(adminId)
+    // 관리자용 공지사항 수정
+    public NoticeUpdateResponse updateNotice(Long adminId, NoticeUpdateRequest request) {
+        adminRepository.findById(adminId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 관리자입니다."));
 
         Notice findNotice = findByNotices(request.getNoticeId());
 
         findNotice.update(request.getTitle(), request.getContent());
 
-
         noticeRepository.save(findNotice);
-        return new NoticeUpdateResponse(findNotice.getNoticeId(),findNotice.getTitle(),findNotice.getContent(),findNotice.getUpdatedAt());
+        return new NoticeUpdateResponse(
+                findNotice.getNoticeId(),
+                findNotice.getTitle(),
+                findNotice.getContent(),
+                findNotice.getUpdatedAt()
+        );
     }
-
-
 }
