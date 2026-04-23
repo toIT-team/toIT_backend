@@ -13,7 +13,6 @@ import com.toit.schedules.dto.response.*;
 import com.toit.schedules.dto.request.SchedulesCreateRequest;
 import com.toit.schedulesalarm.SchedulesAlarm;
 import com.toit.schedulesalarm.SchedulesAlarmRepository;
-import com.toit.schedulesalarm.SchedulesAlarmService;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
 import java.time.LocalDate;
@@ -36,7 +35,6 @@ public class SchedulesService {
     private final UsersService usersService;
     private final FoldersService foldersService;
     private final SchedulesAlarmRepository schedulesAlarmRepository;
-    private final SchedulesAlarmService schedulesAlarmService;
 
     /**
      * 일정 ID로 일정을 조회하고, 없으면 예외를 발생시킨다.
@@ -68,11 +66,10 @@ public class SchedulesService {
         Long alarmOffsetMinutes = (alarm != null) ? alarm.getAlarmOffsetMinutes() : null;
 
         return new ScheduleViewResponse(
-                usersId,
                 schedules.getSchedulesId(),
                 schedules.getTitle(),
-                (folders != null) ? folders.getFoldersId() : null, // 폴더가 없으면 ID도 null
-                (folders != null) ? folders.getName() : null,      // 폴더가 없으면 제목도 null
+                (folders != null) ? folders.getFoldersId() : null,
+                (folders != null) ? folders.getName() : null,
                 schedules.getTimeSetting(),
                 schedules.getStartDate(),
                 schedules.getEndDate(),
@@ -351,7 +348,7 @@ public class SchedulesService {
 
         schedulesRepository.save(schedule);
 
-        return new SchedulesDeleteResponse(request.getSchedulesId(), usersId, schedule.getStatus());
+        return new SchedulesDeleteResponse(request.getSchedulesId(), schedule.getStatus());
     }
 
 
@@ -369,21 +366,21 @@ public class SchedulesService {
         List<ScheduleViewResponse> responses = new ArrayList<>();
 
         for (Schedules schedule : schedules) {
-            SchedulesAlarm bySchedulesAlarm = schedulesAlarmService.findBySchedulesAlarm(schedule.getSchedulesId());
+            Folders folders = schedule.getFolders();
+
             responses.add(new ScheduleViewResponse(
-                    usersId,
                     schedule.getSchedulesId(),
                     schedule.getTitle(),
-                    schedule.getFolders().getFoldersId(),
-                    schedule.getFolders().getName(),
+                    (folders != null) ? folders.getFoldersId() : null,
+                    (folders != null) ? folders.getName() : null,
                     schedule.getTimeSetting(),
                     schedule.getStartDate(),
                     schedule.getEndDate(),
                     schedule.getStartTime(),
                     schedule.getEndTime(),
                     schedule.getMemo(),
-                    bySchedulesAlarm.getAlarmState(),
-                    bySchedulesAlarm.getAlarmOffsetMinutes()
+                    false,
+                    null
             ));
         }
         return responses;

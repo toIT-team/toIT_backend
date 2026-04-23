@@ -13,41 +13,26 @@ import lombok.NoArgsConstructor;
 public class TextsGetInFoldersResponse {
     private Long textsId;
 
-    private Long usersId;
-
     private Long foldersId;
-    /**
-     * 메모 본문
-     */
+
     private String textContent;
 
-    /**
-     * 자료 생성시간
-     */
     private LocalDateTime createdAt;
 
-    /**
-     * 보관함 이름
-     */
     private String foldersName;
 
-    /**
-     * 생성시간 기준 서울 시간 요일 (예: 월요일)
-     */
     private String dayOfWeek;
 
-    public TextsGetInFoldersResponse(Texts texts, Long usersId){
+    public TextsGetInFoldersResponse(Texts texts){
         this.textsId = texts.getTextsId();
-        this.usersId = usersId;
         this.foldersId = texts.getStorageId();
         this.textContent = texts.getTextContent();
         this.createdAt = texts.getCreatedAt();
         this.dayOfWeek = toDayOfWeekKorean(texts.getCreatedAt());
     }
 
-    public TextsGetInFoldersResponse(Texts texts, Long usersId, String foldersName){
+    public TextsGetInFoldersResponse(Texts texts, String foldersName){
         this.textsId = texts.getTextsId();
-        this.usersId = usersId;
         this.foldersId = texts.getStorageId();
         this.textContent = texts.getTextContent();
         this.createdAt = texts.getCreatedAt();

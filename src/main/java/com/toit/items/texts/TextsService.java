@@ -65,7 +65,7 @@ public class TextsService {
         List<TextsGetInFoldersResponse> result = new ArrayList<>();
 
         for (Texts item : links) {
-            result.add(new TextsGetInFoldersResponse(item, usersId));
+            result.add(new TextsGetInFoldersResponse(item));
         }
         return result;
     }
@@ -117,7 +117,7 @@ public class TextsService {
 
         for (Texts text : texts) {
             String foldersName = foldersService.findById(text.getStorageId()).getName();
-            responses.add(new TextsGetInFoldersResponse(text, usersId, foldersName));
+            responses.add(new TextsGetInFoldersResponse(text, foldersName));
         }
         return responses;
     }

@@ -9,11 +9,9 @@ import lombok.NoArgsConstructor;
 public class AttachMentsDeleteInFoldersResponse {
 
     private Long attachmentsId;
-    private Long usersId;
 
-    public AttachMentsDeleteInFoldersResponse(Long attachmentsId, Long usersId){
+    public AttachMentsDeleteInFoldersResponse(Long attachmentsId){
         this.attachmentsId = attachmentsId;
-        this.usersId = usersId;
     }
 
 }

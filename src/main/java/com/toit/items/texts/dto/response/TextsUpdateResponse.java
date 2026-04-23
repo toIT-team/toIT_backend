@@ -9,14 +9,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TextsUpdateResponse {
-    private Long usersId;
     private Long textsId;
     private Long foldersId;
     private String textContent;
     private LocalDateTime createdAt;
 
     public TextsUpdateResponse(Texts texts) {
-        this.usersId = texts.getUsers().getUsersId();
         this.textsId = texts.getTextsId();
         this.foldersId = texts.getStorageId();
         this.textContent = texts.getTextContent();

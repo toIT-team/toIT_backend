@@ -14,6 +14,7 @@ import com.toit.exception.users.UsersNotFoundException;
 import com.toit.common.enums.EntityStatus;
 import com.toit.folders.dto.response.FoldersCreateResponse;
 import com.toit.folders.dto.response.FoldersDeleteResponse;
+import com.toit.folders.dto.response.FoldersFavoriteResponse;
 import com.toit.folders.dto.response.FoldersUpdateResponse;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
@@ -94,6 +95,122 @@ class FoldersServiceTest {
 
         assertThrows(UsersNotFoundException.class,
                 () -> foldersService.createFolders(invalidUsersId, "여행", "메모", "pink100", 0));
+
+        verify(foldersRepository, never()).save(any(Folders.class));
+    }
+
+    @Test
+    @DisplayName("즐겨찾기가 true인 보관함에 false 요청 시 즐겨찾기가 false로 변경된다")
+    void toggleFavorite_shouldToggleToFalse_whenCurrentIsTrue() {
+        Long usersId = 1L;
+        Long foldersId = 10L;
+
+        Users user = new Users(
+                "test@toit.com",
+                "tester",
+                "bio",
+                null,
+                AuthProvider.KAKAO,
+                null,
+                LocalDateTime.now()
+        );
+        ReflectionTestUtils.setField(user, "usersId", usersId);
+
+        Folders folder = new Folders(
+                "여행",
+                "메모",
+                false,
+                "pink100",
+                true,
+                LocalDateTime.now(),
+                user,
+                0
+        );
+        ReflectionTestUtils.setField(folder, "foldersId", foldersId);
+
+        when(usersService.findById(usersId)).thenReturn(user);
+        when(foldersRepository.findByFoldersIdAndUsers_UsersId(foldersId, usersId)).thenReturn(java.util.Optional.of(folder));
+        when(foldersRepository.save(any(Folders.class))).thenReturn(folder);
+
+        FoldersFavoriteResponse response = foldersService.toggleFavorite(usersId, foldersId, false);
+
+        assertFalse(response.getIsFavorite());
+        verify(foldersRepository).save(any(Folders.class));
+    }
+
+    @Test
+    @DisplayName("즐겨찾기가 false인 보관함에 true 요청 시 즐겨찾기가 true로 변경된다")
+    void toggleFavorite_shouldToggleToTrue_whenCurrentIsFalse() {
+        Long usersId = 1L;
+        Long foldersId = 10L;
+
+        Users user = new Users(
+                "test@toit.com",
+                "tester",
+                "bio",
+                null,
+                AuthProvider.KAKAO,
+                null,
+                LocalDateTime.now()
+        );
+        ReflectionTestUtils.setField(user, "usersId", usersId);
+
+        Folders folder = new Folders(
+                "여행",
+                "메모",
+                false,
+                "pink100",
+                false,
+                LocalDateTime.now(),
+                user,
+                0
+        );
+        ReflectionTestUtils.setField(folder, "foldersId", foldersId);
+
+        when(usersService.findById(usersId)).thenReturn(user);
+        when(foldersRepository.findByFoldersIdAndUsers_UsersId(foldersId, usersId)).thenReturn(java.util.Optional.of(folder));
+        when(foldersRepository.save(any(Folders.class))).thenReturn(folder);
+
+        FoldersFavoriteResponse response = foldersService.toggleFavorite(usersId, foldersId, true);
+
+        assertNotNull(response);
+        verify(foldersRepository).save(any(Folders.class));
+    }
+
+    @Test
+    @DisplayName("즐겨찾기 현재 상태와 동일한 값 요청 시 예외를 던진다")
+    void toggleFavorite_shouldThrowException_whenSameState() {
+        Long usersId = 1L;
+        Long foldersId = 10L;
+
+        Users user = new Users(
+                "test@toit.com",
+                "tester",
+                "bio",
+                null,
+                AuthProvider.KAKAO,
+                null,
+                LocalDateTime.now()
+        );
+        ReflectionTestUtils.setField(user, "usersId", usersId);
+
+        Folders folder = new Folders(
+                "여행",
+                "메모",
+                false,
+                "pink100",
+                true,
+                LocalDateTime.now(),
+                user,
+                0
+        );
+        ReflectionTestUtils.setField(folder, "foldersId", foldersId);
+
+        when(usersService.findById(usersId)).thenReturn(user);
+        when(foldersRepository.findByFoldersIdAndUsers_UsersId(foldersId, usersId)).thenReturn(java.util.Optional.of(folder));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> foldersService.toggleFavorite(usersId, foldersId, true));
 
         verify(foldersRepository, never()).save(any(Folders.class));
     }

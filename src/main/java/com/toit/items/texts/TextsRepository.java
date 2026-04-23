@@ -42,4 +42,6 @@ public interface TextsRepository extends JpaRepository<Texts, Long> {
     );
 
     long countByStorageIdAndStatus(Long storageId, EntityStatus status);
+
+    List<Texts> findByStorageIdAndStatus(Long storageId, EntityStatus status);
 }

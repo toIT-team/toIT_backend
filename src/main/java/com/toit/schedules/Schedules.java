@@ -154,6 +154,8 @@ public class Schedules {
         return this.status;
     }
 
-
+    public void detachFolder() {
+        this.folders = null;
+    }
 
 }

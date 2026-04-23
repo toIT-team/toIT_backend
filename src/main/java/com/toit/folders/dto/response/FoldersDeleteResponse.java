@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FoldersDeleteResponse {
     private Long foldersId;
-    private Long usersId;
     private String name;
     private String memo;
     private Boolean isDefault;
@@ -24,7 +23,6 @@ public class FoldersDeleteResponse {
 
     public FoldersDeleteResponse(Folders folders) {
         this.foldersId = folders.getFoldersId();
-        this.usersId = folders.getUsers().getUsersId();
         this.name = folders.getName();
         this.memo = folders.getMemo();
         this.isDefault = folders.getIsDefault();

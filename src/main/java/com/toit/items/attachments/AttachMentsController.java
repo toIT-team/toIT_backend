@@ -113,7 +113,8 @@ public class AttachMentsController {
                         usersId,
                         request.getFoldersId(),
                         request.getAttachmentsId(),
-                        request.getFileName()
+                        request.getFileName(),
+                        request.getTextContent()
                 )
         );
     }

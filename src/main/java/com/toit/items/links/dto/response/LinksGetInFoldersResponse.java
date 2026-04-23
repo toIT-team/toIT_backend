@@ -15,58 +15,23 @@ public class LinksGetInFoldersResponse {
 
     private Long foldersId;
 
-    private Long usersId;
-    /**
-     * 링크 제목
-     */
     private String linksName;
 
-    /**
-     * 링크 URL
-     */
     private String linksUrl;
 
-    /**
-     * 링크 썸네일
-     */
     private String linksThumbnail;
 
-    /**
-     * 링크 본문
-     */
     private String textContent;
 
-    /**
-     * 자료 생성시간
-     */
     private LocalDateTime createdAt;
 
-    /**
-     * 보관함 이름
-     */
     private String foldersName;
 
-    /**
-     * 생성시간 기준 서울 시간 요일 (예: 월요일)
-     */
     private String dayOfWeek;
 
-    public LinksGetInFoldersResponse(Long linksId, Long foldersId, Long usersId, String linksName, String linksUrl, String textContent, String linksThumbnail, LocalDateTime createdAt){
-        this.linksId = linksId;
-        this.foldersId = foldersId;
-        this.usersId = usersId;
-        this.linksName = linksName;
-        this.linksUrl = linksUrl;
-        this.textContent = textContent;
-        this.linksThumbnail = linksThumbnail;
-        this.createdAt = createdAt;
-        this.dayOfWeek = toDayOfWeekKorean(createdAt);
-    }
-
-    public LinksGetInFoldersResponse(Links links, Long usersId){
+    public LinksGetInFoldersResponse(Links links){
         this.linksId = links.getLinksId();
         this.foldersId = links.getStorageId();
-        this.usersId = usersId;
         this.linksName = links.getLinksName();
         this.linksUrl = links.getLinksUrl();
         this.linksThumbnail = links.getLinksThumbnail();
@@ -75,10 +40,9 @@ public class LinksGetInFoldersResponse {
         this.dayOfWeek = toDayOfWeekKorean(links.getCreatedAt());
     }
 
-    public LinksGetInFoldersResponse(Links links, Long usersId, String foldersName){
+    public LinksGetInFoldersResponse(Links links, String foldersName){
         this.linksId = links.getLinksId();
         this.foldersId = links.getStorageId();
-        this.usersId = usersId;
         this.linksName = links.getLinksName();
         this.linksUrl = links.getLinksUrl();
         this.linksThumbnail = links.getLinksThumbnail();

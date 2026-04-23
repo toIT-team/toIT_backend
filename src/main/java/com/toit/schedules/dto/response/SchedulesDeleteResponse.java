@@ -13,15 +13,11 @@ public class SchedulesDeleteResponse {
     /** 스케줄 id */
     private Long schedulesId;
 
-    /** 사용자 id */
-    private Long userId;
-
     /** 삭제 형식 */
-    private EntityStatus status ;
+    private EntityStatus status;
 
-    public SchedulesDeleteResponse(Long schedulesId, Long userId, EntityStatus status) {
+    public SchedulesDeleteResponse(Long schedulesId, EntityStatus status) {
         this.schedulesId = schedulesId;
-        this.userId = userId;
         this.status = status;
     }
 }

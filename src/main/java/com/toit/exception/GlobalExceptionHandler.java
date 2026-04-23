@@ -14,6 +14,8 @@ import com.toit.exception.schedules.SchedulesNotFoundException;
 import com.toit.exception.schedulesalarm.SchedulesAlarmNotFoundException;
 import com.toit.exception.users.UsersNotFoundException;
 import com.toit.exception.userssettings.UsersSettingsNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -23,12 +25,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     /**
      * <h1>Auth</h1>
      */
 
     @ExceptionHandler(InvalidTokenException.class)
     public ResponseEntity<ErrorResponse> InvalidTokenException(InvalidTokenException ex) {
+        log.warn("[401] InvalidTokenException: {}", ex.getMessage());
         ErrorResponse response = new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
@@ -42,6 +47,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(UsersNotFoundException.class)
     public ResponseEntity<ErrorResponse> UsersNotFoundException(UsersNotFoundException ex) {
+        log.warn("[404] UsersNotFoundException: {}", ex.getMessage());
         ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
@@ -51,6 +57,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(UsersSettingsNotFoundException.class)
     public ResponseEntity<ErrorResponse> UsersSettingsNotFoundException(UsersSettingsNotFoundException ex) {
+        log.warn("[404] UsersSettingsNotFoundException: {}", ex.getMessage());
         ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
@@ -60,6 +67,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(FoldersNotFoundException.class)
     public ResponseEntity<ErrorResponse> FoldersNotFoundException(UsersNotFoundException ex) {
+        log.warn("[404] FoldersNotFoundException: {}", ex.getMessage());
         ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
@@ -74,6 +82,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(SchedulesNotFoundException.class)
     public ResponseEntity<ErrorResponse> SchedulesNotFoundException(SchedulesNotFoundException ex) {
+        log.warn("[404] SchedulesNotFoundException: {}", ex.getMessage());
         ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
@@ -83,12 +92,14 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(ScheduleTimeRangeException.class)
     public ResponseEntity<ErrorResponse> ScheduleTimeRangeException(ScheduleTimeRangeException ex) {
+        log.warn("[400] ScheduleTimeRangeException: {}", ex.getMessage());
         ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(SchedulesAlarmNotFoundException.class)
     public ResponseEntity<ErrorResponse> SchedulesAlarmNotFoundException(SchedulesAlarmNotFoundException ex) {
+        log.warn("[404] SchedulesAlarmNotFoundException: {}", ex.getMessage());
         ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
@@ -102,6 +113,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(UnsupportedImageTypeException.class)
     public ResponseEntity<ErrorResponse> UnsupportedImageTypeException(UnsupportedImageTypeException ex) {
+        log.warn("[400] UnsupportedImageTypeException: {}", ex.getMessage());
         ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
@@ -111,12 +123,14 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(UnsupportedFileTypeException.class)
     public ResponseEntity<ErrorResponse> UnsupportedFileTypeException(UnsupportedFileTypeException ex) {
+        log.warn("[400] UnsupportedFileTypeException: {}", ex.getMessage());
         ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(AttachmentFileNameUpdateNotAllowedException.class)
     public ResponseEntity<ErrorResponse> AttachmentFileNameUpdateNotAllowedException(AttachmentFileNameUpdateNotAllowedException ex) {
+        log.warn("[400] AttachmentFileNameUpdateNotAllowedException: {}", ex.getMessage());
         ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
@@ -126,6 +140,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(AttachmentReadException.class)
     public ResponseEntity<ErrorResponse> AttachmentReadException(AttachmentReadException ex) {
+        log.error("[500] AttachmentReadException: {}", ex.getMessage(), ex);
         ErrorResponse response = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -135,6 +150,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(TextsNotFoundException.class)
     public ResponseEntity<ErrorResponse> TextsNotFoundException(TextsNotFoundException ex) {
+        log.warn("[404] TextsNotFoundException: {}", ex.getMessage());
         ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
@@ -144,6 +160,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(LinksNotFoundException.class)
     public ResponseEntity<ErrorResponse> LinksNotFoundException(LinksNotFoundException ex) {
+        log.warn("[404] LinksNotFoundException: {}", ex.getMessage());
         ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
@@ -153,8 +170,29 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(AttachmentsNotFoundException.class)
     public ResponseEntity<ErrorResponse> AttachmentsNotFoundException(AttachmentsNotFoundException ex) {
+        log.warn("[404] AttachmentsNotFoundException: {}", ex.getMessage());
         ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * 비즈니스 규칙 위반 (보관함 20개 초과, 스토리지 용량 초과 등) -> 400
+     */
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException ex) {
+        log.warn("[400] IllegalStateException: {}", ex.getMessage());
+        ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * 잘못된 인자 (즐겨찾기 상태 동일 등) -> 400
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
+        log.warn("[400] IllegalArgumentException: {}", ex.getMessage());
+        ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -162,6 +200,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex) {
+        log.error("서버 내부 오류 발생", ex);
         ErrorResponse response = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버 내부 오류가 발생했습니다.");
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
