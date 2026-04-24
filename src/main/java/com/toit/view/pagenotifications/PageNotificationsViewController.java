@@ -18,7 +18,7 @@ public class PageNotificationsViewController {
 
     private final PageNotificationsUseCase pageNotificationsUseCase;
 
-    @Operation(summary = "알림 화면 API - 화면이름 : 알림")
+    @Operation(summary = "알림 리스트 조회 API")
     @GetMapping
     public ResponseEntity<PageNotificationsViewResponse> getNotifications() {
         Long usersId = SecurityUtil.getCurrentUserId();
