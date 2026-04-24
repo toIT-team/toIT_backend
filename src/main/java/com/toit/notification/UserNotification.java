@@ -40,6 +40,9 @@ public class UserNotification {
     @Column(nullable = false)
     private Boolean isSent;
 
+    @Column
+    private LocalDateTime sentAt;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -56,6 +59,7 @@ public class UserNotification {
 
     public void markAsSent() {
         this.isSent = true;
+        this.sentAt = LocalDateTime.now();
     }
 
     public void markAsRead() {

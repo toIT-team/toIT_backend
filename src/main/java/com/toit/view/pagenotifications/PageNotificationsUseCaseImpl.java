@@ -7,6 +7,7 @@ import com.toit.view.pagenotifications.dto.response.PageNotificationsViewRespons
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,10 +27,23 @@ public class PageNotificationsUseCaseImpl implements PageNotificationsUseCase {
                         notification.getTitle(),
                         notification.getType(),
                         notification.getDeeplink(),
+                        resolveSentAt(notification),
                         notification.getIsRead()
                 ))
                 .collect(Collectors.toList());
 
         return new PageNotificationsViewResponse(responses);
+    }
+
+    private LocalDateTime resolveSentAt(UserNotification notification) {
+        if (notification.getSentAt() != null) {
+            return notification.getSentAt();
+        }
+
+        if (Boolean.TRUE.equals(notification.getIsSent())) {
+            return notification.getCreatedAt();
+        }
+
+        return null;
     }
 }
