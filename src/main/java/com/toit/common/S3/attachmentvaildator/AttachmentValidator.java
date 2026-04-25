@@ -19,7 +19,9 @@ public class AttachmentValidator {
             "application/vnd.openxmlformats-officedocument.presentationml.presentation",                // .pptx
             "text/plain",                                                                                // .txt
             "application/x-hwp",                                                                         // .hwp
-            "application/haansofthwp"                                                                    // .hwp (일부 OS 다른 MIME)
+            "application/haansofthwp",                                                                   // .hwp (일부 OS)
+            "application/vnd.hancom.hwp",                                                                // .hwp (공식 MIME)
+            "application/hwp"                                                                            // .hwp (일부 환경)
     );
 
     /**
