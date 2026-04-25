@@ -120,7 +120,7 @@ public class AttachMentsService {
         }
 
         /* 확장자 검사 */
-        attachmentValidator.validateFilesContentType(file.getContentType());
+        attachmentValidator.validateFilesContentType(file.getContentType(), file.getOriginalFilename());
 
         /* 파일 크기 검사 */
         attachmentValidator.validateFileSize(file.getSize());
