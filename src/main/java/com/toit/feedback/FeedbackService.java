@@ -50,7 +50,6 @@ public class FeedbackService {
     }
 
     public List<FeedbackMyResponse> getMyList(Long usersId) {
-        log.info("getMyList usersId: {}", usersId);
         return feedbackRepository.findAllByUsers_UsersIdOrderByCreatedAtDesc(usersId)
                 .stream()
                 .map(feedback -> FeedbackMyResponse.from(feedback, resolveAdminName(feedback.getAdminId())))
@@ -62,6 +61,21 @@ public class FeedbackService {
         return adminRepository.findById(adminId)
                 .map(admin -> admin.getName())
                 .orElse(null);
+    }
+
+    public void delete(Long usersId, Long feedbackId) {
+        Feedback feedback = feedbackRepository.findById(feedbackId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 피드백입니다."));
+
+        if (!feedback.getUsers().getUsersId().equals(usersId)) {
+            throw new IllegalArgumentException("본인의 문의만 삭제할 수 있습니다.");
+        }
+
+        if (feedback.getReply() != null) {
+            throw new IllegalStateException("답변이 등록된 문의는 삭제할 수 없습니다.");
+        }
+
+        feedbackRepository.delete(feedback);
     }
 
     // 피드백/문의 답변 등록
