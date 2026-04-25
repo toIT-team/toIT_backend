@@ -34,4 +34,12 @@ public class FeedbackController {
         Long usersId = SecurityUtil.getCurrentUserId();
         return ResponseEntity.ok(feedbackService.getMyList(usersId));
     }
+
+    @Operation(summary = "내 피드백/문의 삭제", description = "답변이 등록된 문의는 삭제할 수 없습니다.")
+    @DeleteMapping("/{feedbackId}")
+    public ResponseEntity<Void> delete(@PathVariable("feedbackId") Long feedbackId) {
+        Long usersId = SecurityUtil.getCurrentUserId();
+        feedbackService.delete(usersId, feedbackId);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -13,4 +13,5 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
     Page<Feedback> findAllByUsers_UsersIdOrderByCreatedAtDesc(Long usersId, Pageable pageable);
 
     List<Feedback> findAllByUsers_UsersIdOrderByCreatedAtDesc(Long usersId);
+
 }
