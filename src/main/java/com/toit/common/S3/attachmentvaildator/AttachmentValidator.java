@@ -27,11 +27,16 @@ public class AttachmentValidator {
             "application/haansofthwp",                                                                   // .hwp (일부 OS)
             "application/vnd.hancom.hwp",                                                                // .hwp (공식 MIME)
             "application/hwp",                                                                           // .hwp (일부 환경)
-            "application/octet-stream"                                                                   // 확장자 기반으로 추가 검증
+            "application/octet-stream",                                                                  // 확장자 기반으로 추가 검증
+            "application/zip",                                                                           // .zip
+            "application/x-zip-compressed",                                                              // .zip (일부 환경)
+            "application/vnd.hancom.hwpx",                                                               // .hwpx (공식 MIME)
+            "application/x-hwpx",                                                                        // .hwpx (일부 환경)
+            "application/vnd.ms-powerpoint"                                                              // .ppt
     );
 
     private static final Set<String> ALLOWED_EXTENSIONS = Set.of(
-            "pdf", "doc", "docx", "xlsx", "pptx", "txt", "hwp"
+            "pdf", "doc", "docx", "xlsx", "pptx", "ppt", "txt", "hwp", "hwpx", "zip"
     );
 
     /**
