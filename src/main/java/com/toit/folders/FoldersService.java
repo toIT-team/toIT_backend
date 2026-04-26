@@ -23,6 +23,7 @@ import com.toit.folders.dto.response.RecentFoldersResponse;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +54,7 @@ public class FoldersService {
         List<FoldersItemResponse> folders = foldersRepository.findByUsers_UsersIdAndStatus(usersId, EntityStatus.ACTIVE)
                 .stream()
                 .map(FoldersItemResponse::new)
+                .sorted(Comparator.comparing(f -> !Boolean.TRUE.equals(f.getIsDefault())))
                 .toList();
         return folders;
     }
