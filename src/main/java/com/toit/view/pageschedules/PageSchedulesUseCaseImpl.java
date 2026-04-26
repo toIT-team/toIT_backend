@@ -64,6 +64,7 @@ public class PageSchedulesUseCaseImpl implements PageSchedulesUseCase {
                 schedule.getTitle(),
                 schedule.getFoldersId(),
                 schedule.getFoldersTitle(),
+                schedule.getAppColor(),
                 schedule.getTimeSetting(),
                 schedule.getStartDate(),
                 schedule.getEndDate(),

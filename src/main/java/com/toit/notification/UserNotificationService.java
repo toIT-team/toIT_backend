@@ -33,6 +33,11 @@ public class UserNotificationService {
         return userNotificationRepository.findAllByUsers_UsersIdOrderByCreatedAtDesc(usersId);
     }
 
+    public long getUnreadCount(Long usersId) {
+        usersService.findById(usersId);
+        return userNotificationRepository.countByUsers_UsersIdAndIsSentTrueAndIsReadFalse(usersId);
+    }
+
     public void markAsSent(UserNotification notification) {
         notification.markAsSent();
         userNotificationRepository.save(notification);

@@ -27,6 +27,9 @@ public class ScheduleViewResponse {
     /** 스케줄과 mapping 된 폴더 제목 */
     private String foldersTitle;
 
+    /**스케줄에 선택된 앱 색상*/
+    private String appColor;
+
     /** 스케줄 시간 설정 */
     private Boolean timeSetting;
 
@@ -63,7 +66,7 @@ public class ScheduleViewResponse {
 
     public ScheduleViewResponse(Long schedulesId,
                                 String title, Long foldersId,
-                                String foldersTitle,
+                                String foldersTitle,String appColor,
                                 Boolean timeSetting, LocalDate startDate,
                                 LocalDate endDate, LocalTime startTime,
                                 LocalTime endTime,
@@ -72,6 +75,7 @@ public class ScheduleViewResponse {
         this.title = title;
         this.foldersId = foldersId;
         this.foldersTitle  = foldersTitle;
+        this.appColor = appColor;
         this.timeSetting = timeSetting;
         this.startDate = startDate;
         this.endDate = endDate;
