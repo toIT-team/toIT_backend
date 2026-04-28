@@ -70,6 +70,7 @@ public class NotificationScheduler {
             }
 
             alarm.markAsSent();
+            schedulesAlarmRepository.save(alarm);
         }
     }
 }

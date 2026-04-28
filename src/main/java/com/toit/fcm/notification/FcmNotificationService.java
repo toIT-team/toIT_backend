@@ -2,6 +2,8 @@ package com.toit.fcm.notification;
 
 import com.google.firebase.messaging.AndroidConfig;
 import com.google.firebase.messaging.AndroidNotification;
+import com.google.firebase.messaging.ApnsConfig;
+import com.google.firebase.messaging.Aps;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
@@ -71,6 +73,13 @@ public class FcmNotificationService {
                             .build())
                     .build();
 
+            ApnsConfig apnsConfig = ApnsConfig.builder()
+                    .putHeader("apns-priority", "10")
+                    .setAps(Aps.builder()
+                            .setSound("default")
+                            .build())
+                    .build();
+
             Message.Builder messageBuilder = Message.builder()
                     .setToken(fcmTokenEntity.getFcmToken())
                     .setNotification(Notification.builder()
@@ -78,7 +87,8 @@ public class FcmNotificationService {
                             .setBody(normalizeBody(request.body()))
                             .build())
                     .putData("type", request.type())
-                    .setAndroidConfig(androidConfig);
+                    .setAndroidConfig(androidConfig)
+                    .setApnsConfig(apnsConfig);
 
             if (request.link() != null && !request.link().isBlank()) {
                 messageBuilder.putData("link", request.link());
