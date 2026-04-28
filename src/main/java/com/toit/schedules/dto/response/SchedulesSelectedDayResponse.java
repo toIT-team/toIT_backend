@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Getter
@@ -15,6 +16,10 @@ public class SchedulesSelectedDayResponse {
     private Long schedulesId;
 
     private String title;
+
+    private LocalDate startDate;
+
+    private LocalDate endDate;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     @Schema(type = "string", example = "09:00:00")
@@ -26,13 +31,14 @@ public class SchedulesSelectedDayResponse {
 
     private String appColor;
 
-    public SchedulesSelectedDayResponse(Long schedulesId, String title, LocalTime startTime, LocalTime endTime, String appColor) {
+    public SchedulesSelectedDayResponse(Long schedulesId, String title, LocalDate startDate, LocalDate endDate,
+                                        LocalTime startTime, LocalTime endTime, String appColor) {
         this.schedulesId = schedulesId;
         this.title = title;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.startTime = startTime;
         this.endTime = endTime;
         this.appColor = appColor;
     }
-
-
 }

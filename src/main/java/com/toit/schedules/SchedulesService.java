@@ -70,6 +70,7 @@ public class SchedulesService {
                 schedules.getTitle(),
                 (folders != null) ? folders.getFoldersId() : null,
                 (folders != null) ? folders.getName() : null,
+                schedules.getAppColor(),
                 schedules.getTimeSetting(),
                 schedules.getStartDate(),
                 schedules.getEndDate(),
@@ -119,6 +120,8 @@ public class SchedulesService {
                 .map(s -> new SchedulesSelectedDayResponse(
                          s.getSchedulesId()
                         ,s.getTitle()
+                        ,s.getStartDate()
+                        ,s.getEndDate()
                         ,s.getStartTime()
                         ,s.getEndTime()
                         ,s.getAppColor()))
@@ -373,6 +376,7 @@ public class SchedulesService {
                     schedule.getTitle(),
                     (folders != null) ? folders.getFoldersId() : null,
                     (folders != null) ? folders.getName() : null,
+                    schedule.getAppColor(),
                     schedule.getTimeSetting(),
                     schedule.getStartDate(),
                     schedule.getEndDate(),
