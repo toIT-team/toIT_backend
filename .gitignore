@@ -45,3 +45,4 @@ application-local.yml
 src/main/resources/firebase/firebase-key.json
 src/main/resources/data/seed_postgres.sql
 src/main/resources/apple/*.p8
+src/main/resources/cloudfront/private_key.pem

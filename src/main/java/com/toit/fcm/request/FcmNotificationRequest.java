@@ -4,6 +4,7 @@ public record FcmNotificationRequest(
         String title,
         String body,
         String type,
-        String link
+        String link,
+        Long notificationId
 ) {
 }

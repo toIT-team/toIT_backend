@@ -77,7 +77,8 @@ public class NoticeService {
                             savedNotice.getTitle(),
                             savedNotice.getContent(),
                             "notice",
-                            notification.getDeeplink()
+                            notification.getDeeplink(),
+                            notification.getNotificationId()
                     )
             );
 
