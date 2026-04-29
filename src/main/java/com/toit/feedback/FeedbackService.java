@@ -97,10 +97,11 @@ public class FeedbackService {
         boolean isSent = fcmNotificationService.sendToUser(
                 feedback.getUsers(),
                 new FcmNotificationRequest(
-                        feedback.getTitle(),
-                        request.getReply(),
+                        "문의",
+                        "문의하신 내용에 답변이 등록되었습니다.",
                         "feedback_reply",
-                        "toit://feedback?tab=history"
+                        "toit://feedback?tab=history",
+                        notification.getNotificationId()
                 )
         );
 

@@ -94,6 +94,10 @@ public class FcmNotificationService {
                 messageBuilder.putData("link", request.link());
             }
 
+            if (request.notificationId() != null) {
+                messageBuilder.putData("notificationId", String.valueOf(request.notificationId()));
+            }
+
             Message firebaseMessage = messageBuilder.build();
 
             FirebaseMessaging.getInstance().send(firebaseMessage);

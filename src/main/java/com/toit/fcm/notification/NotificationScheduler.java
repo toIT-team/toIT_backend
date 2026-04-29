@@ -43,9 +43,8 @@ public class NotificationScheduler {
             Users user = schedule.getUsers();
 
             String title = schedule.getTitle();
-            String rawMemo = schedule.getMemo();
-            String body = (rawMemo == null || rawMemo.isBlank()) ? "일정 시간이 도착했습니다." :
-                    (rawMemo.length() > 100 ? rawMemo.substring(0, 100) + "..." : rawMemo);
+            long alarmOffsetMinutes = alarm.getAlarmOffsetMinutes() != null ? alarm.getAlarmOffsetMinutes() : 0L;
+            String body = "일정이 시작되기 " + alarmOffsetMinutes + "분 전입니다.";
 
             UserNotification notification = userNotificationService.create(
                     user,
@@ -61,7 +60,8 @@ public class NotificationScheduler {
                             title,
                             body,
                             "schedule_detail",
-                            notification.getDeeplink()
+                            notification.getDeeplink(),
+                            notification.getNotificationId()
                     )
             );
 
