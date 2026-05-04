@@ -2,6 +2,7 @@ package com.toit.user;
 
 import com.toit.common.enums.AuthProvider;
 import com.toit.exception.users.UsersNotFoundException;
+import com.toit.fcm.FcmTokenRepository;
 import com.toit.user.dto.request.UsersCreateRequest;
 import com.toit.user.dto.request.UsersUpdateNameRequest;
 import com.toit.user.dto.response.UsersCreateResponse;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 public class UsersService {
     private final UsersRepository usersRepository;
     private final UsersSettingsRepository usersInfoRepository;
+    private final FcmTokenRepository fcmTokenRepository;
 
 
     public UsersCreateResponse createUser(UsersCreateRequest request) {
@@ -50,6 +52,7 @@ public class UsersService {
 
     public void withdraw(Long usersId) {
         Users user = findById(usersId);
+        fcmTokenRepository.deleteAll(fcmTokenRepository.findAllByUsers(user));
         user.softDelete();
         usersRepository.save(user);
     }
