@@ -11,10 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AttachMentsFilesCreateInFoldersResponse {
     private Long attachmentsId;
-
-    /**
-     * ENUM형태("FILE")
-     */
     private AttachMentsType attachmentsType;
     private String objectKey;
     private String presignedUrl;
@@ -24,24 +20,11 @@ public class AttachMentsFilesCreateInFoldersResponse {
     private String textContent;
     private LocalDateTime createdAt;
 
-    public AttachMentsFilesCreateInFoldersResponse(Long attachmentsId, AttachMentsType attachmentsType,
-                                                    String objectKey, String presignedUrl, String attachmentsExtension,
-                                                    Double attachmentsSize,  String fileName, LocalDateTime createdAt){
-        this.attachmentsId = attachmentsId;
-        this.attachmentsType = attachmentsType;
-        this.objectKey = objectKey;
-        this.presignedUrl = presignedUrl;
-        this.attachmentsExtension = attachmentsExtension;
-        this.attachmentsSize = attachmentsSize;
-        this.fileName = fileName;
-        this.createdAt = createdAt;
-    }
-
-    public AttachMentsFilesCreateInFoldersResponse(AttachMents attachments) {
+    public AttachMentsFilesCreateInFoldersResponse(AttachMents attachments, String signedUrl) {
         this.attachmentsId = attachments.getAttachmentsId();
         this.attachmentsType = attachments.getAttachmentsType();
         this.objectKey = attachments.getObjectKey();
-        this.presignedUrl = attachments.getPresignedUrl();
+        this.presignedUrl = signedUrl;
         this.attachmentsExtension = attachments.getAttachmentsExtension();
         this.attachmentsSize = attachments.getAttachmentsSize();
         this.fileName = attachments.getFileName();

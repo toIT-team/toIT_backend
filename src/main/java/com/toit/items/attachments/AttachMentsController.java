@@ -1,10 +1,16 @@
 package com.toit.items.attachments;
 
+import com.toit.items.attachments.dto.request.AttachMentsConfirmRequest;
+import com.toit.items.attachments.dto.request.AttachMentsPresignRequest;
 import com.toit.items.attachments.dto.request.AttachMentsUpdateFileNameRequest;
 import com.toit.items.attachments.dto.request.AttachMenetsMoveInFoldersRequest;
+import com.toit.items.attachments.dto.response.AttachMentsConfirmResponse;
+import com.toit.items.attachments.dto.response.AttachMentsPresignResponse;
 import com.toit.items.attachments.dto.response.AttachMentsDeleteInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsFilesCreateInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsImagesCreateInFoldersResponse;
+import com.toit.items.attachments.dto.response.AttachMentsFilesGetInFoldersResponse;
+import com.toit.items.attachments.dto.response.AttachMentsImagesGetInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsMoveInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsUpdateFileNameResponse;
 import com.toit.swagger.docs.items.attachments.AttachMentsDeleteApiDocs;
@@ -33,6 +39,24 @@ import org.springframework.web.multipart.MultipartFile;
 public class AttachMentsController {
     private final AttachMentsService attachmentsService;
 
+    @Operation(summary = "S3 직접 업로드용 presigned PUT URL 발급 - IMAGE: 최대 3개, FILE: 1개")
+    @PostMapping("/attachments/presign")
+    public ResponseEntity<List<AttachMentsPresignResponse>> presignUpload(
+            @RequestBody AttachMentsPresignRequest request
+    ) {
+        Long usersId = SecurityUtil.getCurrentUserId();
+        return ResponseEntity.ok(attachmentsService.presignUpload(usersId, request));
+    }
+
+    @Operation(summary = "S3 직접 업로드 완료 후 DB 저장 - Flutter가 S3 PUT 성공 후 호출")
+    @PostMapping("/attachments/confirm")
+    public ResponseEntity<List<AttachMentsConfirmResponse>> confirmUpload(
+            @RequestBody AttachMentsConfirmRequest request
+    ) {
+        Long usersId = SecurityUtil.getCurrentUserId();
+        return ResponseEntity.ok(attachmentsService.confirmUpload(usersId, request));
+    }
+
     /**
      * image 추가 컨트롤러
      */
@@ -49,7 +73,7 @@ public class AttachMentsController {
     ) {
         Long usersId = SecurityUtil.getCurrentUserId();
         return ResponseEntity.ok(
-                attachmentsService.createImagesInFolders(usersId, foldersIdList, textContent, image)
+                attachmentsService.createImagesInFolders(usersId, foldersIdList, textContent, List.of(image))
         );
     }
 
