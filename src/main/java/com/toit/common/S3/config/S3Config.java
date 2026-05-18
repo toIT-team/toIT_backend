@@ -34,6 +34,20 @@ public class S3Config {
         return s3Template.createSignedGetURL(bucket, objectKey, duration).toString();
     }
 
+    public String presignPutUrl(String objectKey, String contentType, Duration duration) {
+        return s3Template.createSignedPutURL(
+                bucket,
+                objectKey,
+                duration,
+                ObjectMetadata.builder().contentType(contentType).build(),
+                null
+        ).toString();
+    }
+
+    public boolean exists(String objectKey) {
+        return s3Template.objectExists(bucket, objectKey);
+    }
+
     public void delete(String objectKey) {
         s3Template.deleteObject(bucket, objectKey);
     }

@@ -9,9 +9,11 @@ import java.io.IOException;
 import java.time.Duration;
 import javax.imageio.ImageIO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ImageAttachmentProcessor implements AttachmentProcessor {
@@ -31,18 +33,25 @@ public class ImageAttachmentProcessor implements AttachmentProcessor {
     @Override
     public AttachmentPayload getSizeWithDimensions(MultipartFile image) {
         try {
-            /** bytes로 한 번만 읽어서 size + 및 이미지 크기 추출 */
+            long bytesStart = System.currentTimeMillis();
             byte[] bytes = image.getBytes();
+            long bytesReadMs = System.currentTimeMillis() - bytesStart;
             long size = bytes.length;
 
             Long width = null;
             Long height = null;
 
-            BufferedImage img = ImageIO.read(new ByteArrayInputStream(bytes));
-            if (img != null) {
-                width = (long) img.getWidth();
-                height = (long) img.getHeight();
-            }
+            // Flutter에서 imagesWidth/imagesHeight 미사용으로 ImageIO 디코딩 제거
+            // long imageIoStart = System.currentTimeMillis();
+            // BufferedImage img = ImageIO.read(new ByteArrayInputStream(bytes));
+            // long imageIoMs = System.currentTimeMillis() - imageIoStart;
+            // if (img != null) {
+            //     width = (long) img.getWidth();
+            //     height = (long) img.getHeight();
+            // }
+
+            log.info("[이미지 수신 분석] file={} | bytesReadMs={}ms | size={}bytes",
+                    image.getOriginalFilename(), bytesReadMs, size);
 
             String attachmentsExtension = image.getContentType();
             String fileName = image.getOriginalFilename();
@@ -79,27 +88,23 @@ public class ImageAttachmentProcessor implements AttachmentProcessor {
     }
 
     @Override
-    public StorageResult S3Store(Long usersId, AttachmentPayload payload){
+    public StorageResult S3Store(Long usersId, AttachmentPayload payload) {
+        String objectKey = s3KeyFactory.imageKey(usersId, payload.getExt());
 
-        /** 키 생성 확장자는 payload.getExtension() */
-        String objectKey = s3KeyFactory.imageKey(
-                usersId,
-                payload.getExt()
-        );
-
-        /** S3 업로드 */
+        long s3Start = System.currentTimeMillis();
         s3Storage.S3upload(
                 objectKey,
                 new ByteArrayInputStream(payload.getBytes()),
                 payload.getAttachmentsExtension(),
                 payload.getAttachmentsSize().longValue()
         );
+        long s3UploadMs = System.currentTimeMillis() - s3Start;
 
-        /** presigned url 생성 (예: 30분) */
-        String presignedUrl =
-                s3Storage.presignGetUrl(objectKey, Duration.ofDays(7));
+        long presignStart = System.currentTimeMillis();
+        String presignedUrl = s3Storage.presignGetUrl(objectKey, Duration.ofDays(7));
+        long presignMs = System.currentTimeMillis() - presignStart;
 
-        return new StorageResult(objectKey, presignedUrl);
+        return new StorageResult(objectKey, presignedUrl, s3UploadMs, presignMs);
     }
 
 }

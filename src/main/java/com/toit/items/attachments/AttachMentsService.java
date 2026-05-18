@@ -4,6 +4,8 @@ import com.toit.common.S3.attachmentprocessor.StorageResult;
 import com.toit.common.S3.attachmentprocessor.AttachmentPayload;
 import com.toit.common.S3.attachmentprocessor.AttachmentProcessor;
 import com.toit.common.S3.attachmentprocessor.AttachmentProcessorRouter;
+import com.toit.common.S3.attachmentprocessor.S3KeyFactory;
+import com.toit.common.cloudfront.CloudFrontSigner;
 import com.toit.storage.dto.StorageUsageResponse;
 import com.toit.common.S3.attachmentvaildator.AttachmentValidator;
 import com.toit.common.S3.config.S3Config;
@@ -11,13 +13,18 @@ import com.toit.common.enums.AttachMentsType;
 import com.toit.common.enums.EntityStatus;
 import com.toit.exception.items.attachments.AttachmentsNotFoundException;
 import com.toit.folders.FoldersService;
+import com.toit.items.attachments.dto.request.AttachMentsConfirmRequest;
+import com.toit.items.attachments.dto.request.AttachMentsPresignRequest;
+import com.toit.items.attachments.dto.response.AttachMentsConfirmResponse;
 import com.toit.items.attachments.dto.response.AttachMentsDeleteInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsFilesCreateInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsImagesCreateInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsImagesGetInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsFilesGetInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsMoveInFoldersResponse;
+import com.toit.items.attachments.dto.response.AttachMentsPresignResponse;
 import com.toit.items.attachments.dto.response.AttachMentsUpdateFileNameResponse;
+import lombok.extern.slf4j.Slf4j;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
 import java.util.ArrayList;
@@ -27,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AttachMentsService {
@@ -40,66 +48,52 @@ public class AttachMentsService {
     private final AttachMentsRepository attachMentsRepository;
 
     private final S3Config s3Storage;
+    private final CloudFrontSigner cloudFrontSigner;
+    private final S3KeyFactory s3KeyFactory;
 
-
+    private static final int PRESIGN_TTL_SECONDS = 300;
 
     /**
      * 이미지 저장 메소드
-     * @param usersId
-     * @param foldersIdList
-     * @param image
-     * @return
      */
-    public List<AttachMentsImagesCreateInFoldersResponse> createImagesInFolders(Long usersId, List<Long> foldersIdList, String textContent, MultipartFile image) {
+    public List<AttachMentsImagesCreateInFoldersResponse> createImagesInFolders(Long usersId, List<Long> foldersIdList, String textContent, List<MultipartFile> images) {
         Users users = usersService.findById(usersId);
-        for (Long folderId : foldersIdList){
+        for (Long folderId : foldersIdList) {
             foldersService.findByFoldersIdAndUsers_UsersId(usersId, folderId);
         }
 
-        /* 확장자 검사 */
-        attachmentValidator.validateImageContentType(image.getContentType());
+        // 전체 이미지 합산 용량으로 스토리지 검사
+        long totalSize = images.stream().mapToLong(MultipartFile::getSize).sum();
+        for (MultipartFile image : images) {
+            attachmentValidator.validateImageContentType(image.getContentType());
+            attachmentValidator.validateFileSize(image.getSize());
+        }
+        validateStorageLimit(usersId, totalSize);
 
-        /* 파일 크기 검사 */
-        attachmentValidator.validateFileSize(image.getSize());
-
-        /* 스토리지 용량 검사 */
-        validateStorageLimit(usersId, image.getSize());
-
-        /** IMAGE 타입 Processor 가져오기 */
         AttachmentProcessor processor = processorRouter.getProcessor(AttachMentsType.IMAGE);
-
-        /** 파일 처리 (bytes + width + height + 확장자 추출) */
-        AttachmentPayload payload = processor.getSizeWithDimensions(image);
-
-        /**
-         * 이미지 똑같은 걸 여러 개의 폴더에 저장할 필요 없음 그래서 하나만 저장하고 DB에는 다 같은 걸로 진행
-         */
-        StorageResult result = processor.S3Store(usersId, payload);
-
         List<AttachMentsImagesCreateInFoldersResponse> responses = new ArrayList<>();
 
+        for (MultipartFile image : images) {
+            long recvStart = System.currentTimeMillis();
+            AttachmentPayload payload = processor.getSizeWithDimensions(image);
+            long receiveMs = System.currentTimeMillis() - recvStart;
 
-        for (Long folderId : foldersIdList) {
+            StorageResult result = processor.S3Store(usersId, payload);
 
-            AttachMents entity =
-                    AttachMents.createImagesInFolders(
-                            users,
-                            folderId,
-                            result.getObjectKey(),
-                            result.getPresignedUrl(),
-                            payload.getAttachmentsExtension(),
-                            payload.getAttachmentsSize(),
-                            payload.getFileName(),
-                            textContent,
-                            payload.getWidth(),
-                            payload.getHeight()
-                    );
+            log.info("[이미지 업로드] file={} | receiveMs={}ms | s3Ms={}ms | presignMs={}ms",
+                    image.getOriginalFilename(), receiveMs, result.getS3UploadMs(), result.getPresignMs());
 
-            AttachMents saved = attachMentsRepository.save(entity);
-
-            responses.add(
-                    new AttachMentsImagesCreateInFoldersResponse(saved)
-            );
+            for (Long folderId : foldersIdList) {
+                AttachMents entity = AttachMents.createImagesInFolders(
+                        users, folderId,
+                        result.getObjectKey(), result.getPresignedUrl(),
+                        payload.getAttachmentsExtension(), payload.getAttachmentsSize(),
+                        payload.getFileName(), textContent,
+                        payload.getWidth(), payload.getHeight()
+                );
+                AttachMents saved = attachMentsRepository.save(entity);
+                responses.add(new AttachMentsImagesCreateInFoldersResponse(saved, result.getPresignedUrl()));
+            }
         }
 
         return responses;
@@ -107,37 +101,27 @@ public class AttachMentsService {
 
     /**
      * 파일 저장 메소드
-     * @param usersId
-     * @param foldersIdList
-     * @param textContent
-     * @param file
-     * @return
      */
     public List<AttachMentsFilesCreateInFoldersResponse> createFilesInFolders(Long usersId, List<Long> foldersIdList, String textContent, MultipartFile file) {
         Users users = usersService.findById(usersId);
-        for (Long folderId : foldersIdList){
+        for (Long folderId : foldersIdList) {
             foldersService.findByFoldersIdAndUsers_UsersId(usersId, folderId);
         }
 
-        /* 확장자 검사 */
         attachmentValidator.validateFilesContentType(file.getContentType(), file.getOriginalFilename());
-
-        /* 파일 크기 검사 */
         attachmentValidator.validateFileSize(file.getSize());
-
-        /* 스토리지 용량 검사 */
         validateStorageLimit(usersId, file.getSize());
 
-        /** File 타입 Processor 가져오기 */
         AttachmentProcessor processor = processorRouter.getProcessor(AttachMentsType.FILE);
 
-        /** 파일 처리 (bytes + width + height + 확장자 추출) */
+        long recvStart = System.currentTimeMillis();
         AttachmentPayload payload = processor.getSizeWithDimensions(file);
+        long receiveMs = System.currentTimeMillis() - recvStart;
 
-        /**
-         * 파일 똑같은 걸 여러 개의 폴더에 저장할 필요 없음 그래서 하나만 저장하고 DB에는 다 같은 걸로 진행
-         */
         StorageResult result = processor.S3Store(usersId, payload);
+
+        log.info("[파일 업로드] receiveMs={}ms | s3Ms={}ms | presignMs={}ms",
+                receiveMs, result.getS3UploadMs(), result.getPresignMs());
 
         List<AttachMentsFilesCreateInFoldersResponse> responses = new ArrayList<>();
 
@@ -155,10 +139,7 @@ public class AttachMentsService {
                     );
 
             AttachMents saved = attachMentsRepository.save(entity);
-
-            responses.add(
-                    new AttachMentsFilesCreateInFoldersResponse(saved)
-            );
+            responses.add(new AttachMentsFilesCreateInFoldersResponse(saved, result.getPresignedUrl()));
         }
         return responses;
     }
@@ -167,22 +148,17 @@ public class AttachMentsService {
      * 하나의 사용자 폴더 내부 FILES 조회
      */
     public List<AttachMentsFilesGetInFoldersResponse> getFilesInFolders(Long usersId, Long foldersId) {
-
         usersService.findById(usersId);
         foldersService.findByFoldersIdAndUsers_UsersId(usersId, foldersId);
-        // 링크만 조회
+
         List<AttachMents> attachments = attachMenetsRepository
-                .findAttachMentsInFolders(
-                        usersId,
-                        AttachMentsType.FILE,
-                        foldersId,
-                        EntityStatus.ACTIVE
-                );
+                .findAttachMentsInFolders(usersId, AttachMentsType.FILE, foldersId, EntityStatus.ACTIVE);
 
         List<AttachMentsFilesGetInFoldersResponse> attachmentsFilesResponse = new ArrayList<>();
-
-        for (AttachMents attachmentsfiles : attachments) {
-            attachmentsFilesResponse.add(new AttachMentsFilesGetInFoldersResponse(attachmentsfiles));
+        for (AttachMents a : attachments) {
+            // String signedUrl = cloudFrontSigner.generateSignedUrl(a.getObjectKey());
+            String signedUrl = s3Storage.presignGetUrl(a.getObjectKey(), java.time.Duration.ofDays(7));
+            attachmentsFilesResponse.add(new AttachMentsFilesGetInFoldersResponse(a, signedUrl));
         }
         return attachmentsFilesResponse;
     }
@@ -191,22 +167,17 @@ public class AttachMentsService {
      * 하나의 사용자 폴더 내부 IMAGE 조회
      */
     public List<AttachMentsImagesGetInFoldersResponse> getImagesInFolders(Long usersId, Long foldersId) {
-
         usersService.findById(usersId);
         foldersService.findByFoldersIdAndUsers_UsersId(usersId, foldersId);
 
         List<AttachMents> attachments = attachMenetsRepository
-                .findAttachMentsInFolders(
-                        usersId,
-                        AttachMentsType.IMAGE,
-                        foldersId,
-                        EntityStatus.ACTIVE
-                );
+                .findAttachMentsInFolders(usersId, AttachMentsType.IMAGE, foldersId, EntityStatus.ACTIVE);
 
         List<AttachMentsImagesGetInFoldersResponse> attachmentsImagesResponse = new ArrayList<>();
-
-        for (AttachMents attachmentsimages : attachments) {
-            attachmentsImagesResponse.add(new AttachMentsImagesGetInFoldersResponse(attachmentsimages));
+        for (AttachMents a : attachments) {
+            // String signedUrl = cloudFrontSigner.generateSignedUrl(a.getObjectKey());
+            String signedUrl = s3Storage.presignGetUrl(a.getObjectKey(), java.time.Duration.ofDays(7));
+            attachmentsImagesResponse.add(new AttachMentsImagesGetInFoldersResponse(a, signedUrl));
         }
         return attachmentsImagesResponse;
     }
@@ -215,27 +186,16 @@ public class AttachMentsService {
      * 이미지 및 파일 삭제
      */
     public AttachMentsDeleteInFoldersResponse deleteAttachments(Long usersId, Long attachmentsId) {
-
         AttachMents attachment = attachMentsRepository
                 .findByAttachmentsIdAndUsers_UsersId(attachmentsId, usersId)
                 .orElseThrow(() -> new RuntimeException("첨부파일 없음"));
 
         String objectKey = attachment.getObjectKey();
 
-        /**
-         * DB에서 소프트 삭제
-         */
         attachment.softDelete();
         attachMentsRepository.flush();
 
-        /**
-         * 같은 objectKey를 참조하는 ACTIVE 레코드가 남아있나?
-         */
         long activeCount = attachMentsRepository.countByObjectKeyAndStatus(objectKey, EntityStatus.ACTIVE);
-
-        /**
-         *  아무도 안 쓰면 S3에서도 삭제
-         */
         if (activeCount == 0) {
             s3Storage.delete(objectKey);
         }
@@ -243,7 +203,7 @@ public class AttachMentsService {
         return new AttachMentsDeleteInFoldersResponse(attachmentsId);
     }
 
-    public AttachMentsMoveInFoldersResponse moveAttachmentsInFolders(Long usersId, Long foldersId, Long moveFoldersId, Long attachmentsId){
+    public AttachMentsMoveInFoldersResponse moveAttachmentsInFolders(Long usersId, Long foldersId, Long moveFoldersId, Long attachmentsId) {
         usersService.findById(usersId);
         foldersService.findByFoldersIdAndUsers_UsersId(usersId, foldersId);
         foldersService.findById(moveFoldersId);
@@ -266,9 +226,11 @@ public class AttachMentsService {
         }
         attachments.updateTextContent(textContent);
         attachMentsRepository.save(attachments);
-        return new AttachMentsUpdateFileNameResponse(attachments);
-    }
 
+        // String signedUrl = cloudFrontSigner.generateSignedUrl(attachments.getObjectKey());
+        String signedUrl = s3Storage.presignGetUrl(attachments.getObjectKey(), java.time.Duration.ofDays(7));
+        return new AttachMentsUpdateFileNameResponse(attachments, signedUrl);
+    }
 
     /**
      * 파일 검색
@@ -284,7 +246,9 @@ public class AttachMentsService {
         List<AttachMentsFilesGetInFoldersResponse> res = new ArrayList<>(files.size());
         for (AttachMents a : files) {
             String foldersName = foldersService.findById(a.getStorageId()).getName();
-            res.add(new AttachMentsFilesGetInFoldersResponse(a, foldersName));
+            // String signedUrl = cloudFrontSigner.generateSignedUrl(a.getObjectKey());
+            String signedUrl = s3Storage.presignGetUrl(a.getObjectKey(), java.time.Duration.ofDays(7));
+            res.add(new AttachMentsFilesGetInFoldersResponse(a, foldersName, signedUrl));
         }
         return res;
     }
@@ -302,12 +266,130 @@ public class AttachMentsService {
 
         List<AttachMentsImagesGetInFoldersResponse> res = new ArrayList<>(images.size());
         for (AttachMents a : images) {
-            res.add(new AttachMentsImagesGetInFoldersResponse(a));
+            // String signedUrl = cloudFrontSigner.generateSignedUrl(a.getObjectKey());
+            String signedUrl = s3Storage.presignGetUrl(a.getObjectKey(), java.time.Duration.ofDays(7));
+            res.add(new AttachMentsImagesGetInFoldersResponse(a, signedUrl));
         }
         return res;
     }
 
+    /**
+     * Flutter S3 직접 업로드용 presigned PUT URL 발급 (단건/다건 통합)
+     * IMAGE: 최대 3개, FILE: 1개
+     */
+    public List<AttachMentsPresignResponse> presignUpload(Long usersId, AttachMentsPresignRequest request) {
+        if (request.getFiles() == null || request.getFiles().isEmpty()) {
+            throw new IllegalArgumentException("업로드할 파일이 없습니다.");
+        }
+        if (request.getAttachmentsType() == AttachMentsType.IMAGE && request.getFiles().size() > 3) {
+            throw new IllegalArgumentException("이미지는 최대 3개까지 업로드할 수 있습니다.");
+        }
+        if (request.getAttachmentsType() == AttachMentsType.FILE && request.getFiles().size() > 1) {
+            throw new IllegalArgumentException("파일은 1개씩 업로드할 수 있습니다.");
+        }
 
+        usersService.findById(usersId);
+        for (Long folderId : request.getFoldersIdList()) {
+            foldersService.findByFoldersIdAndUsers_UsersId(usersId, folderId);
+        }
+
+        long totalSize = request.getFiles().stream().mapToLong(f -> f.getFileSize()).sum();
+        validateStorageLimit(usersId, totalSize);
+
+        for (var file : request.getFiles()) {
+            if (request.getAttachmentsType() == AttachMentsType.IMAGE) {
+                attachmentValidator.validateImageContentType(file.getContentType());
+            } else {
+                attachmentValidator.validateFilesContentType(file.getContentType(), file.getFileName());
+            }
+            attachmentValidator.validateFileSize(file.getFileSize());
+        }
+
+        long totalStart = System.currentTimeMillis();
+
+        List<AttachMentsPresignResponse> responses = new ArrayList<>();
+        long s3PresignMs = 0;
+        for (var file : request.getFiles()) {
+            String ext = extractExtension(file.getFileName());
+
+            long t = System.currentTimeMillis();
+            String objectKey = request.getAttachmentsType() == AttachMentsType.IMAGE
+                    ? s3KeyFactory.imageKey(usersId, ext)
+                    : s3KeyFactory.fileKey(usersId, ext);
+            String uploadUrl = s3Storage.presignPutUrl(objectKey, file.getContentType(),
+                    java.time.Duration.ofSeconds(PRESIGN_TTL_SECONDS));
+            s3PresignMs += System.currentTimeMillis() - t;
+            responses.add(new AttachMentsPresignResponse(objectKey, uploadUrl, PRESIGN_TTL_SECONDS));
+        }
+
+        log.info("[presign] total={}ms | s3PresignGenerate={}ms | fileCount={}",
+                System.currentTimeMillis() - totalStart, s3PresignMs, request.getFiles().size());
+
+        return responses;
+    }
+
+    /**
+     * Flutter S3 직접 업로드 완료 후 DB 저장
+     */
+    public List<AttachMentsConfirmResponse> confirmUpload(Long usersId, AttachMentsConfirmRequest request) {
+        if (request.getFiles() == null || request.getFiles().isEmpty()) {
+            throw new IllegalArgumentException("확인할 파일이 없습니다.");
+        }
+
+        Users users = usersService.findById(usersId);
+        for (Long folderId : request.getFoldersIdList()) {
+            foldersService.findByFoldersIdAndUsers_UsersId(usersId, folderId);
+        }
+
+        long totalStart = System.currentTimeMillis();
+        long dbSaveMs = 0;
+        long s3ViewUrlMs = 0;
+
+        List<AttachMentsConfirmResponse> responses = new ArrayList<>();
+
+        for (var file : request.getFiles()) {
+            String presignedUrl = s3Storage.presignGetUrl(file.getObjectKey(), java.time.Duration.ofDays(7));
+
+            for (Long folderId : request.getFoldersIdList()) {
+                AttachMents entity;
+                if (request.getAttachmentsType() == AttachMentsType.IMAGE) {
+                    entity = AttachMents.createImagesInFolders(
+                            users, folderId, file.getObjectKey(), presignedUrl, file.getContentType(),
+                            file.getFileSize(), file.getFileName(), request.getTextContent(),
+                            file.getWidth(), file.getHeight()
+                    );
+                } else {
+                    entity = AttachMents.createFilesInFolders(
+                            users, folderId, file.getObjectKey(), presignedUrl, file.getContentType(),
+                            file.getFileSize(), file.getFileName(), request.getTextContent()
+                    );
+                }
+
+                long t = System.currentTimeMillis();
+                AttachMents saved = attachMentsRepository.save(entity);
+                dbSaveMs += System.currentTimeMillis() - t;
+
+                t = System.currentTimeMillis();
+                // String signedUrl = cloudFrontSigner.generateSignedUrl(saved.getObjectKey());
+                String signedUrl = s3Storage.presignGetUrl(saved.getObjectKey(), java.time.Duration.ofDays(7));
+                s3ViewUrlMs += System.currentTimeMillis() - t;
+
+                responses.add(new AttachMentsConfirmResponse(saved, signedUrl));
+            }
+        }
+
+        log.info("[confirm] total={}ms | dbSave={}ms | s3ViewUrlGenerate={}ms | fileCount={}",
+                System.currentTimeMillis() - totalStart, dbSaveMs, s3ViewUrlMs, request.getFiles().size());
+
+        return responses;
+    }
+
+    private String extractExtension(String filename) {
+        if (filename == null || filename.isBlank()) return "bin";
+        int idx = filename.lastIndexOf('.');
+        if (idx == -1 || idx == filename.length() - 1) return "bin";
+        return filename.substring(idx + 1).toLowerCase();
+    }
 
     private void validateStorageLimit(Long usersId, long newFileSize) {
         List<Object[]> result = attachMentsRepository.sumAttachmentsSizeByUsersId(usersId, EntityStatus.ACTIVE);
@@ -322,7 +404,7 @@ public class AttachMentsService {
         return attachMentsRepository.countByStorageIdAndStatus(foldersId, EntityStatus.ACTIVE);
     }
 
-    public AttachMents findById(Long attachmentsId){
+    public AttachMents findById(Long attachmentsId) {
         Optional<AttachMents> attachments = attachMentsRepository.findById(attachmentsId);
         if (attachments.isPresent()) {
             return attachments.get();
@@ -330,5 +412,4 @@ public class AttachMentsService {
             throw new AttachmentsNotFoundException(attachments + "는 존재하지 않는 링크입니다.");
         }
     }
-
 }

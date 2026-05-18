@@ -13,79 +13,24 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AttachMentsFilesGetInFoldersResponse {
     private Long attachmentsId;
-
     private Long foldersId;
-
-    /**
-     * ENUM형태("FILE")
-     */
     private AttachMentsType attachmentsType;
-
-    /**
-     * 같이 씀 - 파일 및 이미지 오브젝트 키(S3)
-     */
     private String objectKey;
-
-    /**
-     * 같이 씀 - 파일 및 이미지 미리보기 및 다운로드 경로
-     */
     private String presignedUrl;
-
-    /**
-     * 같이 씀 - 파일 및 이미지 확장자
-     */
     private String attachmentsExtension;
-
-    /**
-     * 같이 씀 - 파일 및 이미지 DATA 크기
-     */
     private Double attachmentsSize;
-
-    /**
-     * attachments_type이 FILE일 경우 - 파일의 이름
-     * 길이 제한 255
-     */
     private String fileName;
-
-    /**
-     * 자료 생성시간
-     */
     private LocalDateTime createdAt;
-
-    /**
-     * 보관함 이름
-     */
     private String foldersName;
-
     private String textContent;
-
-    /**
-     * 생성시간 기준 서울 시간 요일 (예: 월요일)
-     */
     private String dayOfWeek;
 
-    public AttachMentsFilesGetInFoldersResponse(Long attachmentsId, AttachMentsType attachmentsType,
-                                                String objectKey, String presignedUrl, String attachmentsExtension,
-                                                Double attachmentsSize, String fileName, LocalDateTime createdAt,
-                                                Long foldersId){
-        this.attachmentsId = attachmentsId;
-        this.foldersId = foldersId;
-        this.attachmentsType = attachmentsType;
-        this.objectKey = objectKey;
-        this.presignedUrl = presignedUrl;
-        this.attachmentsExtension = attachmentsExtension;
-        this.attachmentsSize = attachmentsSize;
-        this.fileName = fileName;
-        this.createdAt = createdAt;
-        this.dayOfWeek = toDayOfWeekKorean(createdAt);
-    }
-
-    public AttachMentsFilesGetInFoldersResponse(AttachMents attachments){
+    public AttachMentsFilesGetInFoldersResponse(AttachMents attachments, String signedUrl) {
         this.attachmentsId = attachments.getAttachmentsId();
         this.foldersId = attachments.getStorageId();
         this.attachmentsType = attachments.getAttachmentsType();
         this.objectKey = attachments.getObjectKey();
-        this.presignedUrl = attachments.getPresignedUrl();
+        this.presignedUrl = signedUrl;
         this.attachmentsExtension = attachments.getAttachmentsExtension();
         this.attachmentsSize = attachments.getAttachmentsSize();
         this.fileName = attachments.getFileName();
@@ -94,12 +39,12 @@ public class AttachMentsFilesGetInFoldersResponse {
         this.dayOfWeek = toDayOfWeekKorean(attachments.getCreatedAt());
     }
 
-    public AttachMentsFilesGetInFoldersResponse(AttachMents attachments, String foldersName){
+    public AttachMentsFilesGetInFoldersResponse(AttachMents attachments, String foldersName, String signedUrl) {
         this.attachmentsId = attachments.getAttachmentsId();
         this.foldersId = attachments.getStorageId();
         this.attachmentsType = attachments.getAttachmentsType();
         this.objectKey = attachments.getObjectKey();
-        this.presignedUrl = attachments.getPresignedUrl();
+        this.presignedUrl = signedUrl;
         this.attachmentsExtension = attachments.getAttachmentsExtension();
         this.attachmentsSize = attachments.getAttachmentsSize();
         this.fileName = attachments.getFileName();
