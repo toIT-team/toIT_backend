@@ -53,7 +53,10 @@ public class SchedulesService {
 
         usersService.findById(usersId);
 
-        Schedules schedules = findBySchedules(schedulesId);
+        Schedules schedules = schedulesRepository
+                .findBySchedulesIdAndUsers_UsersIdAndStatus(schedulesId, usersId, EntityStatus.ACTIVE)
+                .orElseThrow(() -> new SchedulesNotFoundException(
+                        "schedulesId 가 " + schedulesId + "인 일정을 찾을 수 없습니다."));
 
         Folders folders = schedules.getFolders();
 

@@ -76,18 +76,21 @@ public class FileAttachmentProcessor implements AttachmentProcessor {
         );
 
         /** S3 업로드 */
+        long s3Start = System.currentTimeMillis();
         s3Storage.S3upload(
                 objectKey,
                 new ByteArrayInputStream(payload.getBytes()),
                 payload.getAttachmentsExtension(),
                 payload.getAttachmentsSize().longValue()
         );
+        long s3UploadMs = System.currentTimeMillis() - s3Start;
 
         /** SigV4 presigned URL은 최대 7일까지 허용 */
-        String presignedUrl =
-                s3Storage.presignGetUrl(objectKey, Duration.ofDays(7));
+        long presignStart = System.currentTimeMillis();
+        String presignedUrl = s3Storage.presignGetUrl(objectKey, Duration.ofDays(7));
+        long presignMs = System.currentTimeMillis() - presignStart;
 
-        return new StorageResult(objectKey, presignedUrl);
+        return new StorageResult(objectKey, presignedUrl, s3UploadMs, presignMs);
     }
 
 }

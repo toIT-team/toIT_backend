@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SchedulesRepository extends JpaRepository<Schedules, Long> {
@@ -49,6 +50,8 @@ public interface SchedulesRepository extends JpaRepository<Schedules, Long> {
 //    List<Schedules> findTargetSchedules(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
     List<Schedules> findByFolders_FoldersIdAndStatus(Long foldersId, EntityStatus status);
+
+    Optional<Schedules> findBySchedulesIdAndUsers_UsersIdAndStatus(Long schedulesId, Long usersId, EntityStatus status);
 
     /**
      * 스케줄 제목으로 검색

@@ -21,13 +21,13 @@ public class AttachMentsUpdateFileNameResponse {
     private String textContent;
     private LocalDateTime createdAt;
 
-    public AttachMentsUpdateFileNameResponse(AttachMents attachments) {
+    public AttachMentsUpdateFileNameResponse(AttachMents attachments, String signedUrl) {
         this.attachmentsId = attachments.getAttachmentsId();
         this.foldersId = attachments.getStorageId();
         this.attachmentsType = attachments.getAttachmentsType();
         this.fileName = attachments.getFileName();
         this.objectKey = attachments.getObjectKey();
-        this.presignedUrl = attachments.getPresignedUrl();
+        this.presignedUrl = signedUrl;
         this.attachmentsExtension = attachments.getAttachmentsExtension();
         this.attachmentsSize = attachments.getAttachmentsSize();
         this.textContent = attachments.getTextContent();

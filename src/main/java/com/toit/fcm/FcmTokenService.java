@@ -16,19 +16,30 @@ public class FcmTokenService {
     private final FcmTokenRepository fcmTokenRepository;
     private final UsersService usersService;
 
-
     public FcmCreateResponse createFcmToken(Long usersId, FcmCreateRequest request) {
         Users users = usersService.findById(usersId);
 
-        Optional<FcmToken> existingToken = fcmTokenRepository.findByUsersAndFcmToken(users, request.getFcmToken());
+        Optional<FcmToken> existingToken = fcmTokenRepository.findByFcmToken(request.getFcmToken());
 
         if (existingToken.isPresent()) {
-            existingToken.get().updateTokenTimestamp();
+            FcmToken fcmToken = existingToken.get();
+            if (fcmToken.getUsers().getUsersId().equals(usersId)) {
+                fcmToken.updateTokenTimestamp();
+            } else {
+                fcmToken.updateUser(users);
+            }
+            fcmTokenRepository.save(fcmToken);
             return new FcmCreateResponse(usersId, request.getFcmToken());
         } else {
             FcmToken newToken = new FcmToken(users, request.getFcmToken());
             fcmTokenRepository.save(newToken);
             return new FcmCreateResponse(usersId, request.getFcmToken());
         }
+    }
+
+    public void deleteFcmToken(Long usersId, FcmCreateRequest request) {
+        Users users = usersService.findById(usersId);
+        fcmTokenRepository.findByUsersAndFcmToken(users, request.getFcmToken())
+                .ifPresent(fcmTokenRepository::delete);
     }
 }
