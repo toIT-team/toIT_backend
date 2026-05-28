@@ -41,7 +41,6 @@ public class ImageAttachmentProcessor implements AttachmentProcessor {
             Long width = null;
             Long height = null;
 
-            // Flutter에서 imagesWidth/imagesHeight 미사용으로 ImageIO 디코딩 제거
             // long imageIoStart = System.currentTimeMillis();
             // BufferedImage img = ImageIO.read(new ByteArrayInputStream(bytes));
             // long imageIoMs = System.currentTimeMillis() - imageIoStart;
