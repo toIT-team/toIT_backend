@@ -17,3 +17,11 @@
 자세한 커밋 규칙은 다음 문서에서 확인하시길 바랍니다.
 
 👉 [Commit Convention 문서 바로가기](./docs/convention/commitconvention.md)
+
+
+### 🚀 Release & Version Management
+
+이 프로젝트는 `main` 브랜치를 기준으로 배포 가능한 버전을 관리하며,  
+GitHub Releases를 사용하여 배포 이력과 버전별 변경 사항을 기록합니다.
+
+👉 [Release & Version Management 문서 바로가기](./docs/convention/release.md)
