@@ -11,14 +11,12 @@ public class PageMyViewResponse {
     private final String name;
     private final String email;
     private final String authProvider;
-    private final String appVersion;
 
-    public PageMyViewResponse(Users user, String appVersion) {
+    public PageMyViewResponse(Users user) {
         this.nickname = user.getName();
         this.imageUrl = user.getImageUrl();
         this.name = user.getName();
         this.email = user.getEmail();
         this.authProvider = user.getAuthProvider().name();
-        this.appVersion = appVersion;
     }
 }
