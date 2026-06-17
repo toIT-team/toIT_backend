@@ -43,6 +43,8 @@ application-local.yml
 
 ### Firebase Key (보안) ###
 src/main/resources/firebase/firebase-key.json
+src/main/resources/firebase/firebase-testserver-key.json
 src/main/resources/data/seed_postgres.sql
 src/main/resources/apple/*.p8
 src/main/resources/cloudfront/private_key.pem
+src/main/resources/cloudfront/cloudfront_private_key_testserver.pem

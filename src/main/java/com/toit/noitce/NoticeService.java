@@ -61,31 +61,32 @@ public class NoticeService {
 
         Notice savedNotice = noticeRepository.save(notice);
 
-        List<Users> users = usersRepository.findAll();
-        List<UserNotification> notifications = userNotificationService.createAll(
-                users,
-                NotificationType.NOTICE,
-                savedNotice.getTitle(),
-                "toit://notice?id=" + savedNotice.getNoticeId(),
-                savedNotice.getNoticeId()
-        );
-
-        for (UserNotification notification : notifications) {
-            boolean isSent = fcmNotificationService.sendToUserIgnoringAppAlarmEnabled(
-                    notification.getUsers(),
-                    new FcmNotificationRequest(
-                            savedNotice.getTitle(),
-                            savedNotice.getContent(),
-                            "notice",
-                            notification.getDeeplink(),
-                            notification.getNotificationId()
-                    )
-            );
-
-            if (isSent) {
-                userNotificationService.markAsSent(notification);
-            }
-        }
+        // [FCM 비활성화] 공지 등록 시 인앱 알림 생성 및 FCM 발송 중단
+        // List<Users> users = usersRepository.findAll();
+        // List<UserNotification> notifications = userNotificationService.createAll(
+        //         users,
+        //         NotificationType.NOTICE,
+        //         savedNotice.getTitle(),
+        //         "toit://notice?id=" + savedNotice.getNoticeId(),
+        //         savedNotice.getNoticeId()
+        // );
+        //
+        // for (UserNotification notification : notifications) {
+        //     boolean isSent = fcmNotificationService.sendToUserIgnoringAppAlarmEnabled(
+        //             notification.getUsers(),
+        //             new FcmNotificationRequest(
+        //                     savedNotice.getTitle(),
+        //                     savedNotice.getContent(),
+        //                     "notice",
+        //                     notification.getDeeplink(),
+        //                     notification.getNotificationId()
+        //             )
+        //     );
+        //
+        //     if (isSent) {
+        //         userNotificationService.markAsSent(notification);
+        //     }
+        // }
     }
 
     // 공지사항 삭제

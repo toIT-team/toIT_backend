@@ -3,12 +3,15 @@ package com.toit.auth;
 
 import com.toit.auth.dto.request.RefreshTokenRequest;
 import com.toit.auth.dto.response.RefreshTokenResponse;
+import com.toit.common.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -47,5 +50,12 @@ public class AuthController {
     @PostMapping("/restore")
     public ResponseEntity<AuthService.LoginTokens> restoreAccount(@RequestParam String restoreToken) {
         return ResponseEntity.ok(authService.restoreAccount(restoreToken));
+    }
+
+    @Operation(summary = "CloudFront Signed Cookie 발급 및 재발급", description = "이미지 조회에 필요한 CloudFront Signed Cookie를 발급합니다. 만료 시 동일 API로 재발급합니다.")
+    @GetMapping("/cloudfront/cookie")
+    public ResponseEntity<Map<String, String>> issueCloudFrontCookie() {
+        Long usersId = SecurityUtil.getCurrentUserId();
+        return ResponseEntity.ok(authService.issueCloudFrontCookies(usersId));
     }
 }

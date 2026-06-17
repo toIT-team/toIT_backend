@@ -1,6 +1,5 @@
 package com.toit.common.cloudfront;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
@@ -8,6 +7,8 @@ import java.security.Signature;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.time.Instant;
 import java.util.Base64;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -28,6 +29,38 @@ public class CloudFrontSigner {
 
     @Value("${cloudfront.ttl-seconds:900}")
     private int ttlSeconds;
+
+    public String getResizeUrl(String objectKey, int width) {
+        return domain + "/resize/" + width + "/" + objectKey;
+    }
+
+    public String getOriginalUrl(String objectKey) {
+        return domain + "/" + objectKey;
+    }
+
+    public Map<String, String> generateSignedCookies(Long userId) {
+        try {
+            log.info("CloudFront Signed Cookie 발급 - keyPairId: {}, domain: {}", keyPairId, domain);
+            long expiry = Instant.now().getEpochSecond() + ttlSeconds;
+            String resourceUrl = domain + "/*";
+
+            String policy = "{\"Statement\":[{\"Resource\":\"" + resourceUrl
+                    + "\",\"Condition\":{\"DateLessThan\":{\"AWS:EpochTime\":" + expiry + "}}}]}";
+
+            String encodedPolicy = toCloudFrontBase64(policy.getBytes(StandardCharsets.UTF_8));
+            byte[] signatureBytes = sign(policy.getBytes(StandardCharsets.UTF_8));
+            String signature = toCloudFrontBase64(signatureBytes);
+
+            Map<String, String> cookies = new LinkedHashMap<>();
+            cookies.put("CloudFront-Policy", encodedPolicy);
+            cookies.put("CloudFront-Signature", signature);
+            cookies.put("CloudFront-Key-Pair-Id", keyPairId);
+            return cookies;
+        } catch (Exception e) {
+            log.error("CloudFront Signed Cookie 생성 실패 - cause: {}", e.getCause() != null ? e.getCause().getMessage() : e.getMessage(), e);
+            throw new RuntimeException("CloudFront Signed Cookie 생성 실패", e);
+        }
+    }
 
     public String generateSignedUrl(String objectKey) {
         try {

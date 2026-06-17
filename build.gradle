@@ -52,9 +52,9 @@ dependencies {
 	implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.1.1'
 
 	/**
-	 * .env 읽기
+	 * .env 읽기 → application.properties로 대체 (.gitignore로 git 미추적)
 	 */
-	implementation 'me.paulschwarz:spring-dotenv:4.0.0'
+	// implementation 'me.paulschwarz:spring-dotenv:4.0.0'
 
 	/***
 	 * 	FCM 의존성 추가

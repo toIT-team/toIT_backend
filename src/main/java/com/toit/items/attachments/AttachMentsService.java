@@ -175,12 +175,27 @@ public class AttachMentsService {
 
         List<AttachMentsImagesGetInFoldersResponse> attachmentsImagesResponse = new ArrayList<>();
         for (AttachMents a : attachments) {
-            // String signedUrl = cloudFrontSigner.generateSignedUrl(a.getObjectKey());
-            String signedUrl = s3Storage.presignGetUrl(a.getObjectKey(), java.time.Duration.ofDays(7));
-            attachmentsImagesResponse.add(new AttachMentsImagesGetInFoldersResponse(a, signedUrl));
+            // Flutter가 objectKey로 CloudFront URL을 직접 생성한다
+            attachmentsImagesResponse.add(new AttachMentsImagesGetInFoldersResponse(a));
         }
         return attachmentsImagesResponse;
     }
+
+    // [측정 전용] S3 presigned URL 방식 이미지 조회 (p50/p95/p99 비교용, 측정 종료로 비활성화)
+    // public List<com.toit.items.attachments.dto.response.BenchS3ImageResponse> getImagesInFoldersS3Bench(Long usersId, Long foldersId) {
+    //     usersService.findById(usersId);
+    //     foldersService.findByFoldersIdAndUsers_UsersId(usersId, foldersId);
+    //
+    //     List<AttachMents> attachments = attachMenetsRepository
+    //             .findAttachMentsInFolders(usersId, AttachMentsType.IMAGE, foldersId, EntityStatus.ACTIVE);
+    //
+    //     List<com.toit.items.attachments.dto.response.BenchS3ImageResponse> res = new ArrayList<>();
+    //     for (AttachMents a : attachments) {
+    //         String presignedUrl = s3Storage.presignGetUrl(a.getObjectKey(), java.time.Duration.ofDays(7));
+    //         res.add(new com.toit.items.attachments.dto.response.BenchS3ImageResponse(a, presignedUrl));
+    //     }
+    //     return res;
+    // }
 
     /**
      * 이미지 및 파일 삭제
@@ -266,9 +281,7 @@ public class AttachMentsService {
 
         List<AttachMentsImagesGetInFoldersResponse> res = new ArrayList<>(images.size());
         for (AttachMents a : images) {
-            // String signedUrl = cloudFrontSigner.generateSignedUrl(a.getObjectKey());
-            String signedUrl = s3Storage.presignGetUrl(a.getObjectKey(), java.time.Duration.ofDays(7));
-            res.add(new AttachMentsImagesGetInFoldersResponse(a, signedUrl));
+            res.add(new AttachMentsImagesGetInFoldersResponse(a));
         }
         return res;
     }
@@ -343,24 +356,23 @@ public class AttachMentsService {
 
         long totalStart = System.currentTimeMillis();
         long dbSaveMs = 0;
-        long s3ViewUrlMs = 0;
 
         List<AttachMentsConfirmResponse> responses = new ArrayList<>();
 
         for (var file : request.getFiles()) {
-            String presignedUrl = s3Storage.presignGetUrl(file.getObjectKey(), java.time.Duration.ofDays(7));
-
+            // DB의 presignedUrl 컬럼은 더 이상 사용하지 않는다(Flutter가 objectKey로 URL 생성).
+            // 컬럼이 nullable=false이므로 빈 값으로 채운다.
             for (Long folderId : request.getFoldersIdList()) {
                 AttachMents entity;
                 if (request.getAttachmentsType() == AttachMentsType.IMAGE) {
                     entity = AttachMents.createImagesInFolders(
-                            users, folderId, file.getObjectKey(), presignedUrl, file.getContentType(),
+                            users, folderId, file.getObjectKey(), "", file.getContentType(),
                             file.getFileSize(), file.getFileName(), request.getTextContent(),
                             file.getWidth(), file.getHeight()
                     );
                 } else {
                     entity = AttachMents.createFilesInFolders(
-                            users, folderId, file.getObjectKey(), presignedUrl, file.getContentType(),
+                            users, folderId, file.getObjectKey(), "", file.getContentType(),
                             file.getFileSize(), file.getFileName(), request.getTextContent()
                     );
                 }
@@ -369,17 +381,12 @@ public class AttachMentsService {
                 AttachMents saved = attachMentsRepository.save(entity);
                 dbSaveMs += System.currentTimeMillis() - t;
 
-                t = System.currentTimeMillis();
-                // String signedUrl = cloudFrontSigner.generateSignedUrl(saved.getObjectKey());
-                String signedUrl = s3Storage.presignGetUrl(saved.getObjectKey(), java.time.Duration.ofDays(7));
-                s3ViewUrlMs += System.currentTimeMillis() - t;
-
-                responses.add(new AttachMentsConfirmResponse(saved, signedUrl));
+                responses.add(new AttachMentsConfirmResponse(saved));
             }
         }
 
-        log.info("[confirm] total={}ms | dbSave={}ms | s3ViewUrlGenerate={}ms | fileCount={}",
-                System.currentTimeMillis() - totalStart, dbSaveMs, s3ViewUrlMs, request.getFiles().size());
+        log.info("[confirm] total={}ms | dbSave={}ms | fileCount={}",
+                System.currentTimeMillis() - totalStart, dbSaveMs, request.getFiles().size());
 
         return responses;
     }

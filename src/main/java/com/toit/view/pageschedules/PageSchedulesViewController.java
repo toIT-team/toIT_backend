@@ -79,15 +79,16 @@ public class PageSchedulesViewController {
 
     }
 
-    /***
-     * 전송된 푸시알림 리스트 조회
-     */
-    @Operation(summary = "SchedulesAlarm 화면 API - 화면이름 : 알림 ")
-    @SchedulesAlarmApiDocs
-    @GetMapping("/alarm")
-    public ResponseEntity<PageSchedulesAlarmViewResponse> getScheduleAlarms(){
-        Long usersId = SecurityUtil.getCurrentUserId();
-        PageSchedulesAlarmViewResponse response = schedulesUseCase.getSchedulesAlarmsView(usersId);
-        return ResponseEntity.ok(response);
-    }
+    // [FCM 비활성화] 전송된 푸시알림 리스트 조회 API 비활성화 (라우팅 제거)
+    // /***
+    //  * 전송된 푸시알림 리스트 조회
+    //  */
+    // @Operation(summary = "SchedulesAlarm 화면 API - 화면이름 : 알림 ")
+    // @SchedulesAlarmApiDocs
+    // @GetMapping("/alarm")
+    // public ResponseEntity<PageSchedulesAlarmViewResponse> getScheduleAlarms(){
+    //     Long usersId = SecurityUtil.getCurrentUserId();
+    //     PageSchedulesAlarmViewResponse response = schedulesUseCase.getSchedulesAlarmsView(usersId);
+    //     return ResponseEntity.ok(response);
+    // }
 }

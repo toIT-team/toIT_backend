@@ -9,8 +9,7 @@ import lombok.Getter;
 public class AttachMentsConfirmResponse {
     private final Long attachmentsId;
     private final AttachMentsType attachmentsType;
-    private final String objectKey;
-    private final String presignedUrl;
+    private final String objectKey;  // Flutter가 이 키로 CloudFront URL을 생성한다
     private final String fileName;
     private final Double attachmentsSize;
     private final String attachmentsExtension;
@@ -19,11 +18,10 @@ public class AttachMentsConfirmResponse {
     private final String textContent;
     private final LocalDateTime createdAt;
 
-    public AttachMentsConfirmResponse(AttachMents attachments, String signedUrl) {
+    public AttachMentsConfirmResponse(AttachMents attachments) {
         this.attachmentsId = attachments.getAttachmentsId();
         this.attachmentsType = attachments.getAttachmentsType();
         this.objectKey = attachments.getObjectKey();
-        this.presignedUrl = signedUrl;
         this.fileName = attachments.getFileName();
         this.attachmentsSize = attachments.getAttachmentsSize();
         this.attachmentsExtension = attachments.getAttachmentsExtension();

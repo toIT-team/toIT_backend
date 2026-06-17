@@ -20,19 +20,20 @@ public class UserNotificationController {
 
     private final UserNotificationService userNotificationService;
 
-    @Operation(summary = "확인하지 않은 알림 수 조회 API", description = "사용자의 미확인 알림 개수를 조회합니다.")
-    @GetMapping("/unread-count")
-    public ResponseEntity<NotificationUnreadCountResponse> getUnreadCount() {
-        Long usersId = SecurityUtil.getCurrentUserId();
-        long unreadCount = userNotificationService.getUnreadCount(usersId);
-        return ResponseEntity.ok(new NotificationUnreadCountResponse(unreadCount));
-    }
-
-    @Operation(summary = "알림 읽음 처리", description = "사용자의 알림 1건을 읽음 상태로 변경합니다.")
-    @PatchMapping("/{notificationId}/read")
-    public ResponseEntity<Void> markAsRead(@PathVariable Long notificationId) {
-        Long usersId = SecurityUtil.getCurrentUserId();
-        userNotificationService.markAsRead(usersId, notificationId);
-        return ResponseEntity.noContent().build();
-    }
+    // [FCM 비활성화] 인앱 알림 조회/읽음 API 비활성화 (라우팅 제거)
+    // @Operation(summary = "확인하지 않은 알림 수 조회 API", description = "사용자의 미확인 알림 개수를 조회합니다.")
+    // @GetMapping("/unread-count")
+    // public ResponseEntity<NotificationUnreadCountResponse> getUnreadCount() {
+    //     Long usersId = SecurityUtil.getCurrentUserId();
+    //     long unreadCount = userNotificationService.getUnreadCount(usersId);
+    //     return ResponseEntity.ok(new NotificationUnreadCountResponse(unreadCount));
+    // }
+    //
+    // @Operation(summary = "알림 읽음 처리", description = "사용자의 알림 1건을 읽음 상태로 변경합니다.")
+    // @PatchMapping("/{notificationId}/read")
+    // public ResponseEntity<Void> markAsRead(@PathVariable Long notificationId) {
+    //     Long usersId = SecurityUtil.getCurrentUserId();
+    //     userNotificationService.markAsRead(usersId, notificationId);
+    //     return ResponseEntity.noContent().build();
+    // }
 }
