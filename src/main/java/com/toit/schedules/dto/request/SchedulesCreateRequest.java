@@ -47,11 +47,12 @@ public class SchedulesCreateRequest {
     /** 입력한 메모  */
     private String memo;
 
-    /** 알림 설정 여부 (true: 켬, false: 끔) */
-    private Boolean alarmState;
-
-    /** 몇 분 전 알림인지 (예: 5, 10, 0) - alarmState가 true일 때만 값 존재 */
-    private Long alarmOffsetMinutes;
+    // [FCM 비활성화] 일정 알림 설정 필드 중단
+    // /** 알림 설정 여부 (true: 켬, false: 끔) */
+    // private Boolean alarmState;
+    //
+    // /** 몇 분 전 알림인지 (예: 5, 10, 0) - alarmState가 true일 때만 값 존재 */
+    // private Long alarmOffsetMinutes;
 
 
 }

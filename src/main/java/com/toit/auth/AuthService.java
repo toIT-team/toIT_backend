@@ -3,12 +3,15 @@ package com.toit.auth;
 import com.toit.auth.jwt.JwtProvider;
 import com.toit.auth.token.RefreshToken;
 import com.toit.auth.token.RefreshTokenRepository;
+import com.toit.common.cloudfront.CloudFrontSigner;
 import com.toit.exception.auth.InvalidTokenException;
 import com.toit.user.Users;
 import com.toit.user.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +20,7 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final UsersRepository usersRepository;
+    private final CloudFrontSigner cloudFrontSigner;
 
     /**
      * 로그인 성공 시 우리 서비스의 Access / Refresh Token을 발급하고,
@@ -88,6 +92,10 @@ public class AuthService {
 
         user.restore();
         return issueLoginTokens(user);
+    }
+
+    public Map<String, String> issueCloudFrontCookies(Long usersId) {
+        return cloudFrontSigner.generateSignedCookies(usersId);
     }
 
     public record LoginTokens(String accessToken, String refreshToken) {

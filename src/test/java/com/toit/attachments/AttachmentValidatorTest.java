@@ -16,26 +16,26 @@ class AttachmentValidatorTest {
     private static final int MB = 1024 * 1024;
 
     @Test
-    @DisplayName("10MB 이하 이미지 파일은 크기 검증을 통과한다")
+    @DisplayName("20MB 이하 이미지 파일은 크기 검증을 통과한다")
     void validateFileSize_shouldPass_whenImageSizeIsUnderLimit() {
         MockMultipartFile image = new MockMultipartFile(
                 "image",
                 "test.png",
                 "image/png",
-                new byte[10 * MB]  // 정확히 10MB
+                new byte[20 * MB]  // 정확히 20MB
         );
 
         assertDoesNotThrow(() -> attachmentValidator.validateFileSize(image.getSize()));
     }
 
     @Test
-    @DisplayName("10MB를 초과한 이미지 파일은 예외를 던진다")
+    @DisplayName("20MB를 초과한 이미지 파일은 예외를 던진다")
     void validateFileSize_shouldThrowException_whenImageSizeExceedsLimit() {
         MockMultipartFile image = new MockMultipartFile(
                 "image",
                 "large.png",
                 "image/png",
-                new byte[10 * MB + 1]  // 10MB + 1byte
+                new byte[20 * MB + 1]  // 20MB + 1byte
         );
 
         assertThrows(FileSizeExceededException.class,
@@ -43,13 +43,13 @@ class AttachmentValidatorTest {
     }
 
     @Test
-    @DisplayName("10MB를 초과한 파일(pdf 등)은 예외를 던진다")
+    @DisplayName("20MB를 초과한 파일(pdf 등)은 예외를 던진다")
     void validateFileSize_shouldThrowException_whenFileSizeExceedsLimit() {
         MockMultipartFile file = new MockMultipartFile(
                 "file",
                 "large.pdf",
                 "application/pdf",
-                new byte[10 * MB + 1]  // 10MB + 1byte
+                new byte[20 * MB + 1]  // 20MB + 1byte
         );
 
         assertThrows(FileSizeExceededException.class,

@@ -14,7 +14,7 @@ public class AttachmentValidator {
 
     private static final Logger log = LoggerFactory.getLogger(AttachmentValidator.class);
 
-    private static final long MAX_FILE_SIZE = 10L * 1024 * 1024; // 10MB
+    private static final long MAX_FILE_SIZE = 20L * 1024 * 1024; // 20MB
 
     private static final List<String> ALLOWED_TYPES_FILES = List.of(
             "application/pdf",
