@@ -22,29 +22,30 @@ public class FcmTokenController {
 
     private final FcmTokenService fcmTokenService ;
 
-    @Operation(
-            summary = "FcmToken 생성 ",
-            description = "Token 생성은 POST입니다."
-    )
-    @PostMapping()
-    @FcmApiDocs
-    public ResponseEntity<FcmCreateResponse> createFcmToken(
-            @RequestBody @Valid FcmCreateRequest request
-    ){
-        Long usersId = SecurityUtil.getCurrentUserId();
-        return ResponseEntity.ok(fcmTokenService.createFcmToken(usersId, request));
-    }
+    // [FCM 비활성화] 토큰 등록/삭제 API 비활성화 (라우팅 제거)
+    // @Operation(
+    //         summary = "FcmToken 생성 ",
+    //         description = "Token 생성은 POST입니다."
+    // )
+    // @PostMapping()
+    // @FcmApiDocs
+    // public ResponseEntity<FcmCreateResponse> createFcmToken(
+    //         @RequestBody @Valid FcmCreateRequest request
+    // ){
+    //     Long usersId = SecurityUtil.getCurrentUserId();
+    //     return ResponseEntity.ok(fcmTokenService.createFcmToken(usersId, request));
+    // }
 
-    @Operation(
-            summary = "FcmToken 삭제",
-            description = "현재 로그인한 사용자의 특정 FCM 토큰을 삭제합니다."
-    )
-    @DeleteMapping()
-    public ResponseEntity<Void> deleteFcmToken(
-            @RequestBody @Valid FcmCreateRequest request
-    ) {
-        Long usersId = SecurityUtil.getCurrentUserId();
-        fcmTokenService.deleteFcmToken(usersId, request);
-        return ResponseEntity.noContent().build();
-    }
+    // @Operation(
+    //         summary = "FcmToken 삭제",
+    //         description = "현재 로그인한 사용자의 특정 FCM 토큰을 삭제합니다."
+    // )
+    // @DeleteMapping()
+    // public ResponseEntity<Void> deleteFcmToken(
+    //         @RequestBody @Valid FcmCreateRequest request
+    // ) {
+    //     Long usersId = SecurityUtil.getCurrentUserId();
+    //     fcmTokenService.deleteFcmToken(usersId, request);
+    //     return ResponseEntity.noContent().build();
+    // }
 }

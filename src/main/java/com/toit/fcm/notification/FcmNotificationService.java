@@ -29,12 +29,17 @@ public class FcmNotificationService {
     private final FcmTokenRepository fcmTokenRepository;
     private final UsersSettingsRepository usersSettingsRepository;
 
+    // [FCM 비활성화] 발송 중단 — 호출부는 false를 받아 markAsSent를 건너뛴다(알림 DB 기록은 유지).
     public boolean sendToUser(Users user, FcmNotificationRequest request) {
-        return sendToUserInternal(user, request, false);
+        log.info("[FCM 비활성화] sendToUser 건너뜀. usersId={}", user.getUsersId());
+        return false;
+        // return sendToUserInternal(user, request, false);
     }
 
     public boolean sendToUserIgnoringAppAlarmEnabled(Users user, FcmNotificationRequest request) {
-        return sendToUserInternal(user, request, true);
+        log.info("[FCM 비활성화] sendToUserIgnoringAppAlarmEnabled 건너뜀. usersId={}", user.getUsersId());
+        return false;
+        // return sendToUserInternal(user, request, true);
     }
 
     private boolean sendToUserInternal(Users user, FcmNotificationRequest request, boolean ignoreAppAlarmEnabled) {

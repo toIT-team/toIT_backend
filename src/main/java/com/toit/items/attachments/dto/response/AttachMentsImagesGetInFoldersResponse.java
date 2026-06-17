@@ -12,8 +12,7 @@ import lombok.NoArgsConstructor;
 public class AttachMentsImagesGetInFoldersResponse {
     private Long attachmentsId;
     private AttachMentsType attachmentsType;
-    private String objectKey;
-    private String presignedUrl;
+    private String objectKey;  // Flutter가 이 키로 CloudFront URL을 생성한다
     private String attachmentsExtension;
     private Double attachmentsSize;
     private String fileName;
@@ -22,11 +21,10 @@ public class AttachMentsImagesGetInFoldersResponse {
     private String textContent;
     private LocalDateTime createdAt;
 
-    public AttachMentsImagesGetInFoldersResponse(AttachMents attachments, String signedUrl) {
+    public AttachMentsImagesGetInFoldersResponse(AttachMents attachments) {
         this.attachmentsId = attachments.getAttachmentsId();
         this.attachmentsType = attachments.getAttachmentsType();
         this.objectKey = attachments.getObjectKey();
-        this.presignedUrl = signedUrl;
         this.attachmentsExtension = attachments.getAttachmentsExtension();
         this.attachmentsSize = attachments.getAttachmentsSize();
         this.fileName = attachments.getFileName();

@@ -9,14 +9,11 @@ import com.toit.items.attachments.dto.response.AttachMentsPresignResponse;
 import com.toit.items.attachments.dto.response.AttachMentsDeleteInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsFilesCreateInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsImagesCreateInFoldersResponse;
-import com.toit.items.attachments.dto.response.AttachMentsFilesGetInFoldersResponse;
-import com.toit.items.attachments.dto.response.AttachMentsImagesGetInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsMoveInFoldersResponse;
 import com.toit.items.attachments.dto.response.AttachMentsUpdateFileNameResponse;
 import com.toit.swagger.docs.items.attachments.AttachMentsDeleteApiDocs;
 import com.toit.swagger.docs.items.attachments.AttachMentsFilesUploadApiDocs;
 import com.toit.swagger.docs.items.attachments.AttachMentsImagesUploadApiDocs;
-import com.toit.swagger.docs.items.attachments.AttachMentsPatchApiDocs;
 import com.toit.swagger.docs.items.attachments.AttachMentsUpdateFileNameApiDocs;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,8 +21,11 @@ import java.util.List;
 import com.toit.common.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+// import com.toit.items.attachments.dto.response.BenchS3ImageResponse; // [측정 전용] 비활성화
 import org.springframework.web.bind.annotation.DeleteMapping;
+// import org.springframework.web.bind.annotation.GetMapping; // [측정 전용] 비활성화
 import org.springframework.web.bind.annotation.PatchMapping;
+// import org.springframework.web.bind.annotation.PathVariable; // [측정 전용] 비활성화
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,6 +38,16 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class AttachMentsController {
     private final AttachMentsService attachmentsService;
+
+    // [측정 전용] S3 presigned URL 방식 이미지 조회 - p50/p95/p99 비교용 (측정 종료로 비활성화)
+    // @Operation(summary = "[측정 전용] S3 presigned URL 방식 이미지 조회 - p50/p95/p99 비교용, 측정 후 삭제 예정")
+    // @GetMapping("/attachments/images/{folderId}/bench-s3")
+    // public ResponseEntity<List<BenchS3ImageResponse>> getImagesInFoldersS3Bench(
+    //         @PathVariable Long folderId
+    // ) {
+    //     Long usersId = SecurityUtil.getCurrentUserId();
+    //     return ResponseEntity.ok(attachmentsService.getImagesInFoldersS3Bench(usersId, folderId));
+    // }
 
     @Operation(summary = "S3 직접 업로드용 presigned PUT URL 발급 - IMAGE: 최대 3개, FILE: 1개")
     @PostMapping("/attachments/presign")

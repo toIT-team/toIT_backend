@@ -26,51 +26,52 @@ public class NotificationScheduler {
     private final FcmNotificationService fcmNotificationService;
     private final UserNotificationService userNotificationService;
 
-    @Scheduled(cron = "0 * * * * *")
+    // [FCM 비활성화] 정기 알림 발송 스케줄러 중단
+    // @Scheduled(cron = "0 * * * * *")
     public void checkAndSendAlerts() {
-        LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
-        LocalDateTime nextMinute = now.plusMinutes(1);
-
-        log.info("스케줄러 조회 시간: {}", now);
-
-        List<SchedulesAlarm> alarms = schedulesAlarmRepository.findTargetAlarms(now, nextMinute);
-        if (alarms.isEmpty()) return;
-
-        log.info("알림 발송 작업 시작: 총 {}건 예정", alarms.size());
-
-        for (SchedulesAlarm alarm : alarms) {
-            Schedules schedule = alarm.getSchedules();
-            Users user = schedule.getUsers();
-
-            String title = schedule.getTitle();
-            long alarmOffsetMinutes = alarm.getAlarmOffsetMinutes() != null ? alarm.getAlarmOffsetMinutes() : 0L;
-            String body = "일정이 시작되기 " + alarmOffsetMinutes + "분 전입니다.";
-
-            UserNotification notification = userNotificationService.create(
-                    user,
-                    NotificationType.SCHEDULE,
-                    title,
-                    "toit://schedule?id=" + schedule.getSchedulesId(),
-                    schedule.getSchedulesId()
-            );
-
-            boolean isSent = fcmNotificationService.sendToUser(
-                    user,
-                    new FcmNotificationRequest(
-                            title,
-                            body,
-                            "schedule_detail",
-                            notification.getDeeplink(),
-                            notification.getNotificationId()
-                    )
-            );
-
-            if (isSent) {
-                userNotificationService.markAsSent(notification);
-            }
-
-            alarm.markAsSent();
-            schedulesAlarmRepository.save(alarm);
-        }
+        // LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+        // LocalDateTime nextMinute = now.plusMinutes(1);
+        //
+        // log.info("스케줄러 조회 시간: {}", now);
+        //
+        // List<SchedulesAlarm> alarms = schedulesAlarmRepository.findTargetAlarms(now, nextMinute);
+        // if (alarms.isEmpty()) return;
+        //
+        // log.info("알림 발송 작업 시작: 총 {}건 예정", alarms.size());
+        //
+        // for (SchedulesAlarm alarm : alarms) {
+        //     Schedules schedule = alarm.getSchedules();
+        //     Users user = schedule.getUsers();
+        //
+        //     String title = schedule.getTitle();
+        //     long alarmOffsetMinutes = alarm.getAlarmOffsetMinutes() != null ? alarm.getAlarmOffsetMinutes() : 0L;
+        //     String body = "일정이 시작되기 " + alarmOffsetMinutes + "분 전입니다.";
+        //
+        //     UserNotification notification = userNotificationService.create(
+        //             user,
+        //             NotificationType.SCHEDULE,
+        //             title,
+        //             "toit://schedule?id=" + schedule.getSchedulesId(),
+        //             schedule.getSchedulesId()
+        //     );
+        //
+        //     boolean isSent = fcmNotificationService.sendToUser(
+        //             user,
+        //             new FcmNotificationRequest(
+        //                     title,
+        //                     body,
+        //                     "schedule_detail",
+        //                     notification.getDeeplink(),
+        //                     notification.getNotificationId()
+        //             )
+        //     );
+        //
+        //     if (isSent) {
+        //         userNotificationService.markAsSent(notification);
+        //     }
+        //
+        //     alarm.markAsSent();
+        //     schedulesAlarmRepository.save(alarm);
+        // }
     }
 }
