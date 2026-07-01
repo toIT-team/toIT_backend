@@ -72,7 +72,7 @@ class TextsServiceTest {
         Long usersId = 1L;
         String keyword = "없는키워드";
 
-        when(textsRepository.searchByTextContent(usersId, EntityStatus.ACTIVE, keyword))
+        when(textsRepository.searchTextsWithFolder(usersId, EntityStatus.ACTIVE, keyword))
                 .thenReturn(List.of());
 
         List<TextsGetInFoldersResponse> result = textsService.searchTexts(usersId, keyword);

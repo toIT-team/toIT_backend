@@ -39,6 +39,28 @@ public class AttachMentsFilesGetInFoldersResponse {
         this.dayOfWeek = toDayOfWeekKorean(attachments.getCreatedAt());
     }
 
+    /**
+     * DTO 프로젝션 전용 생성자 (N+1 제거 - JOIN으로 보관함 이름까지 한 번에 조회)
+     * select 컬럼 순서/타입과 정확히 일치해야 함.
+     */
+    public AttachMentsFilesGetInFoldersResponse(
+            Long attachmentsId, Long foldersId, AttachMentsType attachmentsType,
+            String objectKey, String attachmentsExtension, Double attachmentsSize,
+            String fileName, LocalDateTime createdAt, String foldersName, String textContent) {
+        this.attachmentsId = attachmentsId;
+        this.foldersId = foldersId;
+        this.attachmentsType = attachmentsType;
+        this.objectKey = objectKey;
+        this.presignedUrl = null;                 // 서명은 목록에서 제거했으므로 null
+        this.attachmentsExtension = attachmentsExtension;
+        this.attachmentsSize = attachmentsSize;
+        this.fileName = fileName;
+        this.createdAt = createdAt;
+        this.foldersName = foldersName;
+        this.textContent = textContent;
+        this.dayOfWeek = toDayOfWeekKorean(createdAt);
+    }
+
     public AttachMentsFilesGetInFoldersResponse(AttachMents attachments, String foldersName, String signedUrl) {
         this.attachmentsId = attachments.getAttachmentsId();
         this.foldersId = attachments.getStorageId();
