@@ -38,7 +38,9 @@ out/
 
 *.properties
 .DS_Store
+# .env 및 환경별 .env.* 는 커밋 금지
 .env
+.env.*
 application-local.yml
 
 ### 로그 파일 ###
