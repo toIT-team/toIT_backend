@@ -43,6 +43,26 @@ public interface LinksRepository extends JpaRepository<Links, Long> {
             @Param("keyword") String keyword
     );
 
+    /**
+     * 링크 검색 - 보관함 이름까지 JOIN으로 한 번에 DTO 조회 (N+1 제거)
+     */
+    @Query("""
+        select new com.toit.items.links.dto.response.LinksGetInFoldersResponse(
+            l.linksId, l.storageId, l.linksName, l.linksUrl, l.linksThumbnail,
+            l.textContent, l.createdAt, f.name)
+        from Links l
+        join Folders f on f.foldersId = l.storageId
+        where l.users.usersId = :usersId
+          and l.status = :status
+          and lower(coalesce(l.linksName, '')) like lower(concat('%', :keyword, '%'))
+        order by l.createdAt desc
+    """)
+    List<com.toit.items.links.dto.response.LinksGetInFoldersResponse> searchLinksWithFolder(
+            @Param("usersId") Long usersId,
+            @Param("status") EntityStatus status,
+            @Param("keyword") String keyword
+    );
+
     long countByStorageIdAndStatus(Long storageId, EntityStatus status);
 
     List<Links> findByStorageIdAndStatus(Long storageId, EntityStatus status);

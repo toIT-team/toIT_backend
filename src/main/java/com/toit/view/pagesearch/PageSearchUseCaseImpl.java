@@ -15,6 +15,7 @@ import com.toit.view.pagesearch.dto.response.PageSearchResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +28,7 @@ public class PageSearchUseCaseImpl implements PageSearchUseCase {
     private final AttachMentsService attachMentsService;
 
     @Override
+    @Transactional(readOnly = true)
     public PageSearchResponse search(Long usersId, String keyword) {
         String k = keyword == null ? "" : keyword.trim();
         if (k.isEmpty()) {

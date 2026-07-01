@@ -40,6 +40,24 @@ public class LinksGetInFoldersResponse {
         this.dayOfWeek = toDayOfWeekKorean(links.getCreatedAt());
     }
 
+    /**
+     * DTO 프로젝션 전용 생성자 (N+1 제거 - JOIN으로 보관함 이름까지 한 번에 조회)
+     * select 컬럼 순서/타입과 정확히 일치해야 함.
+     */
+    public LinksGetInFoldersResponse(
+            Long linksId, Long foldersId, String linksName, String linksUrl,
+            String linksThumbnail, String textContent, LocalDateTime createdAt, String foldersName) {
+        this.linksId = linksId;
+        this.foldersId = foldersId;
+        this.linksName = linksName;
+        this.linksUrl = linksUrl;
+        this.linksThumbnail = linksThumbnail;
+        this.textContent = textContent;
+        this.createdAt = createdAt;
+        this.foldersName = foldersName;
+        this.dayOfWeek = toDayOfWeekKorean(createdAt);
+    }
+
     public LinksGetInFoldersResponse(Links links, String foldersName){
         this.linksId = links.getLinksId();
         this.foldersId = links.getStorageId();

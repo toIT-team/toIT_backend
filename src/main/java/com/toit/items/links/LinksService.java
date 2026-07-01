@@ -133,16 +133,8 @@ public class LinksService {
         if (k.isEmpty()) {
             return List.of();
         }
-        List<Links> links =
-                linksRepository.searchLinks(usersId, EntityStatus.ACTIVE, k);
-
-        List<LinksGetInFoldersResponse> responses = new ArrayList<>();
-
-        for (Links link : links) {
-            String foldersName = foldersService.findById(link.getStorageId()).getName();
-            responses.add(new LinksGetInFoldersResponse(link, foldersName));
-        }
-        return responses;
+        // [성능개선] N+1 제거 - 보관함 이름을 JOIN으로 한 번에 가져와 DTO로 직접 조회.
+        return linksRepository.searchLinksWithFolder(usersId, EntityStatus.ACTIVE, k);
     }
 
     public long countByFoldersId(Long foldersId) {

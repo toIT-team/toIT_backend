@@ -41,6 +41,11 @@ out/
 .env
 application-local.yml
 
+### 로그 파일 ###
+logs/
+*.log
+*.log.gz
+
 ### Firebase Key (보안) ###
 src/main/resources/firebase/firebase-key.json
 src/main/resources/firebase/firebase-testserver-key.json
