@@ -256,16 +256,9 @@ public class AttachMentsService {
         String k = keyword == null ? "" : keyword.trim();
         if (k.isEmpty()) return List.of();
 
-        List<AttachMents> files = attachMentsRepository.searchByTypeAndFileName(usersId, EntityStatus.ACTIVE, AttachMentsType.FILE, k);
-
-        List<AttachMentsFilesGetInFoldersResponse> res = new ArrayList<>(files.size());
-        for (AttachMents a : files) {
-            String foldersName = foldersService.findById(a.getStorageId()).getName();
-            // String signedUrl = cloudFrontSigner.generateSignedUrl(a.getObjectKey());
-            String signedUrl = s3Storage.presignGetUrl(a.getObjectKey(), java.time.Duration.ofDays(7));
-            res.add(new AttachMentsFilesGetInFoldersResponse(a, foldersName, signedUrl));
-        }
-        return res;
+        // [성능개선] N+1 제거 - 보관함 이름을 JOIN으로 한 번에 가져와 DTO로 직접 조회.
+        // (기존: 행마다 foldersService.findById 호출 = N+1, presigned URL은 목록에서 불필요해 제거)
+        return attachMentsRepository.searchFilesWithFolder(usersId, EntityStatus.ACTIVE, AttachMentsType.FILE, k);
     }
 
     /**

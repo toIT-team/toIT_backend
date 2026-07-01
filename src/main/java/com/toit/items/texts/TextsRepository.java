@@ -41,6 +41,25 @@ public interface TextsRepository extends JpaRepository<Texts, Long> {
             @Param("keyword") String keyword
     );
 
+    /**
+     * 텍스트 검색 - 보관함 이름까지 JOIN으로 한 번에 DTO 조회 (N+1 제거)
+     */
+    @Query("""
+        select new com.toit.items.texts.dto.response.TextsGetInFoldersResponse(
+            t.textsId, t.storageId, t.textContent, t.createdAt, f.name)
+        from Texts t
+        join Folders f on f.foldersId = t.storageId
+        where t.users.usersId = :usersId
+          and t.status = :status
+          and lower(t.textContent) like lower(concat('%', :keyword, '%'))
+        order by t.createdAt desc
+    """)
+    List<com.toit.items.texts.dto.response.TextsGetInFoldersResponse> searchTextsWithFolder(
+            @Param("usersId") Long usersId,
+            @Param("status") EntityStatus status,
+            @Param("keyword") String keyword
+    );
+
     long countByStorageIdAndStatus(Long storageId, EntityStatus status);
 
     List<Texts> findByStorageIdAndStatus(Long storageId, EntityStatus status);

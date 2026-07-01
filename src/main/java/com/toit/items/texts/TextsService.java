@@ -110,16 +110,8 @@ public class TextsService {
         if (k.isEmpty()) {
             return List.of();
         }
-        List<Texts> texts =
-                textsRepository.searchByTextContent(usersId, EntityStatus.ACTIVE, k);
-
-        List<TextsGetInFoldersResponse> responses = new ArrayList<>();
-
-        for (Texts text : texts) {
-            String foldersName = foldersService.findById(text.getStorageId()).getName();
-            responses.add(new TextsGetInFoldersResponse(text, foldersName));
-        }
-        return responses;
+        // [성능개선] N+1 제거 - 보관함 이름을 JOIN으로 한 번에 가져와 DTO로 직접 조회.
+        return textsRepository.searchTextsWithFolder(usersId, EntityStatus.ACTIVE, k);
     }
 
     public long countByFoldersId(Long foldersId) {

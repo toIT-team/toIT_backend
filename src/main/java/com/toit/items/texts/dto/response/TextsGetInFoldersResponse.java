@@ -47,6 +47,20 @@ public class TextsGetInFoldersResponse {
         this.dayOfWeek = toDayOfWeekKorean(createdAt);
     }
 
+    /**
+     * DTO 프로젝션 전용 생성자 (N+1 제거 - JOIN으로 보관함 이름까지 한 번에 조회)
+     * select 컬럼 순서/타입과 정확히 일치해야 함.
+     */
+    public TextsGetInFoldersResponse(
+            Long textsId, Long foldersId, String textContent, LocalDateTime createdAt, String foldersName){
+        this.textsId = textsId;
+        this.foldersId = foldersId;
+        this.textContent = textContent;
+        this.createdAt = createdAt;
+        this.foldersName = foldersName;
+        this.dayOfWeek = toDayOfWeekKorean(createdAt);
+    }
+
     private static String toDayOfWeekKorean(LocalDateTime createdAt) {
         if (createdAt == null) return null;
         ZonedDateTime seoulTime = createdAt.atZone(ZoneId.of("Asia/Seoul"));

@@ -84,8 +84,8 @@ public class FoldersService {
         Users users = usersService.findById(usersId);
 
         long folderCount = foldersRepository.countByUsers_UsersIdAndStatus(usersId, EntityStatus.ACTIVE);
-        if (folderCount >= 20) {
-            throw new IllegalStateException("보관함은 최대 20개까지 생성할 수 있습니다.");
+        if (folderCount >= 100) {
+            throw new IllegalStateException("보관함은 최대 100개까지 생성할 수 있습니다.");
         }
 
         Folders folders = new Folders(

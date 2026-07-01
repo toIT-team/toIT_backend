@@ -83,4 +83,27 @@ public interface AttachMentsRepository extends JpaRepository<AttachMents, Long> 
             @Param("type") AttachMentsType type,
             @Param("keyword") String keyword
     );
+
+    /**
+     * fileName 검색 - 보관함 이름까지 JOIN으로 한 번에 DTO 조회 (N+1 제거)
+     */
+    @Query("""
+        select new com.toit.items.attachments.dto.response.AttachMentsFilesGetInFoldersResponse(
+            a.attachmentsId, a.storageId, a.attachmentsType, a.objectKey,
+            a.attachmentsExtension, a.attachmentsSize, a.fileName, a.createdAt,
+            f.name, a.textContent)
+        from AttachMents a
+        join Folders f on f.foldersId = a.storageId
+        where a.users.usersId = :usersId
+          and a.status = :status
+          and a.attachmentsType = :type
+          and lower(coalesce(a.fileName, '')) like lower(concat('%', :keyword, '%'))
+        order by a.createdAt desc
+    """)
+    List<com.toit.items.attachments.dto.response.AttachMentsFilesGetInFoldersResponse> searchFilesWithFolder(
+            @Param("usersId") Long usersId,
+            @Param("status") EntityStatus status,
+            @Param("type") AttachMentsType type,
+            @Param("keyword") String keyword
+    );
 }
