@@ -1,5 +1,6 @@
 package com.toit.auth;
 
+import com.toit.auth.dto.response.AuthMeResponse;
 import com.toit.auth.jwt.JwtProvider;
 import com.toit.auth.token.RefreshToken;
 import com.toit.auth.token.RefreshTokenRepository;
@@ -92,6 +93,17 @@ public class AuthService {
 
         user.restore();
         return issueLoginTokens(user);
+    }
+
+    /**
+     * 현재 로그인한 사용자의 정보와 온보딩(닉네임 설정) 필요 여부를 반환합니다.
+     * 액세스 토큰이 유효하면 호출되며, needsNickname 으로 신규 사용자 여부를 판별합니다.
+     */
+    @Transactional(readOnly = true)
+    public AuthMeResponse getMe(Long usersId) {
+        Users user = usersRepository.findById(usersId)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 사용자입니다."));
+        return AuthMeResponse.from(user);
     }
 
     public Map<String, String> issueCloudFrontCookies(Long usersId) {

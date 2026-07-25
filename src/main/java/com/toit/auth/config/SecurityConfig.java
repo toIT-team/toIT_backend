@@ -61,9 +61,11 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/me").authenticated()
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/api/admin/login",
+                                "/api/admin/logout",
                                 "/api/admin/register",
                                 "/oauth2/**",
                                 "/login/oauth2/**",
