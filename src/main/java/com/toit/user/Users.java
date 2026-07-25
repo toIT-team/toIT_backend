@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 
 @Entity
@@ -47,6 +48,15 @@ public class Users {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UsersRole role = UsersRole.ROLE_USER;
+
+    /**
+     * 사용자가 직접 닉네임을 설정했는지 여부.
+     * 신규 소셜 로그인 시 false(자동 생성 이름) → 닉네임 지정 후 true.
+     * 클라이언트는 이 값이 false면 닉네임 입력 화면으로 분기한다.
+     */
+    @ColumnDefault("false")
+    @Column(nullable = false)
+    private boolean nicknameSet = false;
 
     /***
      * 사용자의 프로필 이미지
@@ -134,6 +144,7 @@ public class Users {
 
     public void updateName(String name) {
         this.name = name;
+        this.nicknameSet = true;
     }
 
     public void restore() {

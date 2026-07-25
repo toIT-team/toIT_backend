@@ -2,6 +2,7 @@ package com.toit.auth;
 
 
 import com.toit.auth.dto.request.RefreshTokenRequest;
+import com.toit.auth.dto.response.AuthMeResponse;
 import com.toit.auth.dto.response.RefreshTokenResponse;
 import com.toit.common.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,6 +33,15 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.FOUND)
                 .header(HttpHeaders.LOCATION, "/oauth2/authorization/apple")
                 .build();
+    }
+
+    @Operation(summary = "로그인 상태/온보딩 확인",
+            description = "액세스 토큰으로 현재 로그인한 사용자 정보를 조회합니다. "
+                    + "needsNickname 이 true 이면 닉네임 미설정 신규 사용자이므로 닉네임 입력 화면으로 분기합니다.")
+    @GetMapping("/me")
+    public ResponseEntity<AuthMeResponse> me() {
+        Long usersId = SecurityUtil.getCurrentUserId();
+        return ResponseEntity.ok(authService.getMe(usersId));
     }
 
     /**
