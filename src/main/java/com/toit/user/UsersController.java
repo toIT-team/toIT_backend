@@ -8,6 +8,7 @@ import com.toit.usersinfo.UsersSettingsService;
 import com.toit.usersinfo.dto.request.UsersSettingsUpdateRequest;
 import com.toit.usersinfo.dto.response.UsersSettingsUpdateResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,10 +36,10 @@ public class UsersController {
 
     @Operation(
             summary = "이름 수정 API",
-            description = "사용자의 이름을 수정합니다."
+            description = "사용자의 이름(닉네임)을 수정합니다. 닉네임은 최대 10자까지 입력할 수 있습니다."
     )
     @PatchMapping("/name")
-    public ResponseEntity<Void> updateName(@RequestBody UsersUpdateNameRequest request) {
+    public ResponseEntity<Void> updateName(@Valid @RequestBody UsersUpdateNameRequest request) {
         Long usersId = SecurityUtil.getCurrentUserId();
         usersService.updateName(usersId, request);
         return ResponseEntity.noContent().build();
