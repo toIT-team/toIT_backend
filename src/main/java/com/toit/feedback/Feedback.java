@@ -23,8 +23,11 @@ public class Feedback {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    /**
+     * 작성자. 회원 탈퇴 시 피드백 내용은 운영 자료로 남기고 작성자만 null로 익명화하므로 nullable 이다.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "users_id", nullable = false)
+    @JoinColumn(name = "users_id")
     private Users users;
 
     @Column(nullable = false, updatable = false)

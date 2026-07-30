@@ -2,6 +2,9 @@ package com.toit.fcm;
 
 import com.toit.user.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,4 +20,11 @@ public interface FcmTokenRepository extends JpaRepository<FcmToken, Long> {
 //
 //    // (선택) 특정 사용자의 모든 토큰 삭제 (로그아웃/회원탈퇴 시)
 //    void deleteAllByUser(Users user);
+
+    /**
+     * 회원 탈퇴용
+     */
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("delete from FcmToken f where f.users.usersId = :usersId")
+    void deleteAllByUsersId(@Param("usersId") Long usersId);
 }

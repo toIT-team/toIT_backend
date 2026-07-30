@@ -35,7 +35,7 @@ public class UsersController {
 
     @Operation(
             summary = "이름 수정 API",
-            description = "사용자의 이름을 수정합니다."
+            description = "사용자의 이름(닉네임)을 수정합니다. 닉네임은 최대 10자까지 입력할 수 있습니다."
     )
     @PatchMapping("/name")
     public ResponseEntity<Void> updateName(@RequestBody UsersUpdateNameRequest request) {
@@ -46,7 +46,8 @@ public class UsersController {
 
     @Operation(
             summary = "회원 탈퇴 API",
-            description = "회원 탈퇴 시 계정이 비활성화됩니다. (Soft Delete)"
+            description = "회원 탈퇴 시 계정과 관련된 모든 데이터(보관함, 자료, 일정, 업로드 파일)가 완전히 삭제됩니다. "
+                    + "복구할 수 없으며, 문의 내역은 작성자를 익명화한 채 운영 자료로 보관됩니다."
     )
     @DeleteMapping("/withdraw")
     public ResponseEntity<Void> withdraw() {

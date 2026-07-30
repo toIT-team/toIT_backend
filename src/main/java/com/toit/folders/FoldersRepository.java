@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -47,4 +48,11 @@ public interface FoldersRepository extends  JpaRepository<Folders, Long>{
             @Param("status") EntityStatus status,
             @Param("keyword") String keyword
     );
+
+    /**
+     * 회원 탈퇴용 - schedules.folders_id FK 때문에 일정 삭제 이후에 호출해야 한다.
+     */
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("delete from Folders f where f.users.usersId = :usersId")
+    void deleteAllByUsersId(@Param("usersId") Long usersId);
 }

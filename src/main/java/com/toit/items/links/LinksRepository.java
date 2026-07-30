@@ -3,6 +3,7 @@ package com.toit.items.links;
 import com.toit.common.enums.EntityStatus;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -66,4 +67,11 @@ public interface LinksRepository extends JpaRepository<Links, Long> {
     long countByStorageIdAndStatus(Long storageId, EntityStatus status);
 
     List<Links> findByStorageIdAndStatus(Long storageId, EntityStatus status);
+
+    /**
+     * 회원 탈퇴용
+     */
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("delete from Links l where l.users.usersId = :usersId")
+    void deleteAllByUsersId(@Param("usersId") Long usersId);
 }

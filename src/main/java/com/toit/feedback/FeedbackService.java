@@ -67,7 +67,8 @@ public class FeedbackService {
         Feedback feedback = feedbackRepository.findById(feedbackId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 피드백입니다."));
 
-        if (!feedback.getUsers().getUsersId().equals(usersId)) {
+        // 탈퇴 회원의 피드백은 작성자가 익명화(null)되어 남으므로 누구도 삭제할 수 없다.
+        if (feedback.getUsers() == null || !feedback.getUsers().getUsersId().equals(usersId)) {
             throw new IllegalArgumentException("본인의 문의만 삭제할 수 있습니다.");
         }
 
