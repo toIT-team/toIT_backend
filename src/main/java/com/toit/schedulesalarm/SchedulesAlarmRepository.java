@@ -2,6 +2,7 @@ package com.toit.schedulesalarm;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -39,5 +40,13 @@ public interface SchedulesAlarmRepository  extends JpaRepository<SchedulesAlarm,
             "ORDER BY a.alarmDateTime DESC" //알림시간을 기준으로 정렬
         )
     List<SchedulesAlarm> findSentAlarmsByUsersId(@Param("usersId") Long usersId);
+
+    /**
+     * 회원 탈퇴용 - schedules_id FK 때문에 일정보다 먼저 삭제해야 한다.
+     */
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("delete from SchedulesAlarm a "
+            + "where a.schedules in (select s from Schedules s where s.users.usersId = :usersId)")
+    void deleteAllByUsersId(@Param("usersId") Long usersId);
 
 }

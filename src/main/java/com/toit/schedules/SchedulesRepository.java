@@ -3,6 +3,7 @@ package com.toit.schedules;
 
 import com.toit.common.enums.EntityStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -70,4 +71,11 @@ public interface SchedulesRepository extends JpaRepository<Schedules, Long> {
             @Param("keyword") String keyword
     );
 
+
+    /**
+     * 회원 탈퇴용 - schedules_alarm 삭제 이후, folders 삭제 이전에 호출해야 한다.
+     */
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("delete from Schedules s where s.users.usersId = :usersId")
+    void deleteAllByUsersId(@Param("usersId") Long usersId);
 }

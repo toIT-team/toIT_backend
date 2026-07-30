@@ -12,6 +12,7 @@ import com.toit.exception.items.texts.TextsNotFoundException;
 import com.toit.exception.schedules.ScheduleTimeRangeException;
 import com.toit.exception.schedules.SchedulesNotFoundException;
 import com.toit.exception.schedulesalarm.SchedulesAlarmNotFoundException;
+import com.toit.exception.users.InvalidUsersNameException;
 import com.toit.exception.users.UsersNotFoundException;
 import com.toit.exception.userssettings.UsersSettingsNotFoundException;
 import org.slf4j.Logger;
@@ -19,6 +20,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -50,6 +53,16 @@ public class GlobalExceptionHandler {
         log.warn("[404] UsersNotFoundException: {}", ex.getMessage());
         ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Users -> 400, 닉네임이 비어있거나 최대 길이를 초과함
+     */
+    @ExceptionHandler(InvalidUsersNameException.class)
+    public ResponseEntity<ErrorResponse> InvalidUsersNameException(InvalidUsersNameException ex) {
+        log.warn("[400] InvalidUsersNameException: {}", ex.getMessage());
+        ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -192,6 +205,20 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
         log.warn("[400] IllegalArgumentException: {}", ex.getMessage());
         ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * @Valid 검증 실패 (닉네임 길이 초과 등) -> 400
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        String message = ex.getBindingResult().getFieldErrors().stream()
+                .findFirst()
+                .map(FieldError::getDefaultMessage)
+                .orElse("잘못된 요청입니다.");
+        log.warn("[400] MethodArgumentNotValidException: {}", message);
+        ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), message);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 

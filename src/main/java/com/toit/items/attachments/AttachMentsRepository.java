@@ -5,6 +5,7 @@ import com.toit.common.enums.EntityStatus;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -106,4 +107,11 @@ public interface AttachMentsRepository extends JpaRepository<AttachMents, Long> 
             @Param("type") AttachMentsType type,
             @Param("keyword") String keyword
     );
+
+    /**
+     * 회원 탈퇴용 - S3 객체는 prefix 단위로 별도 삭제한다.
+     */
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("delete from AttachMents a where a.users.usersId = :usersId")
+    void deleteAllByUsersId(@Param("usersId") Long usersId);
 }
