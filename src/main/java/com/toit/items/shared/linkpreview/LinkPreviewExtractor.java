@@ -1,19 +1,27 @@
 package com.toit.items.shared.linkpreview;
 
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.net.URI;
-import java.time.Duration;
+import java.util.List;
 
+/**
+ * 링크 프리뷰 추출 진입점.
+ *
+ * <p>URL을 정규화한 뒤 {@link LinkPreviewStrategy} 구현체들을 우선순위대로 시도한다.
+ * 앞선 전략이 실패하면 다음 전략으로 넘어가고, 최종적으로 {@link JsoupLinkPreviewStrategy}가
+ * 폴백으로 동작한다. 모두 실패해도 예외를 던지지 않고 빈 프리뷰를 돌려주므로
+ * 링크 저장 자체는 항상 성공한다.
+ */
+@Slf4j
 @Component
+@RequiredArgsConstructor
 public class LinkPreviewExtractor {
 
-    // 운영에서 적당한 값으로 조절 (너무 길면 요청 스레드 묶임)
-    private static final int TIMEOUT_MS = (int) Duration.ofSeconds(5).toMillis();
+    /** Spring이 {@code @Order} 순으로 정렬해 주입한다. */
+    private final List<LinkPreviewStrategy> strategies;
 
     public LinkPreview extract(String rawUrl) {
         if (rawUrl == null || rawUrl.isBlank()) {
@@ -22,70 +30,19 @@ public class LinkPreviewExtractor {
 
         String normalizedUrl = normalizeUrl(rawUrl);
 
-        try {
-            Document doc = Jsoup.connect(normalizedUrl)
-                    .userAgent("Mozilla/5.0 (compatible; toITLinkBot/1.0)")
-                    .referrer("https://www.google.com")
-                    .timeout(TIMEOUT_MS)
-                    .followRedirects(true)
-                    .get();
-
-            // 최종 URL(리다이렉트 반영)
-            String resolvedUrl = doc.location();
-
-            String title = firstNonBlank(
-                    meta(doc, "property", "og:title"),
-                    meta(doc, "name", "twitter:title"),
-                    doc.title()
-            );
-
-            String description = firstNonBlank(
-                    meta(doc, "property", "og:description"),
-                    meta(doc, "name", "twitter:description"),
-                    meta(doc, "name", "description")
-            );
-
-            String thumbnail = firstNonBlank(
-                    meta(doc, "property", "og:image"),
-                    meta(doc, "name", "twitter:image"),
-                    meta(doc, "property", "twitter:image")
-            );
-
-            // og:image가 상대경로인 경우 absUrl로 보정
-            if (thumbnail != null && !thumbnail.isBlank()) {
-                // meta로 가져온 thumbnail은 content 문자열이라 absUrl이 안 먹음 → 직접 보정
-                thumbnail = absolutize(resolvedUrl, thumbnail);
-            } else {
-                // fallback: favicon
-                Element icon = doc.selectFirst("link[rel~=(?i)^(shortcut )?icon$]");
-                if (icon != null) {
-                    String faviconHref = icon.hasAttr("href") ? icon.attr("href") : "";
-                    String abs = icon.absUrl("href");
-                    thumbnail = (abs != null && !abs.isBlank())
-                            ? abs
-                            : absolutize(resolvedUrl, faviconHref);
-                }
+        for (LinkPreviewStrategy strategy : strategies) {
+            if (!strategy.supports(normalizedUrl)) {
+                continue;
             }
-            return new LinkPreview(resolvedUrl, title, sanitize(description), sanitize(thumbnail));
-
-        } catch (Exception e) {
-            // 운영에서는 logger로 남기고, 서비스는 fallback
-            return empty(normalizedUrl);
+            LinkPreview preview = strategy.extract(normalizedUrl);
+            if (preview != null) {
+                return preview;
+            }
+            // 실패하면 다음 전략으로 폴백한다
         }
-    }
 
-    private static String meta(Document doc, String attrKey, String attrValue) {
-        Element el = doc.selectFirst("meta[" + attrKey + "=" + attrValue + "]");
-        if (el == null) return null;
-        String content = el.attr("content");
-        return (content == null || content.isBlank()) ? null : content.trim();
-    }
-
-    private static String firstNonBlank(String... values) {
-        for (String v : values) {
-            if (v != null && !v.isBlank()) return v.trim();
-        }
-        return null;
+        log.warn("링크 프리뷰 없음(모든 전략 실패) url={}", normalizedUrl);
+        return empty(normalizedUrl);
     }
 
     private static LinkPreview empty(String url) {
@@ -99,27 +56,5 @@ public class LinkPreviewExtractor {
             u = "https://" + u;
         }
         return u;
-    }
-
-    private static String absolutize(String baseUrl, String maybeRelative) {
-        if (maybeRelative == null || maybeRelative.isBlank()) return null;
-        String v = maybeRelative.trim();
-        // 이미 절대경로면 그대로
-        if (v.startsWith("http://") || v.startsWith("https://")) return v;
-
-        try {
-            URI base = URI.create(baseUrl);
-            return base.resolve(v).toString();
-        } catch (Exception e) {
-            return v; // 최후의 fallback
-        }
-    }
-
-    private static String sanitize(String s) {
-        if (s == null) return null;
-        // 길이 제한(DB 컬럼 길이에 맞춰 조절)
-        s = s.strip();
-        if (s.isBlank()) return null;
-        return s.length() > 500 ? s.substring(0, 500) : s;
     }
 }
