@@ -75,27 +75,6 @@ public class AuthService {
     }
 
     /**
-     * 복구 토큰을 검증하고 계정을 복구한 뒤 로그인 토큰을 발급합니다.
-     */
-    @Transactional
-    public LoginTokens restoreAccount(String restoreToken) {
-        if (!jwtProvider.validateToken(restoreToken) || !jwtProvider.isRestoreToken(restoreToken)) {
-            throw new RuntimeException("유효하지 않은 복구 토큰입니다.");
-        }
-
-        Long usersId = Long.parseLong(jwtProvider.getUserId(restoreToken));
-        Users user = usersRepository.findById(usersId)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 사용자입니다."));
-
-        if (!user.isDeleted()) {
-            throw new RuntimeException("탈퇴한 계정이 아닙니다.");
-        }
-
-        user.restore();
-        return issueLoginTokens(user);
-    }
-
-    /**
      * 현재 로그인한 사용자의 정보와 온보딩(닉네임 설정) 필요 여부를 반환합니다.
      * 액세스 토큰이 유효하면 호출되며, needsNickname 으로 신규 사용자 여부를 판별합니다.
      */
