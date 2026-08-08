@@ -14,12 +14,22 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.Getter;
 
 @Entity
-@Table(name = "attachments")
+@Table(
+        name = "attachments",
+        indexes = {
+                // 통합검색: 사용자별 활성 항목만 훑도록 스캔 대상 축소
+                @Index(
+                        name = "idx_attachments_users_status",
+                        columnList = "users_id, status, attachments_type"
+                )
+        }
+)
 @Getter
 public class AttachMents extends ItemsBase {
     @Id

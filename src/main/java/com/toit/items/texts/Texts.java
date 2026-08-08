@@ -9,12 +9,19 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.Getter;
 
 @Entity
-@Table(name = "texts")
+@Table(
+        name = "texts",
+        indexes = {
+                // 통합검색: 사용자별 활성 항목만 훑도록 스캔 대상 축소
+                @Index(name = "idx_texts_users_status", columnList = "users_id, status")
+        }
+)
 @Getter
 public class Texts extends ItemsBase {
     @Id

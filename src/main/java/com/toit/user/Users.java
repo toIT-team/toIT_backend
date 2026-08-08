@@ -100,13 +100,6 @@ public class Users {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    /**
-     * 사용자 서비스 상태가 DELETED 되면 업데이트
-     */
-    @Column(nullable = true)
-    private LocalDateTime deletedAt;
-
-
     public Users(String email, String name, String bio, String imageUrl, AuthProvider authProvider, String providerUsersId, LocalDateTime createdAt) {
         this.email = email;
         this.name = name;
@@ -138,22 +131,8 @@ public class Users {
         return email == null || email.isBlank();
     }
 
-    public boolean isDeleted() {
-        return status == EntityStatus.DELETED;
-    }
-
     public void updateName(String name) {
         this.name = name;
         this.nicknameSet = true;
-    }
-
-    public void restore() {
-        this.status = EntityStatus.ACTIVE;
-        this.deletedAt = null;
-    }
-
-    public void softDelete() {
-        this.status = EntityStatus.DELETED;
-        this.deletedAt = LocalDateTime.now();
     }
 }

@@ -56,12 +56,6 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "탈퇴 계정 복구", description = "복구 토큰으로 탈퇴한 계정을 복구하고 로그인 토큰을 발급합니다.")
-    @PostMapping("/restore")
-    public ResponseEntity<AuthService.LoginTokens> restoreAccount(@RequestParam String restoreToken) {
-        return ResponseEntity.ok(authService.restoreAccount(restoreToken));
-    }
-
     @Operation(summary = "CloudFront Signed Cookie 발급 및 재발급", description = "이미지 조회에 필요한 CloudFront Signed Cookie를 발급합니다. 만료 시 동일 API로 재발급합니다.")
     @GetMapping("/cloudfront/cookie")
     public ResponseEntity<Map<String, String>> issueCloudFrontCookie() {
