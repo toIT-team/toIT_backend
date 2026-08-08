@@ -13,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,7 +26,13 @@ import org.springframework.data.annotation.CreatedDate;
 
 
 @Entity
-@Table(name = "folders")
+@Table(
+        name = "folders",
+        indexes = {
+                // 통합검색: 사용자별 활성 항목만 훑도록 스캔 대상 축소
+                @Index(name = "idx_folders_users_status", columnList = "users_id, status")
+        }
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Folders {

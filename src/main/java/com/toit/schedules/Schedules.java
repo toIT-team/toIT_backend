@@ -15,6 +15,13 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
 @Entity
+@Table(
+        name = "schedules",
+        indexes = {
+                // 통합검색: 사용자별 활성 항목만 훑도록 스캔 대상 축소
+                @Index(name = "idx_schedules_users_status", columnList = "users_id, status")
+        }
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Schedules {

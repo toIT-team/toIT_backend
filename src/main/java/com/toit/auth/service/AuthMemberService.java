@@ -120,9 +120,6 @@ public class AuthMemberService extends DefaultOAuth2UserService {
     }
 
     private SocialLoginResult resolveLoginResult(Users user) {
-        if (user.isDeleted()) {
-            return SocialLoginResult.DELETED_USER;
-        }
         if (user.requiresAdditionalInfo()) {
             return SocialLoginResult.NEEDS_ADDITIONAL_INFO;
         }
