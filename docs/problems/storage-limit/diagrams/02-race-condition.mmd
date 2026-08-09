@@ -1,0 +1,26 @@
+sequenceDiagram
+    participant A as 앱 (폰)
+    participant B as 앱 (태블릿)
+    participant 서버
+    participant DB
+
+    Note over DB: 사용량 4.985GB / 한도 5GB<br/>남은 용량 15MB
+
+    A->>서버: 업로드 URL 요청 (사진 3장 = 15MB)
+    B->>서버: 업로드 URL 요청 (사진 3장 = 15MB)
+
+    rect rgba(255, 80, 80, 0.18)
+        Note over 서버,DB: 문제 구간 — 합산과 예약 저장 사이가 비어 있다
+        서버->>DB: [A] 사용량 합산
+        DB-->>서버: 4.985GB
+        서버->>DB: [B] 사용량 합산
+        DB-->>서버: 4.985GB
+        Note over 서버: 아직 아무도 예약을 저장하지 않았다<br/>A: 4.985 + 0.015 = 5.0GB → 통과<br/>B: 4.985 + 0.015 = 5.0GB → 통과
+        서버->>DB: [A] 예약 저장 (PENDING 15MB)
+        서버->>DB: [B] 예약 저장 (PENDING 15MB)
+    end
+
+    Note over DB: 5.015GB — 15MB 초과
+
+    서버-->>A: URL 발급
+    서버-->>B: URL 발급

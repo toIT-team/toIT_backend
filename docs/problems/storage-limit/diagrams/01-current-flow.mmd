@@ -1,0 +1,27 @@
+sequenceDiagram
+    participant 앱
+    participant 서버
+    participant S3
+    participant DB
+
+    앱->>서버: ① 업로드 URL 요청 (파일명, 크기)
+    서버->>DB: 사용량 합산 (예약분 포함)
+    DB-->>서버: 4.985GB
+    Note over 서버: 5GB 넘나? → 통과
+    서버->>DB: 예약 행 저장 (PENDING)
+    Note over DB: 이 시점부터 용량을 차지한다<br/>사용자에게는 보이지 않는다
+    서버-->>앱: 업로드 URL (5분 유효)
+
+    앱->>S3: ② 파일 직접 업로드
+
+    앱->>서버: ③ 저장 확정
+    서버->>DB: PENDING → CONFIRMED 전환
+    서버-->>앱: 완료
+
+    rect rgba(200, 200, 200, 0.15)
+        Note over 서버,DB: ③이 오지 않은 경우 (앱 종료·네트워크 단절)
+        서버->>DB: ④ 만료된 PENDING 조회 (5분 주기)
+        서버->>S3: 객체 삭제
+        서버->>DB: 예약 행 삭제
+        Note over DB: 용량 반환
+    end

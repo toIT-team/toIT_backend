@@ -47,6 +47,18 @@ public class UsersService {
                 .orElseThrow(() -> new UsersNotFoundException(usersId + "은 존재하지 않는 사용자입니다."));
     }
 
+    /**
+     * 사용자 행을 잠그고 조회한다. 같은 사용자의 동시 요청을 직렬화해야 할 때 쓴다.
+     *
+     * <p>주의 — <b>반드시 트랜잭션의 첫 DB 접근이어야 한다.</b>
+     * REPEATABLE READ 에서 스냅샷은 첫 일반 조회 시점에 확정되므로,
+     * 앞에 일반 조회가 하나라도 있으면 락을 잡아도 그 뒤의 집계가 낡은 값을 읽는다.
+     */
+    public Users findByIdForUpdate(Long usersId) {
+        return usersRepository.findByIdForUpdate(usersId)
+                .orElseThrow(() -> new UsersNotFoundException(usersId + "은 존재하지 않는 사용자입니다."));
+    }
+
     public void updateName(Long usersId, UsersUpdateNameRequest request) {
         String name = validateName(request.getName());
 
