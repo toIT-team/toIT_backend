@@ -2,6 +2,8 @@ package com.toit.items.attachments;
 
 import com.toit.common.enums.AttachMentsType;
 import com.toit.common.enums.EntityStatus;
+import com.toit.common.enums.UploadStatus;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,6 +22,7 @@ public interface AttachMentsRepository extends JpaRepository<AttachMents, Long> 
           and i.attachmentsType = :attachMentsType
           and i.storageId = :foldersId
           and i.status = :status
+          and i.uploadStatus = com.toit.common.enums.UploadStatus.CONFIRMED
         order by i.createdAt desc
     """)
     List<AttachMents> findAttachMentsInFolders(
@@ -29,16 +32,77 @@ public interface AttachMentsRepository extends JpaRepository<AttachMents, Long> 
             @Param("status") EntityStatus status
     );
 
-    Optional<AttachMents> findByAttachmentsIdAndUsers_UsersId(Long attachmentsId, Long usersId);
+    /**
+     * 단건 조회(삭제·이동·이름 수정). 확정된 첨부만 대상으로 한다.
+     */
+    @Query("""
+        select a
+        from AttachMents a
+        where a.attachmentsId = :attachmentsId
+          and a.users.usersId = :usersId
+          and a.uploadStatus = com.toit.common.enums.UploadStatus.CONFIRMED
+    """)
+    Optional<AttachMents> findByAttachmentsIdAndUsers_UsersId(
+            @Param("attachmentsId") Long attachmentsId,
+            @Param("usersId") Long usersId
+    );
 
+    /**
+     * confirm 시 전환할 예약 행 조회.
+     *
+     * <p>presign 이 폴더 수만큼 예약을 남기므로 결과가 여러 건일 수 있다.
+     * 소유자를 함께 조건에 넣어 다른 사용자의 objectKey 로 확정하는 것을 막는다.
+     */
+    List<AttachMents> findByObjectKeyAndUsers_UsersIdAndUploadStatus(
+            String objectKey, Long usersId, UploadStatus uploadStatus
+    );
+
+    /**
+     * 만료된 업로드 예약 조회. 정리 배치가 S3 객체와 함께 회수한다.
+     *
+     * <p>회수하지 않으면 confirm 이 오지 않은 예약이 계속 쌓여 사용자 용량을 영구히 점유한다.
+     */
+    List<AttachMents> findByUploadStatusAndReservedAtBefore(
+            UploadStatus uploadStatus, LocalDateTime reservedAt
+    );
+
+    /**
+     * 같은 S3 객체를 참조하는 행 수. 0이면 S3 객체를 지운다.
+     *
+     * <p><b>PENDING 을 제외하면 안 된다.</b> 업로드 예약 중인 객체를 지워버리게 된다.
+     */
     long countByObjectKeyAndStatus(String objectKey, EntityStatus status);
 
-    long countByStorageIdAndStatus(Long storageId, EntityStatus status);
+    /**
+     * 보관함 내 첨부 개수. 사용자에게 보이는 값이므로 확정분만 센다.
+     */
+    @Query("""
+        select count(a)
+        from AttachMents a
+        where a.storageId = :storageId
+          and a.status = :status
+          and a.uploadStatus = com.toit.common.enums.UploadStatus.CONFIRMED
+    """)
+    long countByStorageIdAndStatus(
+            @Param("storageId") Long storageId,
+            @Param("status") EntityStatus status
+    );
 
     List<AttachMents> findByStatus(EntityStatus status);
 
+    /**
+     * 보관함 삭제 시 하위 첨부 정리용.
+     *
+     * <p><b>PENDING 을 제외하면 안 된다.</b> 예약 행이 남아 용량을 영구히 점유한다.
+     */
     List<AttachMents> findByStorageIdAndStatus(Long storageId, EntityStatus status);
 
+    /**
+     * 사용자 스토리지 사용량 합산.
+     *
+     * <p><b>PENDING 을 제외하면 안 된다.</b> presign 예약이 용량을 선점하는 것이 이 설계의 핵심이라,
+     * 여기서 예약분을 빼면 presign 을 반복 호출하는 것만으로 제한을 넘길 수 있다.
+     */
     @Query("""
         select
             coalesce(sum(case when a.attachmentsType = 'IMAGE' then a.attachmentsSize else 0 end), 0),
@@ -75,6 +139,7 @@ public interface AttachMentsRepository extends JpaRepository<AttachMents, Long> 
         where a.users.usersId = :usersId
           and a.status = :status
           and a.attachmentsType = :type
+          and a.uploadStatus = com.toit.common.enums.UploadStatus.CONFIRMED
           and lower(coalesce(a.fileName, '')) like lower(concat('%', :keyword, '%'))
         order by a.createdAt desc
     """)
@@ -98,6 +163,7 @@ public interface AttachMentsRepository extends JpaRepository<AttachMents, Long> 
         where a.users.usersId = :usersId
           and a.status = :status
           and a.attachmentsType = :type
+          and a.uploadStatus = com.toit.common.enums.UploadStatus.CONFIRMED
           and lower(coalesce(a.fileName, '')) like lower(concat('%', :keyword, '%'))
         order by a.createdAt desc
     """)
