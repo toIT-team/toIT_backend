@@ -11,6 +11,7 @@ import com.toit.common.S3.attachmentvaildator.AttachmentValidator;
 import com.toit.common.S3.config.S3Config;
 import com.toit.common.enums.AttachMentsType;
 import com.toit.common.enums.EntityStatus;
+import com.toit.common.enums.UploadStatus;
 import com.toit.exception.items.attachments.AttachmentsNotFoundException;
 import com.toit.folders.FoldersService;
 import com.toit.items.attachments.dto.request.AttachMentsConfirmRequest;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
@@ -283,6 +285,7 @@ public class AttachMentsService {
      * Flutter S3 직접 업로드용 presigned PUT URL 발급 (단건/다건 통합)
      * IMAGE: 최대 3개, FILE: 1개
      */
+    @Transactional
     public List<AttachMentsPresignResponse> presignUpload(Long usersId, AttachMentsPresignRequest request) {
         if (request.getFiles() == null || request.getFiles().isEmpty()) {
             throw new IllegalArgumentException("업로드할 파일이 없습니다.");
@@ -294,7 +297,10 @@ public class AttachMentsService {
             throw new IllegalArgumentException("파일은 1개씩 업로드할 수 있습니다.");
         }
 
-        usersService.findById(usersId);
+        // 사용자 행을 잠가 같은 사용자의 동시 요청을 직렬화한다.
+        // 뒤에 온 요청은 앞선 요청이 커밋한 뒤에야 사용량을 읽으므로 한도를 넘길 수 없다.
+        // 이 조회보다 앞에 일반 조회를 넣지 말 것 — 스냅샷이 먼저 확정되어 락이 무력해진다.
+        Users users = usersService.findByIdForUpdate(usersId);
         for (Long folderId : request.getFoldersIdList()) {
             foldersService.findByFoldersIdAndUsers_UsersId(usersId, folderId);
         }
@@ -315,6 +321,8 @@ public class AttachMentsService {
 
         List<AttachMentsPresignResponse> responses = new ArrayList<>();
         long s3PresignMs = 0;
+        long reserveMs = 0;
+        int reservedCount = 0;
         for (var file : request.getFiles()) {
             String ext = extractExtension(file.getFileName());
 
@@ -325,11 +333,31 @@ public class AttachMentsService {
             String uploadUrl = s3Storage.presignPutUrl(objectKey, file.getContentType(),
                     java.time.Duration.ofSeconds(PRESIGN_TTL_SECONDS));
             s3PresignMs += System.currentTimeMillis() - t;
+
+            // 용량을 선점하기 위해 예약 행을 남긴다.
+            // confirm 이 폴더마다 행을 만들므로 예약도 같은 개수로 맞춰야 용량 계산이 일치한다.
+            long r = System.currentTimeMillis();
+            for (Long folderId : request.getFoldersIdList()) {
+                attachMentsRepository.save(AttachMents.reserve(
+                        users,
+                        folderId,
+                        request.getAttachmentsType(),
+                        objectKey,
+                        file.getContentType(),
+                        (double) file.getFileSize(),
+                        file.getFileName(),
+                        request.getTextContent()
+                ));
+                reservedCount++;
+            }
+            reserveMs += System.currentTimeMillis() - r;
+
             responses.add(new AttachMentsPresignResponse(objectKey, uploadUrl, PRESIGN_TTL_SECONDS));
         }
 
-        log.info("[presign] total={}ms | s3PresignGenerate={}ms | fileCount={}",
-                System.currentTimeMillis() - totalStart, s3PresignMs, request.getFiles().size());
+        log.info("[presign] total={}ms | s3PresignGenerate={}ms | reserve={}ms | fileCount={} | reservedRows={}",
+                System.currentTimeMillis() - totalStart, s3PresignMs, reserveMs,
+                request.getFiles().size(), reservedCount);
 
         return responses;
     }
@@ -337,49 +365,44 @@ public class AttachMentsService {
     /**
      * Flutter S3 직접 업로드 완료 후 DB 저장
      */
+    @Transactional
     public List<AttachMentsConfirmResponse> confirmUpload(Long usersId, AttachMentsConfirmRequest request) {
         if (request.getFiles() == null || request.getFiles().isEmpty()) {
             throw new IllegalArgumentException("확인할 파일이 없습니다.");
         }
 
-        Users users = usersService.findById(usersId);
-        for (Long folderId : request.getFoldersIdList()) {
-            foldersService.findByFoldersIdAndUsers_UsersId(usersId, folderId);
-        }
+        usersService.findById(usersId);
 
         long totalStart = System.currentTimeMillis();
-        long dbSaveMs = 0;
+        long dbMs = 0;
 
         List<AttachMentsConfirmResponse> responses = new ArrayList<>();
 
         for (var file : request.getFiles()) {
-            // DB의 presignedUrl 컬럼은 더 이상 사용하지 않는다(Flutter가 objectKey로 URL 생성).
-            // 컬럼이 nullable=false이므로 빈 값으로 채운다.
-            for (Long folderId : request.getFoldersIdList()) {
-                AttachMents entity;
-                if (request.getAttachmentsType() == AttachMentsType.IMAGE) {
-                    entity = AttachMents.createImagesInFolders(
-                            users, folderId, file.getObjectKey(), "", file.getContentType(),
-                            file.getFileSize(), file.getFileName(), request.getTextContent(),
-                            file.getWidth(), file.getHeight()
-                    );
-                } else {
-                    entity = AttachMents.createFilesInFolders(
-                            users, folderId, file.getObjectKey(), "", file.getContentType(),
-                            file.getFileSize(), file.getFileName(), request.getTextContent()
-                    );
-                }
+            long t = System.currentTimeMillis();
+            // presign 이 만들어 둔 예약 행을 찾아 상태만 전환한다.
+            // 폴더는 예약 시점에 정해지므로 confirm 의 foldersIdList 는 사용하지 않는다.
+            List<AttachMents> reserved = attachMentsRepository
+                    .findByObjectKeyAndUsers_UsersIdAndUploadStatus(
+                            file.getObjectKey(), usersId, UploadStatus.PENDING);
+            dbMs += System.currentTimeMillis() - t;
 
-                long t = System.currentTimeMillis();
-                AttachMents saved = attachMentsRepository.save(entity);
-                dbSaveMs += System.currentTimeMillis() - t;
+            if (reserved.isEmpty()) {
+                // presign 없이 호출됐거나, 예약이 만료되어 정리 배치가 회수한 경우
+                throw new IllegalStateException(
+                        "업로드 예약을 찾을 수 없습니다. 다시 시도해 주세요. objectKey=" + file.getObjectKey());
+            }
 
-                responses.add(new AttachMentsConfirmResponse(saved));
+            for (AttachMents attachments : reserved) {
+                attachments.confirm();
+                // presign 이후 사용자가 메모를 수정했을 수 있어 확정 시점 값으로 갱신
+                attachments.updateTextContent(request.getTextContent());
+                responses.add(new AttachMentsConfirmResponse(attachments));
             }
         }
 
-        log.info("[confirm] total={}ms | dbSave={}ms | fileCount={}",
-                System.currentTimeMillis() - totalStart, dbSaveMs, request.getFiles().size());
+        log.info("[confirm] total={}ms | db={}ms | fileCount={} | confirmedRows={}",
+                System.currentTimeMillis() - totalStart, dbMs, request.getFiles().size(), responses.size());
 
         return responses;
     }
