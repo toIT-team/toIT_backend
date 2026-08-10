@@ -16,7 +16,7 @@
 > Rate Limiter(`limit_req`, burst=20 + nodelay)를 거치면 요청이 잘려
 > 애플리케이션 레벨 동시성을 측정할 수 없다. 서버 내부에서 앱 포트로 직접 보냈다.
 
-스크립트: `scripts/loadtest/storage-limit/`
+스크립트: `docs/problems/storage-limit/scripts/`
 
 ---
 
