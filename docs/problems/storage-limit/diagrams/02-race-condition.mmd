@@ -1,13 +1,13 @@
 sequenceDiagram
-    participant A as 앱 (폰)
-    participant B as 앱 (태블릿)
+    participant A as 앱 · 재시도<br/>(백그라운드 큐)
+    participant B as 앱 · 새 저장<br/>(사용자)
     participant 서버
     participant DB
 
     Note over DB: 사용량 4.985GB / 한도 5GB<br/>남은 용량 15MB
 
-    A->>서버: 업로드 URL 요청 (사진 3장 = 15MB)
-    B->>서버: 업로드 URL 요청 (사진 3장 = 15MB)
+    A->>서버: 업로드 URL 요청 (실패했던 사진 3장 = 15MB)
+    B->>서버: 업로드 URL 요청 (새로 담은 사진 3장 = 15MB)
 
     rect rgba(255, 80, 80, 0.18)
         Note over 서버,DB: 문제 구간 — 합산과 예약 저장 사이가 비어 있다
