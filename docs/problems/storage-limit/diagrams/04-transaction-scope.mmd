@@ -1,0 +1,12 @@
+flowchart TB
+    subgraph TA["트랜잭션 A · 요청 A"]
+        direction LR
+        A1["합산"] --> A2["검증"] --> A3["저장"] --> A4["커밋"]
+    end
+
+    subgraph TB["트랜잭션 B · 요청 B"]
+        direction LR
+        B1["합산"] --> B2["검증"] --> B3["저장"] --> B4["커밋"]
+    end
+
+    TA -. "별개의 트랜잭션<br/>서로가 무엇을 하는지 모른다" .- TB

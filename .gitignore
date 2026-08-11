@@ -60,6 +60,7 @@ src/main/resources/cloudfront/cloudfront_private_key_testserver.pem
 # 발급된 JWT 목록. 만료 전까지 그대로 사용 가능하므로 커밋 금지
 **/tokens.json
 # JWT_SECRET 원문이 하드코딩되어 있음. 시크릿을 환경변수로 분리하면 이 줄을 지울 것
+**/gen_token.py
 **/gen_tokens.py
 # MYSQL_ROOT_PW 기본값이 하드코딩되어 있음. 환경변수로 분리하면 이 줄을 지울 것
 **/run_curve.sh
