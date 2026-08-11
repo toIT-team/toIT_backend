@@ -1,0 +1,23 @@
+sequenceDiagram
+    participant A as 요청 A
+    participant DB as DB
+    participant B as 요청 B
+
+    A->>DB: BEGIN · 사용자 조회
+    Note left of DB: A의 기억 확정
+    B->>DB: BEGIN · 사용자 조회
+    Note right of DB: B의 기억 확정<br/>이 시점 A는 아직 커밋 전
+
+    A->>DB: 사용량 합산
+    DB-->>A: 4.985GB
+    B->>DB: 사용량 합산
+    DB-->>B: 4.985GB
+
+    Note over A,B: 락이 없어 B는 한순간도 멈추지 않는다
+
+    A->>DB: 검증 통과 → 15MB 예약 저장
+    B->>DB: 검증 통과 → 15MB 예약 저장
+    A->>DB: COMMIT
+    B->>DB: COMMIT
+
+    Note over DB: 5.015GB — 15MB 초과

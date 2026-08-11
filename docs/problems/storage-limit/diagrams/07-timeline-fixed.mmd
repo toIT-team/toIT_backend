@@ -1,0 +1,25 @@
+sequenceDiagram
+    participant A as 요청 A
+    participant DB as DB
+    participant B as 요청 B
+
+    A->>DB: BEGIN · 사용자 조회 FOR UPDATE
+    Note left of DB: A가 사용자 행을 잠근다
+    B->>DB: BEGIN · 사용자 조회 FOR UPDATE
+    Note right of DB: A의 락에 막혀 대기<br/>아직 아무것도 읽지 못한다
+
+    A->>DB: 사용량 합산
+    DB-->>A: 4.985GB
+    A->>DB: 검증 통과 → 15MB 예약 저장
+    A->>DB: COMMIT
+    Note left of DB: 락 해제 · 사용량 5.0GB 확정
+
+    DB-->>B: 락 획득
+    Note right of DB: B의 기억은 여기서 확정된다<br/>A가 커밋한 뒤
+
+    B->>DB: 사용량 합산
+    DB-->>B: 5.0GB
+    Note right of DB: 5.0 + 0.015 > 5GB → 거부
+    B->>DB: ROLLBACK
+
+    Note over DB: 5.0GB — 초과 없음

@@ -1,0 +1,29 @@
+flowchart LR
+    subgraph GOOD["고친 순서"]
+        direction LR
+        G1["사용자 조회 FOR UPDATE<br/>락 획득 · 앞 요청을 기다림"]
+        G2["폴더 조회 · 일반 SELECT"]
+        G3["여기서 기억이 확정된다<br/>앞 요청이 커밋된 뒤"]
+        G4["사용량 합산<br/>최신 값을 읽는다"]
+        G5["5.0GB → 정확히 거부"]
+        G1 --> G2 --> G3 --> G4 --> G5
+    end
+
+    subgraph BAD["기존 순서"]
+        direction LR
+        B1["폴더 조회 · 일반 SELECT"]
+        B2["여기서 기억이 확정된다<br/>앞 요청은 아직 커밋 전"]
+        B3["사용자 조회 FOR UPDATE<br/>락 획득 · 앞 요청을 기다림"]
+        B4["사용량 합산<br/>확정된 옛 기억으로 읽는다"]
+        B5["4.985GB → 통과 → 초과"]
+        B1 --> B2 --> B3 --> B4 --> B5
+    end
+
+    classDef bad fill:#ffe6e6,stroke:#e06666,color:#333
+    classDef good fill:#e6f4ea,stroke:#5aa469,color:#333
+    classDef key fill:#fff3c4,stroke:#d4a017,color:#333
+
+    class B1,B3,B4 bad
+    class G1,G2,G4 good
+    class B2,B5 bad
+    class G3,G5 good
