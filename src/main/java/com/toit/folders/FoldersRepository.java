@@ -35,12 +35,14 @@ public interface FoldersRepository extends  JpaRepository<Folders, Long>{
             Pageable pageable
     );
 
+    // MySQL utf8mb4_0900_ai_ci 는 비교 시 대소문자를 구분하지 않으므로 lower() 를 쓰지 않는다.
+    // 콜레이션을 _bin/_cs 로 바꾸면 이 검색이 대소문자를 가리게 된다.
     @Query("""
         select f
         from Folders f
         where f.users.usersId = :usersId
           and f.status = :status
-          and lower(f.name) like lower(concat('%', :keyword, '%'))
+          and f.name like concat('%', :keyword, '%')
         order by f.createdAt desc
     """)
     List<Folders> searchByName(

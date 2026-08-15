@@ -133,6 +133,8 @@ public interface AttachMentsRepository extends JpaRepository<AttachMents, Long> 
     /**
      * fileName으로 검색
      */
+    // MySQL utf8mb4_0900_ai_ci 는 비교 시 대소문자를 구분하지 않으므로 lower() 를 쓰지 않는다.
+    // 콜레이션을 _bin/_cs 로 바꾸면 이 검색이 대소문자를 가리게 된다.
     @Query("""
         select a
         from AttachMents a
@@ -140,7 +142,7 @@ public interface AttachMentsRepository extends JpaRepository<AttachMents, Long> 
           and a.status = :status
           and a.attachmentsType = :type
           and a.uploadStatus = com.toit.common.enums.UploadStatus.CONFIRMED
-          and lower(coalesce(a.fileName, '')) like lower(concat('%', :keyword, '%'))
+          and coalesce(a.fileName, '') like concat('%', :keyword, '%')
         order by a.createdAt desc
     """)
     List<AttachMents> searchByTypeAndFileName(
@@ -164,7 +166,7 @@ public interface AttachMentsRepository extends JpaRepository<AttachMents, Long> 
           and a.status = :status
           and a.attachmentsType = :type
           and a.uploadStatus = com.toit.common.enums.UploadStatus.CONFIRMED
-          and lower(coalesce(a.fileName, '')) like lower(concat('%', :keyword, '%'))
+          and coalesce(a.fileName, '') like concat('%', :keyword, '%')
         order by a.createdAt desc
     """)
     List<com.toit.items.attachments.dto.response.AttachMentsFilesGetInFoldersResponse> searchFilesWithFolder(

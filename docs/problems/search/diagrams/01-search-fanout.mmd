@@ -1,0 +1,21 @@
+flowchart LR
+    REQ["검색 요청<br/>keyword = 검색어"]
+
+    F["보관함 folders<br/>name"]
+    S["일정 schedules<br/>title"]
+    L["링크 links<br/>links_name"]
+    T["메모 texts<br/>text_content"]
+    A["파일 attachments<br/>file_name"]
+
+    RES["응답<br/>5종 결과를 합쳐 반환"]
+
+    REQ --> F --> RES
+    REQ --> S --> RES
+    REQ --> L --> RES
+    REQ --> T --> RES
+    REQ --> A --> RES
+
+    classDef scan fill:#ffe6e6,stroke:#e06666,color:#333
+    classDef edge fill:#eef2ff,stroke:#7b86d6,color:#333
+    class F,S,L,T,A scan
+    class REQ,RES edge
