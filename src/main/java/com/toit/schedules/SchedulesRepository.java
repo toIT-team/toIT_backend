@@ -57,12 +57,14 @@ public interface SchedulesRepository extends JpaRepository<Schedules, Long> {
     /**
      * 스케줄 제목으로 검색
      */
+    // MySQL utf8mb4_0900_ai_ci 는 비교 시 대소문자를 구분하지 않으므로 lower() 를 쓰지 않는다.
+    // 콜레이션을 _bin/_cs 로 바꾸면 이 검색이 대소문자를 가리게 된다.
     @Query("""
         select s
         from Schedules s
         where s.users.usersId = :usersId
           and s.status = :status
-          and lower(s.title) like lower(concat('%', :keyword, '%'))
+          and s.title like concat('%', :keyword, '%')
         order by s.startDate desc, s.createdAt desc
     """)
     List<Schedules> searchByTitle(

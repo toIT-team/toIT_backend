@@ -30,12 +30,14 @@ public interface LinksRepository extends JpaRepository<Links, Long> {
     /**
      *
      */
+    // MySQL utf8mb4_0900_ai_ci 는 비교 시 대소문자를 구분하지 않으므로 lower() 를 쓰지 않는다.
+    // 콜레이션을 _bin/_cs 로 바꾸면 이 검색이 대소문자를 가리게 된다.
     @Query("""
         select l
         from Links l
         where l.users.usersId = :usersId
           and l.status = :status
-          and lower(coalesce(l.linksName, '')) like lower(concat('%', :keyword, '%'))
+          and coalesce(l.linksName, '') like concat('%', :keyword, '%')
         order by l.createdAt desc
     """)
     List<Links> searchLinks(
@@ -55,7 +57,7 @@ public interface LinksRepository extends JpaRepository<Links, Long> {
         join Folders f on f.foldersId = l.storageId
         where l.users.usersId = :usersId
           and l.status = :status
-          and lower(coalesce(l.linksName, '')) like lower(concat('%', :keyword, '%'))
+          and coalesce(l.linksName, '') like concat('%', :keyword, '%')
         order by l.createdAt desc
     """)
     List<com.toit.items.links.dto.response.LinksGetInFoldersResponse> searchLinksWithFolder(
