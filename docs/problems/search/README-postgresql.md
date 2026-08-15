@@ -170,7 +170,7 @@ ANALYZE ...;
 
 개선 전과 **똑같은 부하 테스트(동시 10 → 30명)** 를 다시 돌렸습니다.
 
-![인덱스 적용 후 SLI](images/01-sli-after-index.png)
+![인덱스 적용 후 SLI](images/postgresql/01-sli-after-index.png)
 
 | 지표 | 개선 전 | 개선 후 |
 | --- | --- | --- |
@@ -191,7 +191,7 @@ SQL 은 EXPLAIN 상 0.68ms 로 빠른데 CPU 가 높다는 건 비용이 SQL 이
 있다는 뜻이라고 생각했습니다. 그래서 부하 중 async-profiler 로 CPU 플레임그래프를 떠서 직접
 확인했습니다.
 
-![CPU 플레임그래프](images/02-flamegraph-self-time.png)
+![CPU 플레임그래프](images/postgresql/02-flamegraph-self-time.png)
 
 각 프레임이 자기 코드에서 직접 쓴 시간(self-time)을 패키지별로 묶어봤습니다.
 
@@ -251,7 +251,7 @@ GC — 15.6%
 
 요청을 1.1만 건 더 처리했고 p95 는 절반 가까이, 처리량은 약 1.4배가 됐습니다.
 
-![S3 서명 제거 후 SLI](images/03-sli-after-s3-removed.png)
+![S3 서명 제거 후 SLI](images/postgresql/03-sli-after-s3-removed.png)
 
 부하 구간 내내 **100% 라인에 붙어** 있었지만, 정확히는 **딱 100% 가 아니었습니다.**
 21:35 한 지점에서 **99.983% 까지 미세하게 내려왔습니다.**
@@ -353,7 +353,7 @@ k6 로 VU(동시 사용자)를 1분 간격으로 30 → 50 → 70 → 90 → 110
 
 **부하 단계별 SLI (700ms 내 응답 비율)**
 
-![부하 단계별 SLI](images/04-sli-capacity-limit.png)
+![부하 단계별 SLI](images/postgresql/04-sli-capacity-limit.png)
 
 | 동시 VU | SLI | 상태 |
 | --- | --- | --- |

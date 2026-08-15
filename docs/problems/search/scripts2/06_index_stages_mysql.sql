@@ -45,7 +45,7 @@ SELECT COUNT(*) AS remaining FROM information_schema.STATISTICS
 WHERE TABLE_SCHEMA = DATABASE() AND INDEX_NAME LIKE 'idx_%_users_status%';
 
 EXPLAIN SELECT * FROM schedules
-WHERE users_id = 34 AND status = 'ACTIVE' AND lower(title) LIKE '%zzsearch%';
+WHERE users_id = 100 AND status = 'ACTIVE' AND title LIKE '%zzsearch%';
 
 -- 인덱스 크기 (트레이드오프 비교용 — 이 상태의 값을 적어둘 것)
 SELECT TABLE_NAME,
@@ -72,7 +72,7 @@ ALTER TABLE attachments ADD INDEX idx_attachments_users_status (users_id, status
 ANALYZE TABLE folders, schedules, links, texts, attachments;
 
 EXPLAIN SELECT * FROM schedules
-WHERE users_id = 34 AND status = 'ACTIVE' AND lower(title) LIKE '%zzsearch%';
+WHERE users_id = 100 AND status = 'ACTIVE' AND title LIKE '%zzsearch%';
 
 SELECT TABLE_NAME,
        ROUND(DATA_LENGTH  / 1024 / 1024, 2) AS data_mb,
@@ -111,10 +111,10 @@ ALTER TABLE attachments ADD  INDEX idx_attachments_users_status (users_id, statu
 ANALYZE TABLE folders, schedules, links, texts, attachments;
 
 EXPLAIN SELECT * FROM schedules
-WHERE users_id = 34 AND status = 'ACTIVE' AND lower(title) LIKE '%zzsearch%';
+WHERE users_id = 100 AND status = 'ACTIVE' AND title LIKE '%zzsearch%';
 
 EXPLAIN ANALYZE SELECT * FROM schedules
-WHERE users_id = 34 AND status = 'ACTIVE' AND lower(title) LIKE '%zzsearch%';
+WHERE users_id = 100 AND status = 'ACTIVE' AND title LIKE '%zzsearch%';
 
 SELECT TABLE_NAME,
        ROUND(DATA_LENGTH  / 1024 / 1024, 2) AS data_mb,

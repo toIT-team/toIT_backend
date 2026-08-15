@@ -88,7 +88,7 @@ SHOW INDEX FROM schedules;
 -- WHERE TABLE_SCHEMA = DATABASE() AND INDEX_NAME LIKE 'idx_%_users_status%';
 --
 -- EXPLAIN SELECT * FROM schedules
--- WHERE users_id = 34 AND status = 'ACTIVE' AND lower(title) LIKE '%zzsearch%';
+-- WHERE users_id = 34 AND status = 'ACTIVE' AND title LIKE '%zzsearch%';
 
 
 -- ═════════════════════════════════════════════════════════════
