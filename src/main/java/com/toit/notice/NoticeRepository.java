@@ -1,4 +1,4 @@
-package com.toit.noitce;
+package com.toit.notice;
 
 
 import org.springframework.data.domain.Page;

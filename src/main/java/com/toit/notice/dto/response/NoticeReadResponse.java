@@ -1,6 +1,6 @@
-package com.toit.noitce.dto.response;
+package com.toit.notice.dto.response;
 
-import com.toit.noitce.Notice;
+import com.toit.notice.Notice;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

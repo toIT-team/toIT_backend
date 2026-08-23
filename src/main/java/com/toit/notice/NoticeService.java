@@ -1,16 +1,16 @@
-package com.toit.noitce;
+package com.toit.notice;
 
 import com.toit.admin.Admin;
 import com.toit.admin.AdminRepository;
 import com.toit.exception.schedules.SchedulesNotFoundException;
 import com.toit.fcm.notification.FcmNotificationService;
 import com.toit.fcm.request.FcmNotificationRequest;
-import com.toit.noitce.dto.request.NoticeCreateRequest;
-import com.toit.noitce.dto.request.NoticeDeleteRequest;
-import com.toit.noitce.dto.request.NoticeUpdateRequest;
-import com.toit.noitce.dto.response.NoticeDeleteResponse;
-import com.toit.noitce.dto.response.NoticeReadResponse;
-import com.toit.noitce.dto.response.NoticeUpdateResponse;
+import com.toit.notice.dto.request.NoticeCreateRequest;
+import com.toit.notice.dto.request.NoticeDeleteRequest;
+import com.toit.notice.dto.request.NoticeUpdateRequest;
+import com.toit.notice.dto.response.NoticeDeleteResponse;
+import com.toit.notice.dto.response.NoticeReadResponse;
+import com.toit.notice.dto.response.NoticeUpdateResponse;
 import com.toit.notification.NotificationType;
 import com.toit.notification.UserNotification;
 import com.toit.notification.UserNotificationService;

@@ -1,4 +1,4 @@
-package com.toit.noitce.dto.response;
+package com.toit.notice.dto.response;
 
 
 import lombok.AccessLevel;

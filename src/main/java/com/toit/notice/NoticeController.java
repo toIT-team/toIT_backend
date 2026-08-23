@@ -1,7 +1,7 @@
-package com.toit.noitce;
+package com.toit.notice;
 
 
-import com.toit.noitce.dto.response.NoticeReadResponse;
+import com.toit.notice.dto.response.NoticeReadResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

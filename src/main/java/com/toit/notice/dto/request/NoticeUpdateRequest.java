@@ -1,4 +1,4 @@
-package com.toit.noitce.dto.request;
+package com.toit.notice.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
