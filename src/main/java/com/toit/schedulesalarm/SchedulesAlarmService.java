@@ -27,21 +27,19 @@ public class SchedulesAlarmService {
 
     }
 
-    // [FCM 비활성화] 일정 알림 조회 비활성화
-    // public SchedulesAlarm getAlarmBySchedulesId(Long schedulesId) {
-    //     return schedulesAlarmRepository.findBySchedules_SchedulesId(schedulesId)
-    //             .orElse(null);
-    // }
+    public SchedulesAlarm getAlarmBySchedulesId(Long schedulesId) {
+        return schedulesAlarmRepository.findBySchedules_SchedulesId(schedulesId)
+                .orElse(null);
+    }
 
 
-    // [FCM 비활성화] 푸시 알림 조회 비활성화
-    // /***
-    //  * 푸시 알림 조회
-    //  */
-    // public List<SchedulesAlarm> getAlarmList(Long usersId) {
-    //     usersService.findById(usersId); // 유저 조회 (예외 case 고려)
-    //
-    //     return schedulesAlarmRepository.findSentAlarmsByUsersId(usersId);
-    // }
+    /***
+     * 푸시 알림 조회
+     */
+    public List<SchedulesAlarm> getAlarmList(Long usersId) {
+        usersService.findById(usersId); // 유저 조회 (예외 case 고려)
+
+        return schedulesAlarmRepository.findSentAlarmsByUsersId(usersId);
+    }
 
 }

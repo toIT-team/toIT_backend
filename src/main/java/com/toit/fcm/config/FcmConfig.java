@@ -16,14 +16,13 @@ public class FcmConfig {
     @Value("${fcm.key.path}")
     private Resource fcmKeyResource;
 
-    // [FCM 비활성화] Firebase 초기화 중단 (키 파일 없어도 서버 기동)
-    // @PostConstruct
+    @PostConstruct
     public void init() throws IOException {
-        // if (FirebaseApp.getApps().isEmpty()) {
-        //     FirebaseOptions options = FirebaseOptions.builder()
-        //             .setCredentials(GoogleCredentials.fromStream(fcmKeyResource.getInputStream()))
-        //             .build();
-        //     FirebaseApp.initializeApp(options);
-        // }
+        if (FirebaseApp.getApps().isEmpty()) {
+            FirebaseOptions options = FirebaseOptions.builder()
+                    .setCredentials(GoogleCredentials.fromStream(fcmKeyResource.getInputStream()))
+                    .build();
+            FirebaseApp.initializeApp(options);
+        }
     }
 }

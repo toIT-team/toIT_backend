@@ -51,19 +51,18 @@ public class SchedulesUpdateRequest {
     /** 메모 */
     private String memo;
 
-    // [FCM 비활성화] 일정 알림 설정 필드 중단
-    // /** 알림 설정 여부 (true: 켬, false: 끔) */
-    // private Boolean alarmState;
-    //
-    // /** 몇 분 전 알림인지 (예: 5, 10, 0) - alarmState가 true일 때만 값 존재 */
-    // private Long alarmOffsetMinutes;
+    /** 알림 설정 여부 (true: 켬, false: 끔) */
+    private Boolean alarmState;
+
+    /** 몇 분 전 알림인지 (예: 5, 10, 0) - alarmState가 true일 때만 값 존재 */
+    private Long alarmOffsetMinutes;
 
 
 
     public SchedulesUpdateRequest(Long schedulesId, String title, String appColor,
                                   Long foldersId, Boolean timeSetting, LocalDate startDate,
                                   LocalDate endDate, LocalTime startTime, LocalTime endTime,
-                                  String memo /* [FCM 비활성화] , Boolean alarmState , Long alarmOffsetMinutes */) {
+                                  String memo, Boolean alarmState, Long alarmOffsetMinutes) {
         this.schedulesId = schedulesId;
         this.title = title;
         this.appColor = appColor;
@@ -74,9 +73,8 @@ public class SchedulesUpdateRequest {
         this.startTime = startTime;
         this.endTime = endTime;
         this.memo = memo;
-        // [FCM 비활성화] 알림 필드 할당 중단
-        // this.alarmState = alarmState;
-        // this.alarmOffsetMinutes = alarmOffsetMinutes;
+        this.alarmState = alarmState;
+        this.alarmOffsetMinutes = alarmOffsetMinutes;
     }
 
 }

@@ -22,19 +22,18 @@ public class FcmTokenController {
 
     private final FcmTokenService fcmTokenService ;
 
-    // [FCM 비활성화] 토큰 등록/삭제 API 비활성화 (라우팅 제거)
-    // @Operation(
-    //         summary = "FcmToken 생성 ",
-    //         description = "Token 생성은 POST입니다."
-    // )
-    // @PostMapping()
-    // @FcmApiDocs
-    // public ResponseEntity<FcmCreateResponse> createFcmToken(
-    //         @RequestBody @Valid FcmCreateRequest request
-    // ){
-    //     Long usersId = SecurityUtil.getCurrentUserId();
-    //     return ResponseEntity.ok(fcmTokenService.createFcmToken(usersId, request));
-    // }
+    @Operation(
+            summary = "FcmToken 생성 ",
+            description = "Token 생성은 POST입니다."
+    )
+    @PostMapping()
+    @FcmApiDocs
+    public ResponseEntity<FcmCreateResponse> createFcmToken(
+            @RequestBody @Valid FcmCreateRequest request
+    ){
+        Long usersId = SecurityUtil.getCurrentUserId();
+        return ResponseEntity.ok(fcmTokenService.createFcmToken(usersId, request));
+    }
 
     // @Operation(
     //         summary = "FcmToken 삭제",
