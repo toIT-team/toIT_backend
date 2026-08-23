@@ -3,8 +3,8 @@ package com.toit.schedules;
 
 
 import com.toit.common.enums.EntityStatus;
-import com.toit.exception.schedules.ScheduleTimeRangeException;
-import com.toit.exception.schedules.SchedulesNotFoundException;
+import com.toit.schedules.exception.ScheduleTimeRangeException;
+import com.toit.schedules.exception.SchedulesNotFoundException;
 import com.toit.folders.Folders;
 import com.toit.folders.FoldersService;
 import com.toit.schedules.dto.request.SchedulesDeleteRequest;

@@ -1,7 +1,7 @@
 package com.toit.folders;
 
 import com.toit.common.enums.EntityStatus;
-import com.toit.exception.folders.FoldersNotFoundException;
+import com.toit.folders.exception.FoldersNotFoundException;
 import com.toit.folders.dto.response.FoldersCreateResponse;
 import com.toit.folders.dto.response.FoldersDeleteResponse;
 import com.toit.folders.dto.response.FoldersFavoriteResponse;

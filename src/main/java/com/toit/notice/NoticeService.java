@@ -2,7 +2,7 @@ package com.toit.notice;
 
 import com.toit.admin.Admin;
 import com.toit.admin.AdminRepository;
-import com.toit.exception.schedules.SchedulesNotFoundException;
+import com.toit.schedules.exception.SchedulesNotFoundException;
 import com.toit.fcm.notification.FcmNotificationService;
 import com.toit.fcm.request.FcmNotificationRequest;
 import com.toit.notice.dto.request.NoticeCreateRequest;

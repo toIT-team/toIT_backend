@@ -1,7 +1,7 @@
 package com.toit.schedulesalarm;
 
 
-import com.toit.exception.schedules.SchedulesNotFoundException;
+import com.toit.schedules.exception.SchedulesNotFoundException;
 import com.toit.user.UsersService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

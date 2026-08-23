@@ -12,7 +12,7 @@ import com.toit.common.S3.config.S3Config;
 import com.toit.common.enums.AttachMentsType;
 import com.toit.common.enums.EntityStatus;
 import com.toit.common.enums.UploadStatus;
-import com.toit.exception.items.attachments.AttachmentsNotFoundException;
+import com.toit.items.attachments.exception.AttachmentsNotFoundException;
 import com.toit.folders.FoldersService;
 import com.toit.items.attachments.dto.request.AttachMentsConfirmRequest;
 import com.toit.items.attachments.dto.request.AttachMentsPresignRequest;

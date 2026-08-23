@@ -2,7 +2,7 @@ package com.toit.common.S3.attachmentprocessor;
 
 import com.toit.common.S3.config.S3Config;
 import com.toit.common.enums.AttachMentsType;
-import com.toit.exception.items.attachments.AttachmentReadException;
+import com.toit.items.attachments.exception.AttachmentReadException;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

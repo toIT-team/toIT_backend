@@ -11,7 +11,7 @@ import com.toit.items.texts.TextsRepository;
 import com.toit.notification.UserNotificationRepository;
 import com.toit.schedules.SchedulesRepository;
 import com.toit.schedulesalarm.SchedulesAlarmRepository;
-import com.toit.usersinfo.UsersSettingsRepository;
+import com.toit.user.settings.UsersSettingsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

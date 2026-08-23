@@ -7,7 +7,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.toit.exception.users.UsersNotFoundException;
+import com.toit.user.exception.UsersNotFoundException;
 import com.toit.folders.FoldersService;
 import com.toit.folders.dto.response.FoldersItemResponse;
 import com.toit.items.attachments.AttachMentsService;

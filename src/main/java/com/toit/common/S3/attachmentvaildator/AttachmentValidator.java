@@ -1,8 +1,8 @@
 package com.toit.common.S3.attachmentvaildator;
 
-import com.toit.exception.items.attachments.FileSizeExceededException;
-import com.toit.exception.items.attachments.UnsupportedFileTypeException;
-import com.toit.exception.items.attachments.UnsupportedImageTypeException;
+import com.toit.items.attachments.exception.FileSizeExceededException;
+import com.toit.items.attachments.exception.UnsupportedFileTypeException;
+import com.toit.items.attachments.exception.UnsupportedImageTypeException;
 import java.util.List;
 import java.util.Set;
 import org.slf4j.Logger;
