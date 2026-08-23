@@ -1,15 +1,15 @@
 package com.toit.user;
 
 import com.toit.common.enums.AuthProvider;
-import com.toit.exception.users.InvalidUsersNameException;
-import com.toit.exception.users.UsersNotFoundException;
+import com.toit.user.exception.InvalidUsersNameException;
+import com.toit.user.exception.UsersNotFoundException;
 import com.toit.user.dto.request.UsersCreateRequest;
 import com.toit.user.dto.request.UsersUpdateNameRequest;
 import com.toit.user.dto.response.UsersCreateResponse;
 import java.time.LocalDateTime;
 
-import com.toit.usersinfo.UsersSettings;
-import com.toit.usersinfo.UsersSettingsRepository;
+import com.toit.user.settings.UsersSettings;
+import com.toit.user.settings.UsersSettingsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

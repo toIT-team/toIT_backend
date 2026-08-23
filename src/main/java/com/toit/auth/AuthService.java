@@ -5,7 +5,7 @@ import com.toit.auth.jwt.JwtProvider;
 import com.toit.auth.token.RefreshToken;
 import com.toit.auth.token.RefreshTokenRepository;
 import com.toit.common.cloudfront.CloudFrontSigner;
-import com.toit.exception.auth.InvalidTokenException;
+import com.toit.auth.exception.InvalidTokenException;
 import com.toit.user.Users;
 import com.toit.user.UsersRepository;
 import lombok.RequiredArgsConstructor;

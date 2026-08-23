@@ -10,7 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.toit.common.enums.AuthProvider;
-import com.toit.exception.users.UsersNotFoundException;
+import com.toit.user.exception.UsersNotFoundException;
 import com.toit.common.enums.EntityStatus;
 import com.toit.folders.dto.response.FoldersCreateResponse;
 import com.toit.folders.dto.response.FoldersDeleteResponse;

@@ -5,7 +5,7 @@ import com.toit.admin.dto.request.AdminMemberCreateRequest;
 import com.toit.admin.dto.request.AdminRegisterRequest;
 import com.toit.admin.dto.response.AdminMemberResponse;
 import com.toit.auth.jwt.JwtProvider;
-import com.toit.common.UsersRole.UsersRole;
+import com.toit.common.enums.UsersRole;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

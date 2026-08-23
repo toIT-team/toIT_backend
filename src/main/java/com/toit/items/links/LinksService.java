@@ -1,7 +1,7 @@
 package com.toit.items.links;
 
 import com.toit.common.enums.EntityStatus;
-import com.toit.exception.items.links.LinksNotFoundException;
+import com.toit.items.links.exception.LinksNotFoundException;
 import com.toit.items.links.dto.response.LinksCreateInFoldersResponse;
 import com.toit.items.links.dto.response.LinksDeleteInFoldersResponse;
 import com.toit.items.links.dto.response.LinksGetInFoldersResponse;

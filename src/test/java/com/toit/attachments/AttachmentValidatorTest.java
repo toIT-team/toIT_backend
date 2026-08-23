@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.toit.common.S3.attachmentvaildator.AttachmentValidator;
-import com.toit.exception.items.attachments.FileSizeExceededException;
+import com.toit.items.attachments.exception.FileSizeExceededException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;

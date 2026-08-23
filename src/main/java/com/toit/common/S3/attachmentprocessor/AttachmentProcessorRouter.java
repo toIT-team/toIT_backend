@@ -1,7 +1,7 @@
 package com.toit.common.S3.attachmentprocessor;
 
 import com.toit.common.enums.AttachMentsType;
-import com.toit.exception.items.attachments.AttachmentReadException;
+import com.toit.items.attachments.exception.AttachmentReadException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

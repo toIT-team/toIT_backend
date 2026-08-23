@@ -3,16 +3,16 @@ package com.toit.schedules;
 
 
 import com.toit.common.enums.EntityStatus;
-import com.toit.exception.schedules.ScheduleTimeRangeException;
-import com.toit.exception.schedules.SchedulesNotFoundException;
+import com.toit.schedules.exception.ScheduleTimeRangeException;
+import com.toit.schedules.exception.SchedulesNotFoundException;
 import com.toit.folders.Folders;
 import com.toit.folders.FoldersService;
 import com.toit.schedules.dto.request.SchedulesDeleteRequest;
 import com.toit.schedules.dto.request.SchedulesUpdateRequest;
 import com.toit.schedules.dto.response.*;
 import com.toit.schedules.dto.request.SchedulesCreateRequest;
-import com.toit.schedulesalarm.SchedulesAlarm;
-import com.toit.schedulesalarm.SchedulesAlarmRepository;
+import com.toit.notification.alarm.SchedulesAlarm;
+import com.toit.notification.alarm.SchedulesAlarmService;
 import com.toit.user.Users;
 import com.toit.user.UsersService;
 import java.time.LocalDate;
@@ -22,10 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -36,7 +34,7 @@ public class SchedulesService {
     private final SchedulesRepository schedulesRepository;
     private final UsersService usersService;
     private final FoldersService foldersService;
-    private final SchedulesAlarmRepository schedulesAlarmRepository;
+    private final SchedulesAlarmService schedulesAlarmService;
 
     /**
      * 일정 ID로 일정을 조회하고, 없으면 예외를 발생시킨다.
@@ -62,10 +60,9 @@ public class SchedulesService {
 
         Folders folders = schedules.getFolders();
 
-        SchedulesAlarm alarm = schedulesAlarmRepository.findBySchedules_SchedulesId(schedulesId)
-                .orElse(null);
+        SchedulesAlarm alarm = schedulesAlarmService.getAlarmBySchedulesId(schedulesId);
 
-        markAlarmAsReadIfNeeded(alarm);
+        schedulesAlarmService.markAsReadIfNeeded(alarm);
 
         Boolean alarmState = (alarm != null) ? alarm.getAlarmState() : false;
         Long alarmOffsetMinutes = (alarm != null) ? alarm.getAlarmOffsetMinutes() : null;
@@ -87,19 +84,6 @@ public class SchedulesService {
         );
     }
 
-    /**
-     * 이미 발송된 일정 알림이 아직 미읽음 상태일 때만 읽음 처리한다.
-     */
-    private void markAlarmAsReadIfNeeded(SchedulesAlarm alarm) {
-        if (alarm == null) {
-            return;
-        }
-        if (!Boolean.TRUE.equals(alarm.getIsSent()) || Boolean.TRUE.equals(alarm.getIsRead())) {
-            return;
-        }
-        alarm.markAsRead();
-        schedulesAlarmRepository.save(alarm);
-    }
 
 
     /***
@@ -209,38 +193,11 @@ public class SchedulesService {
                 request.getAlarmState(), request.getAlarmOffsetMinutes(),
                 request.getTimeSetting(), request.getStartDate(), request.getStartTime());
 
-        // 알림 설정이 켜져 있는 경우만 실행
-        if (Boolean.TRUE.equals(request.getAlarmState())) {
-
-            LocalDateTime alarmDateTime;
-
-            if (request.getTimeSetting() && request.getStartTime() != null) {
-                // 1. 일정 시간 설정이 켜져 있는 경우: (시작 시간 - N분 전)
-                LocalDateTime baseDateTime = LocalDateTime.of(request.getStartDate(), request.getStartTime());
-
-                // NullPointerException 방지를 위해 offset이 null이면 0으로 처리 (혹은 기획에 맞게 예외처리)
-                long offset = (request.getAlarmOffsetMinutes() != null) ? request.getAlarmOffsetMinutes() : 0L;
-                alarmDateTime = baseDateTime.minusMinutes(offset);
-
-            } else {
-                // 2. 일정 시간 설정이 꺼져 있는 경우 (종일 일정 등):
-                // 시작 날짜(StartDate)의 오전 9시 0분 정각으로 알림 시간 세팅
-                alarmDateTime = LocalDateTime.of(request.getStartDate(), LocalTime.of(9, 0));
-            }
-
-            // 알림 엔티티 생성 및 저장
-            SchedulesAlarm alarm = new SchedulesAlarm(
-                    savedSchedule,
-                    request.getAlarmState(),
-                    alarmDateTime,
-                    request.getAlarmOffsetMinutes()
-            );
-            schedulesAlarmRepository.save(alarm);
-
-            log.info("[ALARM] 예약생성 alarmId={} usersId={} scheduleId={} 예정={} offset={}분",
-                    alarm.getSchedulesAlarmId(), usersId, savedSchedule.getSchedulesId(),
-                    alarmDateTime, request.getAlarmOffsetMinutes());
-        }
+        schedulesAlarmService.applyAlarm(
+                usersId, savedSchedule,
+                request.getAlarmState(), request.getAlarmOffsetMinutes(),
+                request.getTimeSetting(), request.getStartDate(), request.getStartTime()
+        );
 
         return new  SchedulesCreateResponse(savedSchedule.getSchedulesId(), savedSchedule.getTitle());
     }
@@ -287,46 +244,11 @@ public class SchedulesService {
                 request.getAlarmState(), request.getAlarmOffsetMinutes(),
                 request.getTimeSetting(), request.getStartDate(), request.getStartTime());
 
-        // 기존에 설정된 알림이 있는지 조회
-        Optional<SchedulesAlarm> existingAlarm = schedulesAlarmRepository.findBySchedules_SchedulesId(schedule.getSchedulesId());
-
-        if (Boolean.TRUE.equals(request.getAlarmState())) {
-            // 알림을 켜는(또는 유지하는) 경우: 알림 시간 재계산
-            LocalDateTime alarmDateTime;
-            if (request.getTimeSetting() && request.getStartTime() != null) {
-                long offset = (request.getAlarmOffsetMinutes() != null) ? request.getAlarmOffsetMinutes() : 0L;
-                alarmDateTime = LocalDateTime.of(request.getStartDate(), request.getStartTime()).minusMinutes(offset);
-            } else {
-                alarmDateTime = LocalDateTime.of(request.getStartDate(), LocalTime.of(9, 0));
-            }
-
-            if (existingAlarm.isPresent()) {
-                SchedulesAlarm alarm = existingAlarm.get();
-                //  기존 알림이 있음 -> 정보 업데이트 및 상태(isSent, isRead) 초기화
-                alarm.updateAlarm(request.getAlarmState(), alarmDateTime, request.getAlarmOffsetMinutes());
-                //알림 변경 내용 저장
-                schedulesAlarmRepository.save(alarm);
-
-                log.info("[ALARM] 예약갱신 alarmId={} usersId={} scheduleId={} 예정={} offset={}분",
-                        alarm.getSchedulesAlarmId(), usersId, schedule.getSchedulesId(),
-                        alarmDateTime, request.getAlarmOffsetMinutes());
-            } else {
-                //  기존 알림이 없음 (새로 켬) -> 새로 생성
-                SchedulesAlarm newAlarm = new SchedulesAlarm(schedule, request.getAlarmState(), alarmDateTime, request.getAlarmOffsetMinutes());
-                schedulesAlarmRepository.save(newAlarm);
-
-                log.info("[ALARM] 예약생성 alarmId={} usersId={} scheduleId={} 예정={} offset={}분",
-                        newAlarm.getSchedulesAlarmId(), usersId, schedule.getSchedulesId(),
-                        alarmDateTime, request.getAlarmOffsetMinutes());
-            }
-        } else {
-            // 알림을 끄는 경우
-            existingAlarm.ifPresent(alarm -> {
-                schedulesAlarmRepository.delete(alarm);
-                log.info("[ALARM] 예약삭제 alarmId={} usersId={} scheduleId={}",
-                        alarm.getSchedulesAlarmId(), usersId, schedule.getSchedulesId());
-            });
-        }
+        schedulesAlarmService.applyAlarm(
+                usersId, schedule,
+                request.getAlarmState(), request.getAlarmOffsetMinutes(),
+                request.getTimeSetting(), request.getStartDate(), request.getStartTime()
+        );
 
         // request.getAlarmState()가 null일 수 있으므로 안전하게 boolean으로 변환
         boolean responseAlarmState = Boolean.TRUE.equals(request.getAlarmState());
