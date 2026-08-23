@@ -1,16 +1,16 @@
 package com.toit.feedback;
 
 import com.toit.admin.AdminRepository;
-import com.toit.fcm.notification.FcmNotificationService;
-import com.toit.fcm.request.FcmNotificationRequest;
+import com.toit.notification.push.FcmNotificationService;
+import com.toit.notification.push.request.FcmNotificationRequest;
 import com.toit.feedback.dto.request.FeedbackCreateRequest;
 import com.toit.feedback.dto.request.FeedbackReplyRequest;
 import com.toit.feedback.dto.response.FeedbackCreateResponse;
 import com.toit.feedback.dto.response.FeedbackListResponse;
 import com.toit.feedback.dto.response.FeedbackMyResponse;
-import com.toit.notification.NotificationType;
-import com.toit.notification.UserNotification;
-import com.toit.notification.UserNotificationService;
+import com.toit.notification.inbox.NotificationType;
+import com.toit.notification.inbox.UserNotification;
+import com.toit.notification.inbox.UserNotificationService;
 import com.toit.user.Users;
 import com.toit.user.UsersRepository;
 import lombok.RequiredArgsConstructor;

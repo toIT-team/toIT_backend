@@ -11,7 +11,7 @@ import com.toit.items.links.exception.LinksNotFoundException;
 import com.toit.items.texts.exception.TextsNotFoundException;
 import com.toit.schedules.exception.ScheduleTimeRangeException;
 import com.toit.schedules.exception.SchedulesNotFoundException;
-import com.toit.schedulesalarm.exception.SchedulesAlarmNotFoundException;
+import com.toit.notification.alarm.exception.SchedulesAlarmNotFoundException;
 import com.toit.user.exception.InvalidUsersNameException;
 import com.toit.user.exception.UsersNotFoundException;
 import com.toit.user.settings.exception.UsersSettingsNotFoundException;

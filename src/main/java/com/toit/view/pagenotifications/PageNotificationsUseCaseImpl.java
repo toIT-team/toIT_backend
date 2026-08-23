@@ -1,7 +1,7 @@
 package com.toit.view.pagenotifications;
 
-import com.toit.notification.UserNotification;
-import com.toit.notification.UserNotificationService;
+import com.toit.notification.inbox.UserNotification;
+import com.toit.notification.inbox.UserNotificationService;
 import com.toit.view.pagenotifications.dto.response.NotificationViewResponse;
 import com.toit.view.pagenotifications.dto.response.PageNotificationsViewResponse;
 import lombok.RequiredArgsConstructor;

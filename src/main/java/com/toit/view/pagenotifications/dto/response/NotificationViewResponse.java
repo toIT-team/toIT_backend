@@ -1,6 +1,6 @@
 package com.toit.view.pagenotifications.dto.response;
 
-import com.toit.notification.NotificationType;
+import com.toit.notification.inbox.NotificationType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

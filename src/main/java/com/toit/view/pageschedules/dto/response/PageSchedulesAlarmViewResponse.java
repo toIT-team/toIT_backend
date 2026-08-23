@@ -1,6 +1,6 @@
 package com.toit.view.pageschedules.dto.response;
 
-import com.toit.schedulesalarm.dto.response.SchedulesAlarmViewResponse;
+import com.toit.notification.alarm.dto.response.SchedulesAlarmViewResponse;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
