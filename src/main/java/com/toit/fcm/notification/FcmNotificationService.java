@@ -29,31 +29,26 @@ public class FcmNotificationService {
     private final FcmTokenRepository fcmTokenRepository;
     private final UsersSettingsRepository usersSettingsRepository;
 
-    // [FCM 비활성화] 발송 중단 — 호출부는 false를 받아 markAsSent를 건너뛴다(알림 DB 기록은 유지).
     public boolean sendToUser(Users user, FcmNotificationRequest request) {
-        log.info("[FCM 비활성화] sendToUser 건너뜀. usersId={}", user.getUsersId());
-        return false;
-        // return sendToUserInternal(user, request, false);
+        return sendToUserInternal(user, request, false);
     }
 
     public boolean sendToUserIgnoringAppAlarmEnabled(Users user, FcmNotificationRequest request) {
-        log.info("[FCM 비활성화] sendToUserIgnoringAppAlarmEnabled 건너뜀. usersId={}", user.getUsersId());
-        return false;
-        // return sendToUserInternal(user, request, true);
+        return sendToUserInternal(user, request, true);
     }
 
     private boolean sendToUserInternal(Users user, FcmNotificationRequest request, boolean ignoreAppAlarmEnabled) {
         if (!ignoreAppAlarmEnabled) {
             UsersSettings usersSettings = usersSettingsRepository.findByUsers_UsersId(user.getUsersId());
             if (usersSettings == null || !Boolean.TRUE.equals(usersSettings.getAppAlarmEnabled())) {
-                log.info("사용자 앱 알림이 비활성화되어 FCM 발송을 건너뜁니다. usersId={}", user.getUsersId());
+                log.info("[FCM] 건너뜀 사유=앱알림꺼짐 usersId={}", user.getUsersId());
                 return false;
             }
         }
 
         List<FcmToken> tokens = fcmTokenRepository.findAllByUsers(user);
         if (tokens.isEmpty()) {
-            log.warn("사용자의 FCM 토큰이 없어 발송을 건너뜁니다. usersId={}", user.getUsersId());
+            log.warn("[FCM] 건너뜀 사유=토큰없음 usersId={}", user.getUsersId());
             return false;
         }
 
@@ -103,7 +98,7 @@ public class FcmNotificationService {
             Message firebaseMessage = messageBuilder.build();
 
             FirebaseMessaging.getInstance().send(firebaseMessage);
-            log.info("FCM 전송 성공: usersId={}, token=...{}",
+            log.info("[FCM] 전송성공 usersId={} token=...{}",
                     fcmTokenEntity.getUsers().getUsersId(),
                     shortenToken(fcmTokenEntity.getFcmToken()));
             return true;
@@ -111,13 +106,13 @@ public class FcmNotificationService {
             MessagingErrorCode errorCode = e.getMessagingErrorCode();
 
             if (errorCode == MessagingErrorCode.UNREGISTERED || errorCode == MessagingErrorCode.INVALID_ARGUMENT) {
-                log.warn("유효하지 않은 FCM 토큰을 제거합니다. usersId={}, token=...{}, errorCode={}",
+                log.warn("[FCM] 토큰제거 usersId={} token=...{} errorCode={}",
                         fcmTokenEntity.getUsers().getUsersId(),
                         shortenToken(fcmTokenEntity.getFcmToken()),
                         errorCode);
                 fcmTokenRepository.delete(fcmTokenEntity);
             } else {
-                log.error("FCM 전송 실패: usersId={}, token=...{}, errorCode={}, message={}",
+                log.error("[FCM] 전송실패 usersId={} token=...{} errorCode={} message={}",
                         fcmTokenEntity.getUsers().getUsersId(),
                         shortenToken(fcmTokenEntity.getFcmToken()),
                         errorCode,
@@ -125,7 +120,7 @@ public class FcmNotificationService {
             }
             return false;
         } catch (Exception e) {
-            log.error("FCM 전송 중 예상하지 못한 오류가 발생했습니다. usersId={}, token=...{}, message={}",
+            log.error("[FCM] 예외 usersId={} token=...{} message={}",
                     fcmTokenEntity.getUsers().getUsersId(),
                     shortenToken(fcmTokenEntity.getFcmToken()),
                     e.getMessage());

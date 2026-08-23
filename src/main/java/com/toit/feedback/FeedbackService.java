@@ -87,28 +87,27 @@ public class FeedbackService {
         feedback.addReply(request.getReply(), adminId);
         feedbackRepository.save(feedback);
 
-        // [FCM 비활성화] 문의 답변 시 인앱 알림 생성 및 FCM 발송 중단
-        // UserNotification notification = userNotificationService.create(
-        //         feedback.getUsers(),
-        //         NotificationType.FEEDBACK_REPLY,
-        //         feedback.getTitle(),
-        //         "toit://feedback?tab=history",
-        //         feedback.getFeedbackId()
-        // );
-        //
-        // boolean isSent = fcmNotificationService.sendToUser(
-        //         feedback.getUsers(),
-        //         new FcmNotificationRequest(
-        //                 "문의",
-        //                 "문의하신 내용에 답변이 등록되었습니다.",
-        //                 "feedback_reply",
-        //                 "toit://feedback?tab=history",
-        //                 notification.getNotificationId()
-        //         )
-        // );
-        //
-        // if (isSent) {
-        //     userNotificationService.markAsSent(notification);
-        // }
+        UserNotification notification = userNotificationService.create(
+                feedback.getUsers(),
+                NotificationType.FEEDBACK_REPLY,
+                feedback.getTitle(),
+                "toit://feedback?tab=history",
+                feedback.getFeedbackId()
+        );
+
+        boolean isSent = fcmNotificationService.sendToUser(
+                feedback.getUsers(),
+                new FcmNotificationRequest(
+                        "문의",
+                        "문의하신 내용에 답변이 등록되었습니다.",
+                        "feedback_reply",
+                        "toit://feedback?tab=history",
+                        notification.getNotificationId()
+                )
+        );
+
+        if (isSent) {
+            userNotificationService.markAsSent(notification);
+        }
     }
 }

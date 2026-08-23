@@ -54,11 +54,10 @@ public class PageSchedulesUseCaseImpl implements PageSchedulesUseCase {
     public ScheduleViewResponse getScheduleView(Long usersId, Long schedulesId){
         ScheduleViewResponse schedule = schedulesService.getSchedule(usersId, schedulesId);
 
-        // [FCM 비활성화] 일정 알림 조회 중단 (항상 false/null 반환)
-        // SchedulesAlarm alarm = schedulesAlarmService.getAlarmBySchedulesId(schedulesId);
-        //
-        // Boolean alarmState = (alarm != null) ? alarm.getAlarmState() : false;
-        // Long alarmOffsetMinutes = (alarm != null) ? alarm.getAlarmOffsetMinutes() : null;
+        SchedulesAlarm alarm = schedulesAlarmService.getAlarmBySchedulesId(schedulesId);
+
+        Boolean alarmState = (alarm != null) ? alarm.getAlarmState() : false;
+        Long alarmOffsetMinutes = (alarm != null) ? alarm.getAlarmOffsetMinutes() : null;
 
         return new ScheduleViewResponse(
                 schedule.getSchedulesId(),
@@ -72,31 +71,30 @@ public class PageSchedulesUseCaseImpl implements PageSchedulesUseCase {
                 schedule.getStartTime(),
                 schedule.getEndTime(),
                 schedule.getMemo(),
-                false,
-                null
+                alarmState,
+                alarmOffsetMinutes
         );
     }
 
-    // [FCM 비활성화] 푸시알림 리스트 조회 비활성화
-    // //푸시알림 리스트 조회
-    // @Override
-    // public PageSchedulesAlarmViewResponse getSchedulesAlarmsView(Long usersId) {
-    //
-    //     // 1. 서비스에서 알림 목록(Page) 조회하기
-    //     List<SchedulesAlarm> alarmPage = schedulesAlarmService.getAlarmList(usersId);
-    //
-    //     // 2. Stream과 new 생성자를 조합해서 DTO로 변환
-    //     List<SchedulesAlarmViewResponse> schedulesAlarms = alarmPage.stream()
-    //             .map(alarm -> new SchedulesAlarmViewResponse(
-    //                     alarm.getSchedulesAlarmId(),
-    //                     alarm.getSchedules().getTitle(),
-    //                     alarm.getSchedules().getStartDate(),
-    //                     alarm.getSchedules().getStartTime()
-    //             ))
-    //             .collect(Collectors.toList());
-    //
-    //     // 3. 만들어두신 최종 껍데기 DTO에 담아서 리턴!
-    //     return new PageSchedulesAlarmViewResponse(schedulesAlarms);
-    // }
+    //푸시알림 리스트 조회
+    @Override
+    public PageSchedulesAlarmViewResponse getSchedulesAlarmsView(Long usersId) {
+
+        // 1. 서비스에서 알림 목록(Page) 조회하기
+        List<SchedulesAlarm> alarmPage = schedulesAlarmService.getAlarmList(usersId);
+
+        // 2. Stream과 new 생성자를 조합해서 DTO로 변환
+        List<SchedulesAlarmViewResponse> schedulesAlarms = alarmPage.stream()
+                .map(alarm -> new SchedulesAlarmViewResponse(
+                        alarm.getSchedulesAlarmId(),
+                        alarm.getSchedules().getTitle(),
+                        alarm.getSchedules().getStartDate(),
+                        alarm.getSchedules().getStartTime()
+                ))
+                .collect(Collectors.toList());
+
+        // 3. 만들어두신 최종 껍데기 DTO에 담아서 리턴!
+        return new PageSchedulesAlarmViewResponse(schedulesAlarms);
+    }
 
 }
