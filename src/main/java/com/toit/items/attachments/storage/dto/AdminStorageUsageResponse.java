@@ -1,4 +1,4 @@
-package com.toit.storage.dto;
+package com.toit.items.attachments.storage.dto;
 
 public record AdminStorageUsageResponse(
         Long usersId,

@@ -1,9 +1,9 @@
-package com.toit.storage;
+package com.toit.items.attachments.storage;
 
 import com.toit.common.enums.EntityStatus;
 import com.toit.items.attachments.AttachMentsRepository;
-import com.toit.storage.dto.AdminStorageUsageResponse;
-import com.toit.storage.dto.StorageUsageResponse;
+import com.toit.items.attachments.storage.dto.AdminStorageUsageResponse;
+import com.toit.items.attachments.storage.dto.StorageUsageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -6,7 +6,7 @@ import com.toit.common.S3.attachmentprocessor.AttachmentProcessor;
 import com.toit.common.S3.attachmentprocessor.AttachmentProcessorRouter;
 import com.toit.common.S3.attachmentprocessor.S3KeyFactory;
 import com.toit.common.cloudfront.CloudFrontSigner;
-import com.toit.storage.dto.StorageUsageResponse;
+import com.toit.items.attachments.storage.dto.StorageUsageResponse;
 import com.toit.common.S3.attachmentvaildator.AttachmentValidator;
 import com.toit.common.S3.config.S3Config;
 import com.toit.common.enums.AttachMentsType;

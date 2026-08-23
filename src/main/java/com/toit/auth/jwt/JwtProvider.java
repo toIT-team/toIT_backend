@@ -1,6 +1,6 @@
 package com.toit.auth.jwt;
 
-import com.toit.common.UsersRole.UsersRole;
+import com.toit.common.enums.UsersRole;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;

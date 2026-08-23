@@ -1,4 +1,4 @@
-package com.toit.common.UsersRole;
+package com.toit.common.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

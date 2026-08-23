@@ -1,7 +1,7 @@
-package com.toit.storage;
+package com.toit.items.attachments.storage;
 
 import com.toit.common.SecurityUtil;
-import com.toit.storage.dto.StorageUsageResponse;
+import com.toit.items.attachments.storage.dto.StorageUsageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
