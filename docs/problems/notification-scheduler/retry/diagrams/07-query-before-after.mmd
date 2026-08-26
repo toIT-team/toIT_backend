@@ -1,0 +1,27 @@
+flowchart TB
+    subgraph before["개선 전 · 시각으로 찾는다"]
+        direction LR
+        A0["02:55 알림<br/>아직 안 보냄"]
+        A1["02:56 실행<br/>조회 범위 = 02:56 ~ 02:57"]
+        A2["안 걸린다<br/>영영 유실"]
+        A0 --> A1
+        A1 -->|"02:55 는 범위 밖<br/>이미 지나갔다"| A2
+    end
+
+    subgraph after["개선 후 · 상태로 찾는다"]
+        direction LR
+        B0["02:55 알림<br/>status = PENDING"]
+        B1["02:56 실행<br/>조회 조건 = PENDING 전부"]
+        B2["걸린다<br/>다음 실행이 회수"]
+        B0 --> B1
+        B1 -->|"지나간 시각이어도<br/>PENDING 이면 걸린다"| B2
+    end
+
+    before ~~~ after
+
+    classDef bad fill:#ffe3e3,stroke:#e03131,color:#000
+    classDef good fill:#d3f9d8,stroke:#2f9e44,color:#000
+    class A2 bad
+    class B2 good
+    style before fill:#fff,stroke:#dee2e6
+    style after fill:#fff,stroke:#dee2e6
