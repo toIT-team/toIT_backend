@@ -14,5 +14,8 @@ WHERE s.title LIKE '유실테스트-%';
 -- 3. 일정
 DELETE FROM schedules WHERE title LIKE '유실테스트-%';
 
--- 4. 남은 게 없는지 확인
+-- 4. 지표 스냅샷 (05_metrics.sql 이 만든 것)
+DROP TABLE IF EXISTS metrics_snapshot;
+
+-- 5. 남은 게 없는지 확인
 SELECT COUNT(*) AS 남은_일정 FROM schedules WHERE title LIKE '유실테스트-%';
