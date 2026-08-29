@@ -6,7 +6,7 @@
 -- 건수를 바꿀 때는 04_teardown.sql 로 먼저 지우고 다시 만든다.
 
 SET @USERS_ID = 32;
-SET @COUNT    = 500;
+SET @COUNT    = 100;
 
 -- 1. 일정 @COUNT 건
 --    재귀 CTE 대신 0~9 세 벌을 교차시켜 1~1000 을 만들고 @COUNT 까지만 쓴다.

@@ -15,7 +15,8 @@
 
 무엇을 재나
     FCM 구간   [ALARM] 발송시도  →  [FCM] 전송성공 / 전송실패 / 건너뜀
-    1건 전체   [ALARM] 발송시도  →  [ALARM] 완료표시
+    1건 전체   [ALARM] 발송시도  →  [ALARM] 발송성공 / 발송포기 / 재시도예약 / 재시도소진
+               (개선 전 로그에서는 [ALARM] 완료표시)
 """
 
 import re
@@ -26,6 +27,8 @@ from datetime import datetime
 TS = re.compile(r"(\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}[.,]\d+)")
 FETCH = re.compile(r"\[ALARM\] 조회.*?count=(\d+)")
 FCM_END = ("전송성공", "전송실패", "건너뜀")
+# 알림 한 건이 끝났음을 알리는 줄. 개선 전후로 이름이 다르다.
+ALARM_END = ("완료표시", "발송성공", "발송포기", "재시도예약", "재시도소진")
 
 
 def parse_time(line):
@@ -112,7 +115,7 @@ def main(path):
                 cur.fcm_end(t, "fail")
             elif "건너뜀" in line:
                 cur.fcm_end(t, "skip")
-            elif "완료표시" in line:
+            elif any(k in line for k in ALARM_END):
                 cur.done(t)
 
     if not runs:

@@ -77,12 +77,16 @@ ORDER BY cur.id DESC
 LIMIT 1;
 
 -- 알림 1건당 몇 개씩 썼는지
---   건수는 유실테스트 데이터에서 세므로 @COUNT 를 바꿔도 알아서 맞는다
 --   쿼리   예상 3~5개.  조회 · 알림함 INSERT · 상태 UPDATE · 토큰 조회 · 설정 조회
 --   읽은행 이 값이 크면 인덱스를 못 타거나 전체 스캔이 있다는 뜻이다
-SET @N = (SELECT COUNT(*) FROM schedules_alarm a
-          JOIN schedules s ON s.schedules_id = a.schedules_id
-          WHERE s.title LIKE '유실테스트-%');
+--
+-- @N 은 손으로 적는다. 01_setup 의 @COUNT 와 같은 값이다.
+--
+-- 전에는 유실테스트 데이터를 세어 자동으로 맞췄는데, schedules.title 에 인덱스가
+-- 없어 그 COUNT 쿼리 하나가 만 건을 훑었다. 측정 창 안에서 도는 쿼리라
+-- **자기가 잰 값을 자기가 오염시켰다.** 500건일 때는 묻혀서 안 보였고
+-- 10,000건에서 드러났다.
+SET @N = 10000;
 
 SELECT
     @N                                                                     AS 알림_건수,
