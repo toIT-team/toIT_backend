@@ -1,0 +1,33 @@
+sequenceDiagram
+    participant 스케줄러
+    participant DB
+    participant FCM
+    participant 폰
+
+    Note over 스케줄러: 매분 0초에 깨어난다
+
+    스케줄러->>DB: ① 보낼 예약 조회
+    Note right of DB: · status = PENDING<br/>· 설정한 알람 시각으로부터 10분 넘지 않음<br/>· 재시도 처리에 필요한 시간이 된 것
+    DB-->>스케줄러: 예약 N건 · 밀린 것 포함
+
+    loop 예약 하나씩
+        스케줄러->>DB: ② 멱등키로 알림함 줄을 찾고 없을 때만 만든다
+        Note right of DB: alarm:{예약번호}:{울릴시각}<br/>재시도해도 한 줄
+
+        스케줄러->>FCM: ③ 토큰마다 푸시 발송
+
+        alt 하나라도 성공
+            FCM-->>폰: 알림 도착
+            FCM-->>스케줄러: 성공
+            스케줄러->>DB: ④ status = SENT
+            Note right of DB: 조회에서 빠진다
+        else 토큰 쪽 문제 · UNREGISTERED
+            FCM-->>스케줄러: 실패
+            스케줄러->>DB: ④ 죽은 토큰 삭제
+            Note right of DB: 토큰이 0개면 FAILED<br/>남아 있으면 재시도 대상
+        else 그 밖의 실패
+            FCM-->>스케줄러: 실패
+            스케줄러->>DB: ④ attempt_count +1 · next_attempt_at · last_error_code
+            Note right of DB: 1 · 2 · 4분 뒤에 다시<br/>3번을 넘기면 FAILED
+        end
+    end

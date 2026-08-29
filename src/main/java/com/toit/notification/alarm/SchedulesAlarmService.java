@@ -56,7 +56,7 @@ public class SchedulesAlarmService {
         if (alarm == null) {
             return;
         }
-        if (!Boolean.TRUE.equals(alarm.getIsSent()) || Boolean.TRUE.equals(alarm.getIsRead())) {
+        if (alarm.getStatus() != AlarmStatus.SENT || Boolean.TRUE.equals(alarm.getIsRead())) {
             return;
         }
         alarm.markAsRead();
