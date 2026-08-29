@@ -1,0 +1,28 @@
+sequenceDiagram
+    participant 스케줄러
+    participant DB
+    participant FCM
+    participant 폰
+
+    Note over 스케줄러: 매분 0초에 깨어난다
+
+    스케줄러->>DB: ① 지금부터 1분 사이에 울릴 예약 조회
+    Note right of DB: [02:55, 02:56) 만 본다<br/>지나간 시각은 조회하지 않는다
+    DB-->>스케줄러: 예약 N건
+
+    loop 예약 하나씩 · 순서대로
+        스케줄러->>DB: ② 알림함에 한 줄 저장
+        스케줄러->>FCM: ③ 푸시 발송 요청
+
+        alt 발송 성공
+            FCM-->>폰: 알림 도착
+            FCM-->>스케줄러: 성공
+            스케줄러->>DB: 알림함을 발송됨으로 표시
+        else 발송 실패
+            FCM-->>스케줄러: 실패
+            Note over 스케줄러: 로그만 남기고 넘어간다
+        end
+
+        스케줄러->>DB: ④ 예약을 완료로 표시 (is_sent = true)
+        Note right of DB: 실패를 성공이라고 남긴다
+    end

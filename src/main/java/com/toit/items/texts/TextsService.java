@@ -1,8 +1,8 @@
 package com.toit.items.texts;
 
 import com.toit.common.enums.EntityStatus;
-import com.toit.exception.folders.FoldersNotFoundException;
-import com.toit.exception.items.texts.TextsNotFoundException;
+import com.toit.folders.exception.FoldersNotFoundException;
+import com.toit.items.texts.exception.TextsNotFoundException;
 import com.toit.folders.Folders;
 import com.toit.items.links.Links;
 import com.toit.items.links.dto.response.LinksGetInFoldersResponse;

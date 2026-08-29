@@ -1,7 +1,7 @@
 package com.toit.user;
 
 
-import com.toit.common.UsersRole.UsersRole;
+import com.toit.common.enums.UsersRole;
 import com.toit.common.enums.AuthProvider;
 import com.toit.common.enums.EntityStatus;
 import jakarta.persistence.*;

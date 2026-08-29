@@ -27,11 +27,10 @@ public interface PageSchedulesUseCase {
      */
     ScheduleViewResponse getScheduleView(Long usersId, Long schedulesId);
 
-    // [FCM 비활성화] 푸시 알림 조회 비활성화
-    // /***
-    //  * 푸시 알림 조회
-    //  */
-    // PageSchedulesAlarmViewResponse getSchedulesAlarmsView(Long userId);
+    /***
+     * 푸시 알림 조회
+     */
+    PageSchedulesAlarmViewResponse getSchedulesAlarmsView(Long userId);
 
 
 

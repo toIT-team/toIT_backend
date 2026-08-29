@@ -1,0 +1,22 @@
+sequenceDiagram
+    participant 스케줄러
+    participant DB
+    participant FCM
+
+    Note over DB: 02:55 에 울릴 예약 100건<br/>is_sent = false
+
+    스케줄러->>DB: 02:55 실행 · [02:55, 02:56) 조회
+    DB-->>스케줄러: 100건
+
+    스케줄러->>FCM: 발송 요청
+    FCM-->>스케줄러: 실패
+
+    Note over 스케줄러: is_sent = false 로 두어<br/>아직 보내지 않았다고 기록된다
+
+    스케줄러->>DB: 02:56 실행 · [02:56, 02:57) 조회
+    DB-->>스케줄러: 0건
+    Note right of DB: 상태는 남았는데 창이 지나갔다<br/>조회 조건에 걸리지 않는다
+
+    스케줄러->>DB: 02:57 실행 · [02:57, 02:58) 조회
+    DB-->>스케줄러: 0건
+    Note over 스케줄러,DB: 실패를 기록해도 찾지 않으면 소용이 없다

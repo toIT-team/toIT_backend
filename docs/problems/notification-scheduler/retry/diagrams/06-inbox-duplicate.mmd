@@ -1,0 +1,27 @@
+flowchart TB
+    subgraph before["개선 전 · 보내기 전에 조건 없이 적는다"]
+        direction LR
+        A1["02:55 1회차<br/>줄을 적는다 ①<br/>발송 실패"]
+        A2["02:56 2회차<br/>줄을 적는다 ②<br/>발송 실패"]
+        A3["02:58 3회차<br/>줄을 적는다 ③<br/>발송 성공"]
+        A4["푸시는 1번 왔는데<br/>목록엔 3줄"]
+        A1 --> A2 --> A3 --> A4
+    end
+
+    subgraph after["개선 후 · 멱등키로 찾고 없을 때만 적는다"]
+        direction LR
+        B1["02:55 1회차<br/>키 없음 → 새 줄 ①<br/>발송 실패"]
+        B2["02:56 2회차<br/>키 있음 → 그 줄 재사용<br/>발송 실패"]
+        B3["02:58 3회차<br/>키 있음 → 그 줄 재사용<br/>발송 성공"]
+        B4["푸시도 1번<br/>목록도 1줄"]
+        B1 --> B2 --> B3 --> B4
+    end
+
+    before ~~~ after
+
+    classDef bad fill:#ffe3e3,stroke:#e03131,color:#000
+    classDef good fill:#d3f9d8,stroke:#2f9e44,color:#000
+    class A4 bad
+    class B4 good
+    style before fill:#fff,stroke:#dee2e6
+    style after fill:#fff,stroke:#dee2e6

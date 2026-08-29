@@ -1,0 +1,24 @@
+sequenceDiagram
+    participant 스케줄러
+    participant DB
+    participant FCM
+
+    Note over DB: 02:55 에 울릴 예약 100건<br/>is_sent = false
+
+    스케줄러->>DB: 02:55 실행 · [02:55, 02:56) 조회
+    DB-->>스케줄러: 100건
+
+    스케줄러->>FCM: 발송 요청
+    FCM-->>스케줄러: 실패
+    Note over 스케줄러: isSent = false 를 받았다<br/>실패를 알고 있다
+
+    스케줄러->>DB: 예약을 완료로 표시
+    Note right of DB: is_sent = true<br/>실패했는데 완료가 된다
+
+    rect rgba(200, 200, 200, 0.15)
+        Note over 스케줄러,FCM: 사용자가 다시 로그인해 토큰이 복구된다<br/>이제 보낼 수 있는 상태다
+    end
+
+    스케줄러->>DB: 02:56 실행 · 조회
+    DB-->>스케줄러: 0건
+    Note right of DB: is_sent = true 라 조회 대상이 아니다<br/>보낼 수 있게 됐는데도 보내지 않는다
