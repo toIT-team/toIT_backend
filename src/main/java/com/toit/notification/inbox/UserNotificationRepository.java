@@ -18,6 +18,8 @@ public interface UserNotificationRepository extends JpaRepository<UserNotificati
 
     Optional<UserNotification> findByNotificationIdAndUsers_UsersId(Long notificationId, Long usersId);
 
+    Optional<UserNotification> findByIdempotencyKey(String idempotencyKey);
+
     /**
      * 회원 탈퇴용
      */

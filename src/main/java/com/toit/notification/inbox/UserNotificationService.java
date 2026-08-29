@@ -20,6 +20,19 @@ public class UserNotificationService {
         return userNotificationRepository.save(notification);
     }
 
+    /**
+     * 멱등키로 찾고 없을 때만 만든다.
+     *
+     * 재시도할 때마다 알림함에 줄이 쌓이는 것을 막는다. 조회에서 걸러지므로 유니크
+     * 제약은 스케줄러가 둘 이상일 때를 위한 안전망이고 지금은 걸리지 않는다.
+     */
+    public UserNotification findOrCreate(String idempotencyKey, Users users, NotificationType type,
+                                         String title, String deeplink, Long targetId) {
+        return userNotificationRepository.findByIdempotencyKey(idempotencyKey)
+                .orElseGet(() -> userNotificationRepository.save(
+                        new UserNotification(users, type, title, deeplink, targetId, idempotencyKey)));
+    }
+
     public List<UserNotification> createAll(List<Users> users, NotificationType type, String title, String deeplink, Long targetId) {
         List<UserNotification> notifications = users.stream()
                 .map(user -> new UserNotification(user, type, title, deeplink, targetId))

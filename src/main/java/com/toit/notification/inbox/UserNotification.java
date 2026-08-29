@@ -34,6 +34,16 @@ public class UserNotification {
     @Column
     private Long targetId;
 
+    /**
+     * 같은 알림을 두 번 적지 않기 위한 키.
+     *
+     * 알림함은 일정 알림만 담는 테이블이 아니라서 종류마다 구분하는 값이 다르다.
+     * 컬럼을 종류별로 늘리는 대신 문자열 하나에 담는다.
+     *   alarm:{예약번호}:{울릴시각}   notice:{공지번호}   feedback:{피드백번호}
+     */
+    @Column(unique = true, length = 100)
+    private String idempotencyKey;
+
     @Column(nullable = false)
     private Boolean isRead;
 
@@ -47,6 +57,12 @@ public class UserNotification {
     private LocalDateTime createdAt;
 
     public UserNotification(Users users, NotificationType type, String title, String deeplink, Long targetId) {
+        this(users, type, title, deeplink, targetId, null);
+    }
+
+    public UserNotification(Users users, NotificationType type, String title, String deeplink,
+                            Long targetId, String idempotencyKey) {
+        this.idempotencyKey = idempotencyKey;
         this.users = users;
         this.type = type;
         this.title = title;

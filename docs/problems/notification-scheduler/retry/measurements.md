@@ -163,27 +163,30 @@ CREATE INDEX idx_alarm_pending ON schedules_alarm (status, alarm_date_time);
 
 ## 스크립트
 
+`is_sent` 를 `status` 로 바꾸면서 데이터를 만들고 세는 방법이 달라져 두 벌로 나눴다.
+
 ```
-00_check_schema.sql   컬럼 이름이 스크립트와 맞는지 확인
-01_setup.sql          일정 100건 + 알림 100건 생성.  한 번만
-02_reset.sql          알림 시각을 모으고 상태 초기화.  @AFTER_MIN 으로 실험 선택
-03_count.sql          도달 · 미도달 집계
-04_teardown.sql       테스트 데이터 정리
-05_metrics.sql        QPS · TPS.  발송 앞뒤로 두 번 실행
-06_latency.py         로그에서 1건당 소요 시간 100개를 뽑는다
+before/    개선 전.  is_sent 기준
+after/     개선 후.  status · attempt_count · next_attempt_at 기준
+07_migrate.sql   before → after 전환.  배포보다 먼저 실행
+04 · 05 · 06     양쪽 공용
 ```
 
 **한 라운드**
 
 ```
-1  02_reset.sql       @AFTER_MIN = 2
-2  05_metrics.sql     실험 전 스냅샷
-3  2분 대기
-4  05_metrics.sql     QPS · TPS · 건당 쿼리
-5  03_count.sql       도달 건수
-6  docker compose logs app --since 15m > app.log
+1  04_teardown.sql        앞 라운드 정리
+2  <폴더>/01_setup.sql     @COUNT 를 맞추고 실행
+3  <폴더>/02_reset.sql     @AFTER_MIN 으로 실험 선택
+4  05_metrics.sql         실험 전 스냅샷
+5  대기
+6  05_metrics.sql         QPS · TPS · 건당 쿼리
+7  <폴더>/03_count.sql     도달 건수
+8  docker compose logs app --since 30m > app.log
    python3 06_latency.py app.log
 ```
+
+쓰는 법은 [scripts/README.md](scripts/README.md) 에 두었다.
 
 ---
 

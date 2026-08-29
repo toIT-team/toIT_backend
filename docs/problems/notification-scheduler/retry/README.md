@@ -355,11 +355,12 @@ UNREGISTERED             앱을 지웠거나 FCM 이 토큰을 폐기함
 재시도 횟수는 **알림을 발송한 뒤에** 올리는 형태로 진행했습니다.
 
 ```java
-private static final int MAX_ATTEMPT = 3;
+private static final int MAX_ATTEMPT = 3;   // 최초 발송 뒤 재시도 3번
 
-alarm.increaseAttempt();
 if (alarm.getAttemptCount() >= MAX_ATTEMPT) {
-    alarm.markAsFailed();
+        alarm.markAsFailed(errorCode);
+} else {
+        alarm.scheduleNextAttempt(now.plusMinutes(1L << alarm.getAttemptCount()), errorCode);
 }
 ```
 
