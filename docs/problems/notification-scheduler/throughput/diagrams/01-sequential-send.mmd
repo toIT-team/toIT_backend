@@ -1,0 +1,29 @@
+sequenceDiagram
+    participant 스케줄러
+    participant DB
+    participant FCM
+    participant 폰
+
+    Note over 스케줄러: 매분 0초에 깨어난다 · 스레드는 하나
+
+    스케줄러->>DB: ① 아직 안 보낸 예약 조회
+    Note right of DB: status = PENDING<br/>울릴 시각이 지났고 10분 안<br/>재시도 시각이 되었다
+    DB-->>스케줄러: 예약 N건
+
+    loop 예약 하나씩 · 앞이 끝나야 다음
+        스케줄러->>DB: ② 알림함에 한 줄 (멱등키로 찾거나 만든다)
+        스케줄러->>FCM: ③ 푸시 발송 요청
+
+        Note over 스케줄러,FCM: 답이 올 때까지 멈춰 서서 기다린다<br/>한 건 약 320 ms · 그중 85 % 가 이 구간
+
+        alt 발송 성공
+            FCM-->>폰: 알림 도착
+            FCM-->>스케줄러: 성공
+            스케줄러->>DB: ④ status = SENT
+        else 발송 실패
+            FCM-->>스케줄러: 오류 코드
+            스케줄러->>DB: ④ 재시도 예약 또는 FAILED
+        end
+    end
+
+    Note over 스케줄러: N건이면 320 ms 를 N 번 차례로 기다린다<br/>1분에 165 ~ 175 건이 한계
