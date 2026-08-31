@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -29,8 +30,19 @@ public class NotificationScheduler {
     /**
      * 얼마나 지난 알림까지 되살릴지.
      *
-     * 알림 오프셋이 최대 10분 전이라, 10분을 넘기면 어떤 설정이든 일정이 이미
-     * 시작한 뒤다. 회의 중에 오는 "5분 전입니다" 는 알림이 아니라 방해다.
+     * 사용자가 약속한 것은 일정과의 거리가 아니라 **알림 시각** 자체다. 4시로
+     * 맞춘 알림은 오프셋이 5분이든 하루든 4시에 와야 한다. 그래서 유예도 오프셋과
+     * 무관하게 하나로 둔다.
+     *
+     * 10분인 이유는 두 가지다.
+     *   - 그쯤까지는 "좀 늦었네" 지만 그 뒤로는 "고장났네" 로 읽힌다고 봤다.
+     *     공식 기준은 없어 우리가 정한 값이다.
+     *   - 재시도 3회가 1+2+4 로 7분을 쓰므로, 마지막 재시도까지 이 안에 들어간다.
+     *     창을 7분 밑으로 내리면 넣어둔 재시도가 잘린다.
+     *
+     * FCM 쪽에도 같은 개념이 있다. 공식 문서가 짧은 TTL 이 필요한 예로 캘린더
+     * 알림을 든다. 다만 몇 분으로 하라는 기준은 없어 그 값은 우리가 정했다.
+     * https://firebase.google.com/docs/cloud-messaging/customize-messages/setting-message-lifespan
      */
     private static final long VALID_MINUTES = 10;
 
@@ -56,8 +68,7 @@ public class NotificationScheduler {
             Users user = schedule.getUsers();
 
             String title = schedule.getTitle();
-            long alarmOffsetMinutes = alarm.getAlarmOffsetMinutes() != null ? alarm.getAlarmOffsetMinutes() : 0L;
-            String body = "일정이 시작되기 " + alarmOffsetMinutes + "분 전입니다.";
+            String body = bodyOf(schedule, now);
 
             log.info("[ALARM] 발송시도 alarmId={} usersId={} scheduleId={} 예정={} 재시도={}",
                     alarm.getSchedulesAlarmId(), user.getUsersId(),
@@ -88,6 +99,39 @@ public class NotificationScheduler {
             applyResult(alarm, notification, result, now);
             schedulesAlarmRepository.save(alarm);
         }
+    }
+
+    /**
+     * 알림 문구를 만든다.
+     *
+     * 저장해 둔 오프셋을 그대로 쓰면 발송이 밀렸을 때 문구가 거짓이 된다.
+     * 5분 늦게 나간 알림이 여전히 "5분 전입니다" 라고 말한다. 그래서 오프셋이
+     * 아니라 **보내는 시점에 남은 시간**으로 적는다.
+     *
+     * 단위는 남은 시간에 맞춘다. 하루 전 알림에 "1440분 전입니다" 는 읽히지 않는다.
+     */
+    private String bodyOf(Schedules schedule, LocalDateTime now) {
+        // 종일 일정은 울릴 시각이 시작 날짜 오전 9시로 고정이라 남은 시간이 아니라
+        // 날짜 차이로 말한다.
+        if (!Boolean.TRUE.equals(schedule.getTimeSetting()) || schedule.getStartTime() == null) {
+            long days = ChronoUnit.DAYS.between(now.toLocalDate(), schedule.getStartDate());
+            return days <= 0 ? "오늘 일정입니다." : days + "일 뒤 일정입니다.";
+        }
+
+        LocalDateTime start = LocalDateTime.of(schedule.getStartDate(), schedule.getStartTime());
+        Duration left = Duration.between(now, start);
+
+        if (left.isNegative() || left.isZero()) {
+            return "일정이 곧 시작됩니다.";
+        }
+        if (left.toDays() >= 1) {
+            return "일정이 시작되기 " + left.toDays() + "일 전입니다.";
+        }
+        if (left.toHours() >= 1) {
+            return "일정이 시작되기 " + left.toHours() + "시간 전입니다.";
+        }
+        // 59초가 남아도 "0분 전" 이 아니라 "1분 전" 이 자연스럽다.
+        return "일정이 시작되기 " + Math.max(1, left.toMinutes()) + "분 전입니다.";
     }
 
     /**
