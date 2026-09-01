@@ -2,7 +2,7 @@ package com.toit.notice;
 
 import com.toit.admin.Admin;
 import com.toit.admin.AdminRepository;
-import com.toit.schedules.exception.SchedulesNotFoundException;
+import com.toit.notice.exception.NoticeNotFoundException;
 import com.toit.notification.push.FcmNotificationService;
 import com.toit.notification.push.request.FcmNotificationRequest;
 import com.toit.notice.dto.request.NoticeCreateRequest;
@@ -37,8 +37,18 @@ public class NoticeService {
     // 공지사항 검증
     public Notice findByNotices(Long noticesId) {
         return noticeRepository.findById(noticesId)
-                .orElseThrow(() -> new SchedulesNotFoundException(
+                .orElseThrow(() -> new NoticeNotFoundException(
                         "noticesId가 " + noticesId + "인 공지사항을 찾을 수 없습니다."));
+    }
+
+    /**
+     * 공지사항 단건 조회.
+     *
+     * 알림함의 딥링크(toit://notice?id=7)가 한 건을 가리키므로, 목록을 받아 거기서
+     * 찾는 대신 바로 가져올 수 있어야 한다.
+     */
+    public NoticeReadResponse getNotice(Long noticeId) {
+        return NoticeReadResponse.from(findByNotices(noticeId));
     }
 
     // 공지사항 목록 조회

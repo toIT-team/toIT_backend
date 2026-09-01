@@ -13,7 +13,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "FCM토큰 업로드 성공"),
+        @ApiResponse(responseCode = "204", description = "FCM토큰 등록·갱신 성공. 본문 없음"),
         @ApiResponse(
                 responseCode = "404",
                 description = "존재하지 않음",
