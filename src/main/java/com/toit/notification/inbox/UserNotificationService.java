@@ -43,7 +43,7 @@ public class UserNotificationService {
 
     public List<UserNotification> getNotifications(Long usersId) {
         usersService.findById(usersId);
-        return userNotificationRepository.findAllByUsers_UsersIdOrderByCreatedAtDesc(usersId);
+        return userNotificationRepository.findAllByUsers_UsersIdAndIsSentTrueOrderBySentAtDesc(usersId);
     }
 
     public long getUnreadCount(Long usersId) {
