@@ -2,11 +2,11 @@ package com.toit.notice;
 
 import com.toit.admin.Admin;
 import com.toit.admin.AdminRepository;
+import com.toit.common.enums.EntityStatus;
 import com.toit.notice.exception.NoticeNotFoundException;
 import com.toit.notification.push.FcmNotificationService;
 import com.toit.notification.push.request.FcmNotificationRequest;
 import com.toit.notice.dto.request.NoticeCreateRequest;
-import com.toit.notice.dto.request.NoticeDeleteRequest;
 import com.toit.notice.dto.request.NoticeUpdateRequest;
 import com.toit.notice.dto.response.NoticeDeleteResponse;
 import com.toit.notice.dto.response.NoticeReadResponse;
@@ -71,50 +71,57 @@ public class NoticeService {
 
         Notice savedNotice = noticeRepository.save(notice);
 
-        List<Users> users = usersRepository.findAll();
-        List<UserNotification> notifications = userNotificationService.createAll(
-                users,
+        // 알림함에만 남기고 푸시는 안 보낸다.
+        userNotificationService.createAllAsSent(
+                usersRepository.findAllByStatus(EntityStatus.ACTIVE),
                 NotificationType.NOTICE,
                 savedNotice.getTitle(),
                 "toit://notice?id=" + savedNotice.getNoticeId(),
                 savedNotice.getNoticeId()
         );
 
-        for (UserNotification notification : notifications) {
-            boolean isSent = fcmNotificationService.sendToUserIgnoringAppAlarmEnabled(
-                    notification.getUsers(),
-                    new FcmNotificationRequest(
-                            savedNotice.getTitle(),
-                            savedNotice.getContent(),
-                            "notice",
-                            notification.getDeeplink(),
-                            notification.getNotificationId()
-                    )
-            );
-
-            if (isSent) {
-                userNotificationService.markAsSent(notification);
-            }
-        }
+        // 푸시는 잠시 멈춰 둔다. 지금 구조로 켜면 두 가지가 걸린다.
+        //   - 관리자 요청이 전체 발송을 마칠 때까지 안 끝난다. 한 건씩 순서대로
+        //     보내므로 사용자가 1,000명이면 5분 넘게 붙잡힌다
+        //   - sendToUserIgnoringAppAlarmEnabled 라 알림을 꺼둔 사람에게도 간다
+        //
+        // 둘을 정리한 뒤 되살린다.
+        //
+        // for (UserNotification notification : notifications) {
+        //     boolean isSent = fcmNotificationService.sendToUserIgnoringAppAlarmEnabled(
+        //             notification.getUsers(),
+        //             new FcmNotificationRequest(
+        //                     savedNotice.getTitle(),
+        //                     savedNotice.getContent(),
+        //                     "notice",
+        //                     notification.getDeeplink(),
+        //                     notification.getNotificationId()
+        //             )
+        //     );
+        //
+        //     if (isSent) {
+        //         userNotificationService.markAsSent(notification);
+        //     }
+        // }
     }
 
     // 공지사항 삭제
-    public NoticeDeleteResponse deleteNotice(Long adminId, NoticeDeleteRequest request) {
+    public NoticeDeleteResponse deleteNotice(Long adminId, Long noticeId) {
         adminRepository.findById(adminId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 관리자입니다."));
 
-        Notice findNotice = findByNotices(request.getNoticeId());
+        Notice findNotice = findByNotices(noticeId);
 
         noticeRepository.delete(findNotice);
         return new NoticeDeleteResponse(findNotice.getNoticeId());
     }
 
     // 관리자용 공지사항 수정
-    public NoticeUpdateResponse updateNotice(Long adminId, NoticeUpdateRequest request) {
+    public NoticeUpdateResponse updateNotice(Long adminId, Long noticeId, NoticeUpdateRequest request) {
         adminRepository.findById(adminId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 관리자입니다."));
 
-        Notice findNotice = findByNotices(request.getNoticeId());
+        Notice findNotice = findByNotices(noticeId);
 
         findNotice.update(request.getTitle(), request.getContent());
 

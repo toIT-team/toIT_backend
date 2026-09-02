@@ -41,6 +41,27 @@ public class UserNotificationService {
         return userNotificationRepository.saveAll(notifications);
     }
 
+    /**
+     * 푸시 없이 알림함에만 남긴다.
+     *
+     * 알림함 조회는 isSent = true 만 보므로, 만들면서 바로 보낸 것으로 표시해야
+     * 목록에 뜬다. 여기서 "보냈다" 는 푸시가 나갔다는 뜻이 아니라 알림함에 놓았다는
+     * 뜻이다. 공지 푸시를 되살리면 createAll 로 돌아간다.
+     */
+    public List<UserNotification> createAllAsSent(List<Users> users, NotificationType type,
+                                                  String title, String deeplink, Long targetId) {
+        List<UserNotification> notifications = users.stream()
+                .map(user -> {
+                    UserNotification notification =
+                            new UserNotification(user, type, title, deeplink, targetId);
+                    notification.markAsSent();
+                    return notification;
+                })
+                .collect(Collectors.toList());
+
+        return userNotificationRepository.saveAll(notifications);
+    }
+
     public List<UserNotification> getNotifications(Long usersId) {
         usersService.findById(usersId);
         return userNotificationRepository.findAllByUsers_UsersIdAndIsSentTrueOrderBySentAtDesc(usersId);
