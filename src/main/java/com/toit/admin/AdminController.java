@@ -13,7 +13,6 @@ import com.toit.items.attachments.storage.StorageService;
 import com.toit.items.attachments.storage.dto.AdminStorageUsageResponse;
 import java.util.List;
 import com.toit.notice.dto.request.NoticeCreateRequest;
-import com.toit.notice.dto.request.NoticeDeleteRequest;
 import com.toit.notice.dto.request.NoticeUpdateRequest;
 import com.toit.notice.dto.response.NoticeDeleteResponse;
 import com.toit.notice.dto.response.NoticeReadResponse;
@@ -166,21 +165,22 @@ public class AdminController {
     }
 
     @Operation(summary = "관리자 공지사항 수정", description = "관리자가 공지사항을 합니다.")
-    @PutMapping("/notices")
+    @PutMapping("/notices/{noticeId}")
     public NoticeUpdateResponse updateNotice(
+            @PathVariable("noticeId") Long noticeId,
             @Valid @RequestBody NoticeUpdateRequest request
     ){
         Long adminId = SecurityUtil.getCurrentUserId();
-        return noticeService.updateNotice(adminId, request);
+        return noticeService.updateNotice(adminId, noticeId, request);
     }
 
     @Operation(summary = "관리자 공지사항 삭제", description = "관리자가 공지사항을 삭제 합니다.")
-    @DeleteMapping("/notices")
+    @DeleteMapping("/notices/{noticeId}")
     public NoticeDeleteResponse deleteNotice(
-            @Valid @RequestBody NoticeDeleteRequest request
+            @PathVariable("noticeId") Long noticeId
     ){
         Long adminId = SecurityUtil.getCurrentUserId();
-        return noticeService.deleteNotice(adminId, request);
+        return noticeService.deleteNotice(adminId, noticeId);
     }
 
 
