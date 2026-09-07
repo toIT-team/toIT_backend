@@ -26,17 +26,32 @@
 
 ## Pull Request 운영 규칙
 
+### 브랜치 이름
+`feature/{작업-내용}` 형식을 쓴다. 작업 내용은 한글로, 띄어쓰기는 `-` 로 잇는다.
+
+```text
+feature/알림-스케줄러-처리량
+feature/공지-피드백-알림-발송
+```
+
+문서·리팩터링처럼 성격이 뚜렷하면 커밋 타입을 접두어로 써도 된다.
+
+```text
+docs/통합검색-mysql-재측정
+refactor/패키지-구조
+```
+
 ### 기본 원칙
 - **1 Issue = 2 Pull Request**
 - 하나의 PR에 여러 커밋은 허용
-- 한 개의 issue에서 feature/#{PR번호}  → dev  → main으로 가기에 2개의 pr
+- 한 개의 issue에서 feature/{작업-내용}  → dev  → main으로 가기에 2개의 pr
 
 
 상세 규칙
 - 이슈 자동 종료는 PR에서만
 - main merge 시 issue 자동 Done
-- 단 feature/#{PR번호} 브랜치 → dev갈 때는 Closes: #{이슈번호}를 쓰지 말고 dev → main 브랜치 갈 때만 진행한다.
-  - feature/#{PR번호} 브랜치 → dev 갈땐 Refs: #{이슈번호}를 사용한다.
+- 단 feature/{작업-내용} 브랜치 → dev갈 때는 Closes: #{이슈번호}를 쓰지 말고 dev → main 브랜치 갈 때만 진행한다.
+  - feature/{작업-내용} 브랜치 → dev 갈땐 Refs: #{이슈번호}를 사용한다.
 
 PR Description 필수 템플릿
 - dev에서 main으로
@@ -48,7 +63,7 @@ PR Description 필수 템플릿
 Closes: #4
 ```
 
-- feature/#{PR번호}에서 dev
+- feature/{작업-내용}에서 dev
 ```text
 ## 변경 내용
 - 커밋 컨벤션 문서 분리

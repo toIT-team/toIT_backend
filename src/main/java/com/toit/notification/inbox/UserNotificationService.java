@@ -21,6 +21,22 @@ public class UserNotificationService {
     }
 
     /**
+     * 푸시와 무관하게 알림함에 남긴다.
+     *
+     * 알림함 조회가 isSent = true 만 보므로, 푸시 성공 여부로 이 값을 정하면 알림을
+     * 꺼둔 사람이나 토큰이 없는 사람은 알림함에서도 그 일을 못 본다. 답변이 달린 것은
+     * 푸시가 나갔든 아니든 사실이므로 알림함에는 있어야 한다.
+     *
+     * 여기서 "보냈다" 는 푸시가 나갔다는 뜻이 아니라 알림함에 놓았다는 뜻이다.
+     */
+    public UserNotification createAsSent(Users users, NotificationType type,
+                                         String title, String deeplink, Long targetId) {
+        UserNotification notification = new UserNotification(users, type, title, deeplink, targetId);
+        notification.markAsSent();
+        return userNotificationRepository.save(notification);
+    }
+
+    /**
      * 멱등키로 찾고 없을 때만 만든다.
      *
      * 재시도할 때마다 알림함에 줄이 쌓이는 것을 막는다. 조회에서 걸러지므로 유니크
