@@ -35,6 +35,13 @@ public class FeedbackController {
         return ResponseEntity.ok(feedbackService.getMyList(usersId));
     }
 
+    @Operation(summary = "내 피드백/문의 단건 조회", description = "알림함의 딥링크가 가리키는 문의 하나를 조회합니다.")
+    @GetMapping("/{feedbackId}")
+    public ResponseEntity<FeedbackMyResponse> getMyFeedback(@PathVariable("feedbackId") Long feedbackId) {
+        Long usersId = SecurityUtil.getCurrentUserId();
+        return ResponseEntity.ok(feedbackService.getMyFeedback(usersId, feedbackId));
+    }
+
     @Operation(summary = "내 피드백/문의 삭제", description = "답변이 등록된 문의는 삭제할 수 없습니다.")
     @DeleteMapping("/{feedbackId}")
     public ResponseEntity<Void> delete(@PathVariable("feedbackId") Long feedbackId) {

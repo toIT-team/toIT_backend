@@ -10,6 +10,8 @@ import com.toit.items.attachments.exception.UnsupportedImageTypeException;
 import com.toit.items.links.exception.LinksNotFoundException;
 import com.toit.items.texts.exception.TextsNotFoundException;
 import com.toit.schedules.exception.ScheduleTimeRangeException;
+import com.toit.notice.exception.NoticeNotFoundException;
+import com.toit.feedback.exception.FeedbackNotFoundException;
 import com.toit.schedules.exception.SchedulesNotFoundException;
 import com.toit.notification.alarm.exception.SchedulesAlarmNotFoundException;
 import com.toit.user.exception.InvalidUsersNameException;
@@ -220,6 +222,34 @@ public class GlobalExceptionHandler {
         log.warn("[400] MethodArgumentNotValidException: {}", message);
         ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), message);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * <h1>Notice</h1>
+     */
+
+    /**
+     * Notice -> 404, 공지사항을 찾을 수 없음
+     */
+    @ExceptionHandler(NoticeNotFoundException.class)
+    public ResponseEntity<ErrorResponse> NoticeNotFoundException(NoticeNotFoundException ex) {
+        log.warn("[404] NoticeNotFoundException: {}", ex.getMessage());
+        ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * <h1>Feedback</h1>
+     */
+
+    /**
+     * Feedback -> 404, 문의를 찾을 수 없거나 본인 것이 아님
+     */
+    @ExceptionHandler(FeedbackNotFoundException.class)
+    public ResponseEntity<ErrorResponse> FeedbackNotFoundException(FeedbackNotFoundException ex) {
+        log.warn("[404] FeedbackNotFoundException: {}", ex.getMessage());
+        ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
     /**

@@ -9,9 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class NoticeUpdateRequest {
 
-    @NotBlank
-    private Long noticeId;
-
     @NotBlank(message = "title은 필수 값입니다.")
     private String title;
 

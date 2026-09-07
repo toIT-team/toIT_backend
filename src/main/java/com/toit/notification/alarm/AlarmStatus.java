@@ -4,7 +4,7 @@ package com.toit.notification.alarm;
  * 알림 예약의 발송 상태.
  *
  * 불리언 하나로는 "성공" 과 "보내봐야 소용없어 접음" 을 구분할 수 없어 상태로 나눴다.
- * 셋이 동시에 참일 수 없으므로 컬럼을 여러 개 두지 않고 하나에 모았다.
+ * 넷이 동시에 참일 수 없으므로 컬럼을 여러 개 두지 않고 하나에 모았다.
  */
 public enum AlarmStatus {
 
@@ -15,5 +15,14 @@ public enum AlarmStatus {
     SENT,
 
     /** 더 안 보지만 성공은 아니다. 왜 접었는지는 lastErrorCode 로 갈린다. */
-    FAILED
+    FAILED,
+
+    /**
+     * 시한을 넘겨 보내지 못했다.
+     *
+     * FAILED 와 나눈 이유는 원인이 다르기 때문이다. FAILED 는 보내봤는데 거절당한
+     * 것이라 사용자에게 설명할 수 있다. EXPIRED 는 보내보지도 못한 것이고, 원인이
+     * 우리 처리량이다.
+     */
+    EXPIRED
 }

@@ -10,17 +10,17 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface FcmTokenRepository extends JpaRepository<FcmToken, Long> {
+public interface FcmTokenRepository extends JpaRepository<FcmToken, String> {
 
-    // 사용자의 특정 토큰이 이미 있는지 확인 (로그인 시 체크용)
-    Optional<FcmToken> findByUsersAndFcmToken(Users users, String token);
-
+    /**
+     * 다른 기기가 이미 쓰고 있는 토큰인지 본다.
+     *
+     * fcm_token 에 유니크가 걸려 있어, 남의 줄에 붙은 토큰을 그대로 저장하면
+     * 제약에 걸린다. 등록할 때 미리 확인해서 옛 줄을 정리한다.
+     */
     Optional<FcmToken> findByFcmToken(String token);
 
     List<FcmToken> findAllByUsers(Users user);
-//
-//    // (선택) 특정 사용자의 모든 토큰 삭제 (로그아웃/회원탈퇴 시)
-//    void deleteAllByUser(Users user);
 
     /**
      * 오래 안 쓴 토큰 정리용.
