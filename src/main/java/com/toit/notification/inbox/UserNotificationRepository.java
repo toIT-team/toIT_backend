@@ -12,7 +12,14 @@ import java.util.Optional;
 @Repository
 public interface UserNotificationRepository extends JpaRepository<UserNotification, Long> {
 
-    List<UserNotification> findAllByUsers_UsersIdOrderByCreatedAtDesc(Long usersId);
+    /**
+     * 알림함에 보여줄 목록.
+     *
+     * 알림함 줄은 발송을 시도하기 전에 만들어진다. 그래서 거르지 않으면 보내다 실패한
+     * 것까지 사용자에게 보인다. 안 읽은 개수도 아래와 같은 조건을 쓰므로, 안 걸면
+     * "뱃지는 0인데 목록에는 새 알림이 있는" 상태가 된다.
+     */
+    List<UserNotification> findAllByUsers_UsersIdAndIsSentTrueOrderBySentAtDesc(Long usersId);
 
     long countByUsers_UsersIdAndIsSentTrueAndIsReadFalse(Long usersId);
 

@@ -1,0 +1,18 @@
+flowchart TB
+    A["<b>14:31:00</b><br/>밀린 2,500건을 집어간다<br/>다 보내는 데 12.8분"]
+    B["<b>14:31:59 ~ 14:43:59</b><br/>새 알림 130건이 울릴 시각이 된다<br/>스케줄러가 묶여 있어 아무도 안 집는다"]
+    C["<b>14:44:00</b><br/>드디어 다시 깨어난다<br/>10분 안쪽만 보므로 기준선은 14:34"]
+
+    D["14:31:59 · 14:32:59 · 14:33:59<br/><b>30건 · 기준선보다 앞이라 유실</b>"]
+    E["14:34:59 ~ 14:43:59<br/><b>100건 · 기준선 안쪽이라 발송</b>"]
+
+    A --> B --> C
+    C -->|"14:34 보다 앞"| D
+    C -->|"14:34 이후"| E
+
+    classDef bad fill:#ffe3e3,stroke:#e03131,color:#000
+    classDef good fill:#d3f9d8,stroke:#2f9e44,color:#000
+    classDef plain fill:#fff,stroke:#adb5bd,color:#000
+    class D bad
+    class E good
+    class A,B,C plain

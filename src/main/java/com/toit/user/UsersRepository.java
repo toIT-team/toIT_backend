@@ -1,8 +1,10 @@
 package com.toit.user;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.toit.common.enums.AuthProvider;
+import com.toit.common.enums.EntityStatus;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
@@ -30,5 +32,13 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
     Optional<Users> findByEmail(String email);
 
     Optional<Users> findByAuthProviderAndProviderUsersId(AuthProvider authProvider, String providerUsersId);
+
+    /**
+     * 공지처럼 전체에게 뿌릴 때 쓴다.
+     *
+     * findAll() 은 탈퇴 회원까지 집는다. 탈퇴하면 토큰은 지워지지만 사용자 행은
+     * 익명화되어 남으므로, 거르지 않으면 받을 사람 없는 알림함 줄이 쌓인다.
+     */
+    List<Users> findAllByStatus(EntityStatus status);
 
 }
