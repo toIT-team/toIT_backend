@@ -106,7 +106,8 @@ public class FeedbackService {
         // 답변이 달린 그 문의로 바로 보낸다. 목록으로 보내면 사용자가 찾아야 한다.
         String deeplink = "toit://feedback?id=" + feedback.getFeedbackId();
 
-        UserNotification notification = userNotificationService.create(
+        // 알림함에는 무조건 남긴다. 푸시가 나갔든 아니든 답변이 달린 것은 사실이다.
+        UserNotification notification = userNotificationService.createAsSent(
                 feedback.getUsers(),
                 NotificationType.FEEDBACK_REPLY,
                 feedback.getTitle(),
@@ -114,7 +115,8 @@ public class FeedbackService {
                 feedback.getFeedbackId()
         );
 
-        boolean isSent = fcmNotificationService.sendToUser(
+        // 푸시는 알림을 켜둔 사람에게만 간다. 실패해도 알림함 줄은 그대로 남는다.
+        fcmNotificationService.sendToUser(
                 feedback.getUsers(),
                 new FcmNotificationRequest(
                         // 알림함과 같은 제목을 쓴다. 같은 알림이 두 곳에서 다르게 보이면 안 된다.
@@ -125,9 +127,5 @@ public class FeedbackService {
                         notification.getNotificationId()
                 )
         );
-
-        if (isSent) {
-            userNotificationService.markAsSent(notification);
-        }
     }
 }
