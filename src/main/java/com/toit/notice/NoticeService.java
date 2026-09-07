@@ -71,8 +71,8 @@ public class NoticeService {
 
         Notice savedNotice = noticeRepository.save(notice);
 
-        // 알림함에만 남기고 푸시는 안 보낸다.
-        userNotificationService.createAllAsSent(
+        // 알림함은 전원에게 남긴다. 푸시를 못 받아도 앱을 열면 보여야 한다.
+        List<UserNotification> notifications = userNotificationService.createAllAsSent(
                 usersRepository.findAllByStatus(EntityStatus.ACTIVE),
                 NotificationType.NOTICE,
                 savedNotice.getTitle(),
@@ -80,29 +80,21 @@ public class NoticeService {
                 savedNotice.getNoticeId()
         );
 
-        // 푸시는 잠시 멈춰 둔다. 지금 구조로 켜면 두 가지가 걸린다.
-        //   - 관리자 요청이 전체 발송을 마칠 때까지 안 끝난다. 한 건씩 순서대로
-        //     보내므로 사용자가 1,000명이면 5분 넘게 붙잡힌다
-        //   - sendToUserIgnoringAppAlarmEnabled 라 알림을 꺼둔 사람에게도 간다
-        //
-        // 둘을 정리한 뒤 되살린다.
-        //
-        // for (UserNotification notification : notifications) {
-        //     boolean isSent = fcmNotificationService.sendToUserIgnoringAppAlarmEnabled(
-        //             notification.getUsers(),
-        //             new FcmNotificationRequest(
-        //                     savedNotice.getTitle(),
-        //                     savedNotice.getContent(),
-        //                     "notice",
-        //                     notification.getDeeplink(),
-        //                     notification.getNotificationId()
-        //             )
-        //     );
-        //
-        //     if (isSent) {
-        //         userNotificationService.markAsSent(notification);
-        //     }
-        // }
+        // 푸시는 알림을 켜둔 사람에게만 간다. sendToUser 가 app_alarm_enabled 를 본다.
+        // 껐는데도 오면 "껐는데 왜 오냐" 가 되고, 알림함에는 어차피 남는다.
+        for (UserNotification notification : notifications) {
+            fcmNotificationService.sendToUser(
+                    notification.getUsers(),
+                    new FcmNotificationRequest(
+                            savedNotice.getTitle(),
+                            savedNotice.getContent(),
+                            "notice",
+                            notification.getDeeplink(),
+                            notification.getNotificationId()
+                    )
+            );
+        }
+
     }
 
     // 공지사항 삭제
